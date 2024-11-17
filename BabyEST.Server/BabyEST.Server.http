@@ -1,0 +1,6 @@
+@BabyEST.Server_HostAddress = http://localhost:5261
+
+GET {{BabyEST.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
