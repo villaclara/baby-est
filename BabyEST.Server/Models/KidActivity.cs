@@ -1,9 +1,9 @@
 ﻿namespace BabyEST.Server.Models;
 
-internal class Activity
+internal class KidActivity
 {
 	public long Id { get; set; }
-	public ActivityType ActivityType { get; set; }
+	public KidActivityType ActivityType { get; set; }
 	public DateTime StartDate { get; set; }
 	public DateTime EndDate { get; set; }
 

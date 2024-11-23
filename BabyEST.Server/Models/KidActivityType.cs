@@ -3,7 +3,7 @@
 /// <summary>
 /// Enum representing the type of the activity.
 /// </summary>
-public enum ActivityType
+public enum KidActivityType
 {
 	Undefined = 0,
 	Sleeping = 1,
