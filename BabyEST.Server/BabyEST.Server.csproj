@@ -24,8 +24,4 @@
     </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="VMs\" />
-  </ItemGroup>
-
 </Project>

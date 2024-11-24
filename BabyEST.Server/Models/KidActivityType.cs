@@ -6,6 +6,11 @@
 public enum KidActivityType
 {
 	Undefined = 0,
-	Sleeping = 1,
-	Eating = 2
+
+	Sleeping = 100,
+
+	EatingLeft = 201,
+	EatingRight = 202,
+	EatingBoth = 203,
+	EatingBottle = 204
 }
