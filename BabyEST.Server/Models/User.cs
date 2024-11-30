@@ -2,10 +2,9 @@
 
 internal record class User
 {
-	public required int Id { get; set; }
+	public Guid Id { get; set; }
 	public required string Email { get; set; }
-	public required string Password { get; set; }
-	public string? UserName { get; set; } = string.Empty;
+	public required string PasswordHash { get; set; }
 
 	public ICollection<Kid> Kids { get; set; }
 }

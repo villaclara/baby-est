@@ -1,14 +1,30 @@
+using BabyEST.Server.Database;
+using BabyEST.Server.EndPoints;
+using BabyEST.Server.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<ITest, Test>();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("db"));
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+builder.Services.AddAuthorization();
 
 var app = builder.Build();
 
 app.UseDefaultFiles();
 app.UseStaticFiles();
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -40,6 +56,11 @@ app.MapGet("/weatherforecast", () =>
 .WithOpenApi();
 
 app.MapFallbackToFile("/index.html");
+
+app.MapGroup("api/user")
+	.MapUserEndpoints();
+
+
 
 app.Run();
 

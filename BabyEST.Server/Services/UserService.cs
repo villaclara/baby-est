@@ -7,9 +7,9 @@ namespace BabyEST.Server.Services;
 
 internal class UserService : IUserService
 {
-	private readonly ApplicationContext _ctx;
+	private readonly ApplicationDbContext _ctx;
 
-	public UserService(ApplicationContext context)
+	public UserService(ApplicationDbContext context)
 	{
 		_ctx = context;
 	}
@@ -29,7 +29,7 @@ internal class UserService : IUserService
 		}
 	}
 
-	public async Task<User?> DeleteUserAsync(int userId)
+	public async Task<User?> DeleteUserAsync(Guid userId)
 	{
 		try
 		{
@@ -49,7 +49,7 @@ internal class UserService : IUserService
 		}
 	}
 
-	public async Task<User?> GetUser(int userId)
+	public async Task<User?> GetUser(Guid userId)
 	{
 		return await _ctx.Users.FirstOrDefaultAsync(u => u.Id == userId);
 	}
