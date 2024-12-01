@@ -14,7 +14,7 @@ internal class UserService : IUserService
 		_ctx = context;
 	}
 
-	public async Task<User?> CreateUserAsync(User user)
+	public async Task<Parent?> CreateUserAsync(Parent user)
 	{
 		try
 		{
@@ -29,7 +29,7 @@ internal class UserService : IUserService
 		}
 	}
 
-	public async Task<User?> DeleteUserAsync(Guid userId)
+	public async Task<Parent?> DeleteUserAsync(Guid userId)
 	{
 		try
 		{
@@ -49,12 +49,12 @@ internal class UserService : IUserService
 		}
 	}
 
-	public async Task<User?> GetUser(Guid userId)
+	public async Task<Parent?> GetUser(Guid userId)
 	{
-		return await _ctx.Users.FirstOrDefaultAsync(u => u.Id == userId);
+		return await _ctx.Parents.FirstOrDefaultAsync(u => u.Id == userId);
 	}
 
-	public async Task<User?> UpdateUserAsync(User user)
+	public async Task<Parent?> UpdateUserAsync(Parent user)
 	{
 		try
 		{

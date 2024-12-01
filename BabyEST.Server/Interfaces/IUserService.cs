@@ -4,8 +4,8 @@ namespace BabyEST.Server.Interfaces;
 
 internal interface IUserService
 {
-	Task<User?> GetUser(Guid userId);
-	Task<User?> CreateUserAsync(User user);
-	Task<User?> UpdateUserAsync(User user);
-	Task<User?> DeleteUserAsync(Guid userId);
+	Task<Parent?> GetUser(Guid userId);
+	Task<Parent?> CreateUserAsync(Parent user);
+	Task<Parent?> UpdateUserAsync(Parent user);
+	Task<Parent?> DeleteUserAsync(Guid userId);
 }

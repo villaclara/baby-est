@@ -2,7 +2,7 @@
 
 namespace BabyEST.Server.DTOs;
 
-internal record class UserDto
+internal record class ParentDto
 {
 	public required Guid Id { get; set; }
 	public required string Email { get; set; }
@@ -10,8 +10,8 @@ internal record class UserDto
 
 	public ICollection<KidDto> Kids { get; set; } = [];
 
-	public UserDto() { }
-	public UserDto(User user)
+	public ParentDto() { }
+	public ParentDto(Parent user)
 	{
 		Email = user.Email;
 		foreach (var kid in user.Kids)

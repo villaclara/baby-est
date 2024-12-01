@@ -7,6 +7,5 @@ internal class Kid
 	public DateOnly BirthDate { get; set; }
 	public ICollection<KidActivity> Activities { get; set; } = null!;
 
-	public int UserId { get; set; }
-	public User User { get; set; } = null!;
+	public ICollection<Parent> Parents { get; set; } = null!; // many to many
 }

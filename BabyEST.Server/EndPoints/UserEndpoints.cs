@@ -24,20 +24,20 @@ public static class UserEndpoints
 	{
 		Console.WriteLine($"new user - {userDto.Email}, {userDto.Password}");
 		// check if the user is not already created
-		var existingUser = appcontext.Users.Where(u => u.Email == userDto.Email).FirstOrDefault();
+		var existingUser = appcontext.Parents.Where(u => u.Email == userDto.Email).FirstOrDefault();
 		if (existingUser is not null)
 		{
 			return TypedResults.BadRequest("Username is already taken.");
 		}
 
-		var userToAdd = new User()
+		var userToAdd = new Parent()
 		{
 			Email = userDto.Email,
 			PasswordHash = userDto.Password,
 			Kids = []
 		};
 
-		appcontext.Users.Add(userToAdd);
+		appcontext.Parents.Add(userToAdd);
 		await appcontext.SaveChangesAsync();
 
 		var claim = new Claim(ClaimTypes.Name, userToAdd.Email);
@@ -53,7 +53,7 @@ public static class UserEndpoints
 	private static async Task<IResult> LoginAsync([FromBody] UserFormModel userDto, ApplicationDbContext appcontext, HttpContext httpcontext)
 	{
 		Console.WriteLine($"login async.");
-		var user = appcontext.Users.Where(u => u.Email == userDto.Email).FirstOrDefault();
+		var user = appcontext.Parents.Where(u => u.Email == userDto.Email).FirstOrDefault();
 
 		if (user is null)
 		{

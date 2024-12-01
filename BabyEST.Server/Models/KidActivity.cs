@@ -7,6 +7,6 @@ internal class KidActivity
 	public DateTime StartDate { get; set; }
 	public DateTime EndDate { get; set; }
 
-	public int KidId { get; set; }
+	public int KidId { get; set; } // foreign key property
 	public Kid Kid { get; set; } = null!;
 }
