@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using BabyEST.Server.Database;
 using BabyEST.Server.EndPoints;
 using BabyEST.Server.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 
@@ -57,10 +59,18 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapFallbackToFile("/index.html");
 
-app.MapGroup("api/user")
+app.MapGroup("/api/user")
 	.MapUserEndpoints();
 
+app.MapGet("/log", async (HttpContext ctx) =>
+{
+	var claim = new Claim(ClaimTypes.Name, "bruh");
+	List<Claim> claims = [claim];
+	var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+	var claimsPrincipal = new ClaimsPrincipal(identity);
 
+	await ctx.SignInAsync(claimsPrincipal);
+});
 
 app.Run();
 

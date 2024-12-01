@@ -13,7 +13,7 @@ public static class UserEndpoints
 	{
 		builder.MapPost("/login", LoginAsync);
 
-		builder.MapGet("/logout", LogoutAsync);
+		builder.MapGet("/logout", LogoutAsync).RequireAuthorization();
 
 		builder.MapPost("/register", RegisterUserAsync);
 
@@ -22,11 +22,12 @@ public static class UserEndpoints
 
 	private static async Task<IResult> RegisterUserAsync([FromBody] UserFormModel userDto, ApplicationDbContext appcontext, HttpContext httpcontext)
 	{
+		Console.WriteLine($"new user - {userDto.Email}, {userDto.Password}");
 		// check if the user is not already created
 		var existingUser = appcontext.Users.Where(u => u.Email == userDto.Email).FirstOrDefault();
 		if (existingUser is not null)
 		{
-			return TypedResults.BadRequest();
+			return TypedResults.BadRequest("Username is already taken.");
 		}
 
 		var userToAdd = new User()
@@ -51,12 +52,13 @@ public static class UserEndpoints
 
 	private static async Task<IResult> LoginAsync([FromBody] UserFormModel userDto, ApplicationDbContext appcontext, HttpContext httpcontext)
 	{
+		Console.WriteLine($"login async.");
 		var user = appcontext.Users.Where(u => u.Email == userDto.Email).FirstOrDefault();
 
 		if (user is null)
 		{
 
-			return TypedResults.BadRequest();
+			return TypedResults.BadRequest("User not found.");
 		}
 
 		var claim = new Claim("auth", user.Email);
@@ -66,12 +68,14 @@ public static class UserEndpoints
 
 		await httpcontext.SignInAsync(claimsPrincipal);
 
-		return TypedResults.Ok();
+		return TypedResults.Ok("Logged in.");
 	}
 
-	private static async Task LogoutAsync(ApplicationDbContext ctx, HttpContext httpcontext)
+	private static async Task<IResult> LogoutAsync(ApplicationDbContext ctx, HttpContext httpcontext)
 	{
+		Console.WriteLine("Logout async.");
 		await httpcontext.SignOutAsync();
+		return TypedResults.Ok("logged out.");
 	}
 
 	public class UserFormModel
