@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BabyEST.Server.EndPoints;
 
-public static class UserEndpoints
+public static class ParentEndpoints
 {
 	public static RouteGroupBuilder MapUserEndpoints(this RouteGroupBuilder builder)
 	{

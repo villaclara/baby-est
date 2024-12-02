@@ -5,6 +5,11 @@ using BabyEST.Server.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using Serilog;
+
+Log.Logger = new LoggerConfiguration()
+	.WriteTo.File("log.txt", shared: true, fileSizeLimitBytes: 1_000_000_000)
+	.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +18,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITest, Test>();
+
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("db"));
 
@@ -59,7 +65,7 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapFallbackToFile("/index.html");
 
-app.MapGroup("/api/user")
+app.MapGroup("/api/auth")
 	.MapUserEndpoints();
 
 app.MapGet("/log", async (HttpContext ctx) =>
