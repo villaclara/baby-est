@@ -13,10 +13,10 @@ internal record class KidDto
 
 	public KidDto(Kid kid)
 	{
-		(Name, BirthDate, UserName) = (kid.Name, kid.BirthDate, kid.User.Email);
-		foreach (var activity in kid.Activities)
-		{
-			Activities.Add(new KidActivityDto(activity));
-		}
+		//(Name, BirthDate, UserName) = (kid.Name, kid.BirthDate, kid.Parents.Email);
+		//foreach (var activity in kid.Activities)
+		//{
+		//	Activities.Add(new KidActivityDto(activity));
+		//}
 	}
 }

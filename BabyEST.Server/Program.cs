@@ -65,8 +65,9 @@ app.MapGet("/weatherforecast", () =>
 
 app.MapFallbackToFile("/index.html");
 
-app.MapGroup("/api/auth")
-	.MapUserEndpoints();
+app.MapGroup("/auth")
+	.MapAuthEndpoints();
+
 
 app.MapGet("/log", async (HttpContext ctx) =>
 {

@@ -33,13 +33,16 @@ internal class ApplicationDbContext : DbContext
 
 			b.HasMany(k => k.Activities)
 			.WithOne(k => k.Kid)
-			.HasForeignKey(k => k.Kid)
-			.IsRequired();
+			.IsRequired(false);
 		});
 
 		modelBuilder.Entity<KidActivity>(b =>
 		{
 			b.HasKey(k => k.Id);
+
+			b.HasOne(k => k.Kid)
+			.WithMany(k => k.Activities)
+			.HasForeignKey(k => k.KidId);
 		});
 	}
 }
