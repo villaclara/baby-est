@@ -29,7 +29,7 @@ internal class UserService : IUserService
 		}
 	}
 
-	public async Task<Parent?> DeleteUserAsync(Guid userId)
+	public async Task<Parent?> DeleteUserAsync(int userId)
 	{
 		try
 		{
@@ -49,7 +49,7 @@ internal class UserService : IUserService
 		}
 	}
 
-	public async Task<Parent?> GetUser(Guid userId)
+	public async Task<Parent?> GetUser(int userId)
 	{
 		return await _ctx.Parents.FirstOrDefaultAsync(u => u.Id == userId);
 	}

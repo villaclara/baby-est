@@ -1,6 +1,6 @@
 ﻿namespace BabyEST.Server.Models;
 
-internal class Kid
+public class Kid
 {
 	public int Id { get; set; }
 	public string Name { get; set; } = null!;

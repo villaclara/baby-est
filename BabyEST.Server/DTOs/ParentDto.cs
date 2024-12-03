@@ -4,7 +4,7 @@ namespace BabyEST.Server.DTOs;
 
 internal record class ParentDto
 {
-	public required Guid Id { get; set; }
+	public required int Id { get; set; }
 	public required string Email { get; set; }
 	public required string Password { get; set; }
 

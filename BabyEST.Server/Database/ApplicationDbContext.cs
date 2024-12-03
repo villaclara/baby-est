@@ -3,11 +3,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BabyEST.Server.Database;
 
-internal class ApplicationDbContext : DbContext
+public class ApplicationDbContext : DbContext
 {
-	internal DbSet<Kid> Kids { get; set; }
-	internal DbSet<KidActivity> KidActivities { get; set; }
-	internal DbSet<Parent> Parents { get; set; }
+	public DbSet<Kid> Kids { get; set; }
+	public DbSet<KidActivity> KidActivities { get; set; }
+	public DbSet<Parent> Parents { get; set; }
 
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 	{

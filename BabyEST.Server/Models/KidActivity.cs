@@ -1,6 +1,6 @@
 ﻿namespace BabyEST.Server.Models;
 
-internal class KidActivity
+public class KidActivity
 {
 	public long Id { get; set; }
 	public KidActivityType ActivityType { get; set; }

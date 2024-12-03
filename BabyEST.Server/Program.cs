@@ -68,6 +68,10 @@ app.MapFallbackToFile("/index.html");
 app.MapGroup("/auth")
 	.MapAuthEndpoints();
 
+app.MapGroup("/parent")
+	.MapParentEndpoints()
+	.RequireAuthorization();
+
 
 app.MapGet("/log", async (HttpContext ctx) =>
 {

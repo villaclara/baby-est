@@ -1,10 +1,10 @@
 ﻿namespace BabyEST.Server.Models;
 
-internal record class Parent
+public record class Parent
 {
-	public Guid Id { get; set; }
-	public string Email { get; set; }
-	public string PasswordHash { get; set; }
+	public int Id { get; set; }
+	public string Email { get; set; } = null!;
+	public string PasswordHash { get; set; } = null!;
 
-	public ICollection<Kid> Kids { get; set; } // many to many
+	public ICollection<Kid> Kids { get; set; } = []; // many to many
 }
