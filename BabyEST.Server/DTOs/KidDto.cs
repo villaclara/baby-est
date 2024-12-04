@@ -7,13 +7,21 @@ internal record class KidDto
 	public string Name { get; set; } = null!;
 	public DateOnly BirthDate { get; set; }
 	public ICollection<KidActivityDto> Activities { get; set; } = [];
-	public string UserName { get; set; } = null!;
+	public ICollection<string> Parents { get; set; } = null!;
 
 	public KidDto() { }
 
 	public KidDto(Kid kid)
 	{
-		//(Name, BirthDate, UserName) = (kid.Name, kid.BirthDate, kid.Parents.Email);
+		(Name, BirthDate) = (kid.Name, kid.BirthDate);
+		foreach (var parent in kid.Parents)
+		{
+			Parents.Add(parent.Email);
+		}
+		foreach (var activity in kid.Activities)
+		{
+			Activities.Add(new KidActivityDto(activity));
+		}
 		//foreach (var activity in kid.Activities)
 		//{
 		//	Activities.Add(new KidActivityDto(activity));

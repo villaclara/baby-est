@@ -44,11 +44,8 @@ public static class AuthEndpoints
 			appcontext.Parents.Add(user);
 			await appcontext.SaveChangesAsync();
 
-			var claim = new Claim(ClaimTypes.Name, user.Email);
-			List<Claim> claims = [claim];
-			var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-			var claimsPrincipal = new ClaimsPrincipal(identity);
 
+			var claimsPrincipal = CreateClaimsPrincipal(user.Email, user.Id);
 			await httpcontext.SignInAsync(claimsPrincipal);
 
 			return TypedResults.Ok("Register completed.");
@@ -59,6 +56,16 @@ public static class AuthEndpoints
 			return TypedResults.StatusCode(500);
 		}
 
+	}
+
+	private static ClaimsPrincipal CreateClaimsPrincipal(string email, int id)
+	{
+		var claim = new Claim(ClaimTypes.Name, email);
+		var claim2 = new Claim("id", $"{id}");
+		List<Claim> claims = [claim, claim2];
+		var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+		var claimsPrincipal = new ClaimsPrincipal(identity);
+		return claimsPrincipal;
 	}
 
 	private static async Task<IResult> LoginAsync([FromBody] UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
@@ -73,10 +80,7 @@ public static class AuthEndpoints
 				return TypedResults.BadRequest("Incorret login or password.");
 			}
 
-			var claim = new Claim("auth", user.Email);
-			List<Claim> claims = [claim];
-			var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-			var claimsPrincipal = new ClaimsPrincipal(identity);
+			var claimsPrincipal = CreateClaimsPrincipal(user.Email, user.Id);
 
 			await httpcontext.SignInAsync(claimsPrincipal);
 

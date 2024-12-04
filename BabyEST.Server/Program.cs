@@ -2,7 +2,6 @@ using System.Security.Claims;
 using BabyEST.Server.Database;
 using BabyEST.Server.EndPoints;
 using BabyEST.Server.Interfaces;
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
@@ -70,18 +69,23 @@ app.MapGroup("/auth")
 
 app.MapGroup("/parent")
 	.MapParentEndpoints()
-	.RequireAuthorization();
+	.RequireAuthorization()
+	.WithOpenApi();
 
 
-app.MapGet("/log", async (HttpContext ctx) =>
+app.MapGet("/log", (ClaimsPrincipal principal) =>
 {
-	var claim = new Claim(ClaimTypes.Name, "bruh");
-	List<Claim> claims = [claim];
-	var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-	var claimsPrincipal = new ClaimsPrincipal(identity);
+	//Dictionary<string, string> claims = [];
+	//foreach (var c in ctx.User.Claims)
+	//{
+	//	claims.Add(c.Type, c.Value);
+	//}
 
-	await ctx.SignInAsync(claimsPrincipal);
-});
+	//return claims;
+
+	//return principal.Claims.Where(c => c.Type == "id").FirstOrDefault()?.Value;
+	return principal.FindFirstValue("id");
+}).RequireAuthorization();
 
 app.Run();
 

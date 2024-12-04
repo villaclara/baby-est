@@ -5,7 +5,7 @@ namespace BabyEST.Server.DTOs;
 internal record class KidActivityDto
 {
 	public long Id { get; set; }
-	public KidActivityType ActivityType { get; set; }
+	public string ActivityType { get; set; } = null!;
 	public DateTime StartDate { get; set; }
 	public DateTime EndDate { get; set; }
 
@@ -14,6 +14,6 @@ internal record class KidActivityDto
 	public KidActivityDto() { }
 
 	public KidActivityDto(KidActivity kidActivity) =>
-		(Id, ActivityType, StartDate, EndDate, KidName) = (kidActivity.Id, kidActivity.ActivityType, kidActivity.StartDate, kidActivity.EndDate, kidActivity.Kid.Name);
+		(Id, ActivityType, StartDate, EndDate, KidName) = (kidActivity.Id, kidActivity.ActivityType.ToString(), kidActivity.StartDate, kidActivity.EndDate, kidActivity.Kid.Name);
 
 }
