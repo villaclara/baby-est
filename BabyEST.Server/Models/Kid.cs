@@ -5,7 +5,7 @@ public class Kid
 	public int Id { get; set; }
 	public string Name { get; set; } = null!;
 	public DateOnly BirthDate { get; set; }
-	public ICollection<KidActivity> Activities { get; set; } = null!;
+	public ICollection<KidActivity> Activities { get; set; } = [];
 
-	public ICollection<Parent> Parents { get; set; } = null!; // many to many
+	public ICollection<Parent> Parents { get; set; } = []; // many to many
 }

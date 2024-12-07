@@ -19,7 +19,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<ITest, Test>();
 
 
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("db"));
+//builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("db"));
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+	options.UseSqlServer(builder.Configuration.GetConnectionString("LocalSqlConnection")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);

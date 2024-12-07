@@ -8,9 +8,6 @@ namespace BabyEST.Server.EndPoints;
 
 public static class ParentEndpoints
 {
-	// TODO 1. Parent Endpoints
-	// TODO 2. Kid Endpoints
-	// TODO 3. Activity Endpoints
 	public static RouteGroupBuilder MapParentEndpoints(this RouteGroupBuilder builder)
 	{
 		builder.MapPost("/addparent", AddNewParentToKid);

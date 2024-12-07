@@ -21,7 +21,7 @@ public static class KidEndpoints
 
 	}
 
-	private static IResult GetAllKidsForCurrentParent([FromRoute] int id, ClaimsPrincipal principal, ApplicationDbContext dbctx)
+	private static IResult GetAllKidsForCurrentParent(ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
 		// Get current user id
 		var pid = principal.FindFirstValue("id");
@@ -84,16 +84,23 @@ public static class KidEndpoints
 			var kid = new Kid()
 			{
 				Name = kidDto.Name,
-				BirthDate = kidDto.BirthDate,
+				BirthDate = DateOnly.ParseExact(kidDto.BirthDate, "yyyy-MM-dd"),
 			};
 
-			kid.Parents.Add(new Parent()
+			var parent = dbctx.Parents.Where(p => p.Id == parentId).FirstOrDefault();
+			if (parent is null)
 			{
-				Id = parentId,
-				Email = principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
-			});
+				return TypedResults.BadRequest("Parent not found with id");
+			}
+			parent.Kids.Add(kid);
 
-			dbctx.Kids.Add(kid);
+			//kid.Parents.Add(new Parent()
+			//{
+			//	Id = parentId,
+			//	Email = principal.FindFirstValue(ClaimTypes.Email) ?? string.Empty,
+			//});
+
+			//dbctx.Kids.Add(kid);
 			await dbctx.SaveChangesAsync();
 
 			return TypedResults.Created($"/api/kid/{kid.Id}");
@@ -157,7 +164,13 @@ public static class KidEndpoints
 		try
 		{
 			kid.Name = kidToUpdate.Name;
-			kid.BirthDate = kidToUpdate.BirthDate;
+			kid.BirthDate = DateOnly.ParseExact(kidToUpdate.BirthDate, "yyyy-MM-dd");
+			// TODO
+			// Error here when ediitng the Kid when not specifying the properties
+
+			// TODO
+			// Test the stuff with normal DB
+
 
 			await dbctx.SaveChangesAsync();
 

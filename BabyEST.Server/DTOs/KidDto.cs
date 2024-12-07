@@ -5,7 +5,7 @@ namespace BabyEST.Server.DTOs;
 internal record class KidDto
 {
 	public string Name { get; set; } = null!;
-	public DateOnly BirthDate { get; set; }
+	public string BirthDate { get; set; }
 	public ICollection<KidActivityDto> Activities { get; set; } = [];
 	public ICollection<string> Parents { get; set; } = null!;
 
@@ -13,7 +13,8 @@ internal record class KidDto
 
 	public KidDto(Kid kid)
 	{
-		(Name, BirthDate) = (kid.Name, kid.BirthDate);
+		Name = kid.Name;
+		BirthDate = kid.BirthDate.ToString("yyyy-MM-dd");
 		foreach (var parent in kid.Parents)
 		{
 			Parents.Add(parent.Email);

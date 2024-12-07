@@ -101,7 +101,7 @@ public static class KidActivityEndpoints
 		}
 	}
 
-	private static async Task<IResult> UpdateActivity([FromRoute] int id, [FromRoute] int aId, [FromBody] KidActivityDto activityToUpdate ClaimsPrincipal principal, ApplicationDbContext dbctx)
+	private static async Task<IResult> UpdateActivity([FromRoute] int id, [FromRoute] int aId, [FromBody] KidActivityDto activityToUpdate, ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
 		// Get current user id
 		var pid = principal.FindFirstValue("id");
@@ -165,6 +165,5 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Error when removing activity.");
 		}
 	}
-
 
 }
