@@ -67,11 +67,18 @@ app.MapFallbackToFile("/index.html");
 app.MapGroup("/auth")
 	.MapAuthEndpoints();
 
-app.MapGroup("/parent")
+app.MapGroup("/api/parent")
 	.MapParentEndpoints()
 	.RequireAuthorization()
 	.WithOpenApi();
 
+app.MapGroup("/api/kid")
+	.MapKidEndpoints()
+	.RequireAuthorization();
+
+app.MapGroup("/api/kid/{id}/activity")
+	.MapKidActivityEndpoints()
+	.RequireAuthorization();
 
 app.MapGet("/log", (ClaimsPrincipal principal) =>
 {

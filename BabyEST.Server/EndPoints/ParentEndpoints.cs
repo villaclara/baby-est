@@ -15,16 +15,24 @@ public static class ParentEndpoints
 	{
 		builder.MapPost("/addparent", AddNewParentToKid);
 
-		builder.MapGet("/{pid}/kids", GetKidsForParent);
+		builder.MapGet("/kids", GetKidsForParent);
+
+		//builder.MapGet("/parent/me", GetCurrentParent);
 
 		return builder;
 	}
 
-	private static IResult GetKidsForParent([FromRoute] int pid, ApplicationDbContext dbContext)
+	private static IResult GetKidsForParent(ClaimsPrincipal principal, ApplicationDbContext dbContext)
 	{
-		var kids = dbContext.Kids.Where(k => k.Parents.Any(p => p.Id == pid)).ToList();
+		// Get Parent instance from context
+		var currentParentId = principal.FindFirstValue("id");
+		if (!int.TryParse(currentParentId, out var parentId))
+		{
+			Log.Warning("{@Method} - Error when parsing claim id of user ({@current}).", nameof(AddNewParentToKid), currentParentId);
+			return TypedResults.BadRequest("Not found user with.");
+		}
 
-		var parent = dbContext.Parents.Where(p => p.Id == pid).FirstOrDefault();
+		var parent = dbContext.Parents.Where(p => p.Id == parentId).FirstOrDefault();
 		if (parent is null)
 		{
 			return TypedResults.BadRequest("Parent id not found.");
@@ -34,7 +42,7 @@ public static class ParentEndpoints
 		return TypedResults.Ok(pDto.Kids);
 	}
 
-	public static async Task<IResult> AddNewParentToKid([FromQuery] int kidId, [FromQuery] string newParentEmail, ApplicationDbContext dbContext, ClaimsPrincipal principal)
+	public static async Task<IResult> AddNewParentToKid([FromBody] FormKidAndParentId kidAndParent, ApplicationDbContext dbContext, ClaimsPrincipal principal)
 	{
 		// Get Parent instance from context
 		var currentParentId = principal.FindFirstValue("id");
@@ -43,6 +51,8 @@ public static class ParentEndpoints
 			Log.Warning("{@Method} - Error when parsing claim id of user ({@current}).", nameof(AddNewParentToKid), currentParentId);
 			return TypedResults.BadRequest("Not found user with.");
 		}
+
+		(int kidId, string newParentEmail) = (kidAndParent.kidId, kidAndParent.pEmail);
 
 		// Check if the current Parent is really parent of Kid
 		var kid = dbContext.Parents.Where(p => p.Id == parentId).FirstOrDefault()?
@@ -70,4 +80,6 @@ public static class ParentEndpoints
 
 		return TypedResults.Ok("Parent added to kid.");
 	}
+
+	public record FormKidAndParentId(int kidId, string pEmail);
 }
