@@ -159,7 +159,6 @@ public static class KidEndpoints
 			kid.Name = kidToUpdate.Name;
 			kid.BirthDate = kidToUpdate.BirthDate;
 
-			dbctx.Kids.Update(kid);
 			await dbctx.SaveChangesAsync();
 
 			return TypedResults.Created($"/api/kid/{kid.Id}");

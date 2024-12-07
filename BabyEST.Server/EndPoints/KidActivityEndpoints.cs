@@ -101,14 +101,69 @@ public static class KidActivityEndpoints
 		}
 	}
 
-	private static async Task UpdateActivity([FromRoute] int id, [FromRoute] int aId)
+	private static async Task<IResult> UpdateActivity([FromRoute] int id, [FromRoute] int aId, [FromBody] KidActivityDto activityToUpdate ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
-		throw new NotImplementedException();
+		// Get current user id
+		var pid = principal.FindFirstValue("id");
+		if (!int.TryParse(pid, out int parentId))
+		{
+			Log.Warning("{@Method} - Could not parse current user id ({@pid}).", nameof(UpdateActivity), pid);
+			return TypedResults.BadRequest("Could not parse current user id.");
+		}
+
+		var activity = dbctx.KidActivities.Where(k => k.Id == id && k.Id == aId).FirstOrDefault();
+		if (activity == null)
+		{
+			Log.Warning("{@Method} - Activity with id ({@id}) not found. Return.", nameof(UpdateActivity), id);
+			return TypedResults.BadRequest("Activity not found.");
+		}
+
+		try
+		{
+			activity.StartDate = activityToUpdate.StartDate;
+			activity.EndDate = activityToUpdate.EndDate;
+			//activity.ActivityType = activityToUpdate.ActivityType;
+
+			await dbctx.SaveChangesAsync();
+
+			return TypedResults.Created($"/api/kid/{activity.Id}");
+		}
+		catch (Exception ex)
+		{
+			Log.Error("{@Method} - Error when updating activity ({@ex}).", nameof(UpdateActivity), ex);
+			return TypedResults.BadRequest("Error when updating activity.");
+		}
 	}
 
-	private static async Task RemoveActivity([FromRoute] int id, [FromRoute] int aId)
+	private static async Task<IResult> RemoveActivity([FromRoute] int id, [FromRoute] int aId, ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
-		throw new NotImplementedException();
+		// Get current user id
+		var pid = principal.FindFirstValue("id");
+		if (!int.TryParse(pid, out int parentId))
+		{
+			Log.Warning("{@Method} - Could not parse current user id ({@pid}).", nameof(RemoveActivity), pid);
+			return TypedResults.BadRequest("Could not parse current user id.");
+		}
+
+		var activity = dbctx.KidActivities.Where(k => k.Id == id && k.Id == aId).FirstOrDefault();
+		if (activity == null)
+		{
+			return TypedResults.BadRequest("Activity not found, maybe already removed.");
+		}
+
+		try
+		{
+
+			dbctx.KidActivities.Remove(activity);
+			await dbctx.SaveChangesAsync();
+
+			return TypedResults.NoContent();
+		}
+		catch (Exception ex)
+		{
+			Log.Error("{@Method} - Error when removing activity ({@ex}).", nameof(RemoveActivity), ex);
+			return TypedResults.BadRequest("Error when removing activity.");
+		}
 	}
 
 
