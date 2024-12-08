@@ -4,6 +4,7 @@ using BabyEST.Server.Database;
 using BabyEST.Server.DTOs;
 using BabyEST.Server.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace BabyEST.Server.EndPoints;
@@ -31,13 +32,16 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		var activities = dbctx.KidActivities.Where(a => a.KidId == id);
+		var activities = dbctx.KidActivities.Where(a => a.KidId == id).Include(k => k.Kid);
 
 		if (activities is null)
 		{
 			return TypedResults.BadRequest("Activities not found.");
 		}
 
+		// TODO
+		// Here the Kid property is not set in act. 
+		// Same in GetActivity method
 		var activitiesDto = new List<KidActivityDto>();
 		foreach (var act in activities)
 		{
@@ -57,7 +61,7 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		var activity = dbctx.KidActivities.Where(a => a.Id == aId && a.KidId == id).FirstOrDefault();
+		var activity = dbctx.KidActivities.Where(a => a.Id == aId && a.KidId == id).Include(k => k.Kid).FirstOrDefault();
 
 		if (activity is null)
 		{
@@ -80,12 +84,14 @@ public static class KidActivityEndpoints
 
 		try
 		{
+			bool isConverted = Enum.TryParse(activityDto.ActivityType, true, out KidActivityType actType);
 
 			var activity = new KidActivity()
 			{
 				KidId = id,
 				StartDate = activityDto.StartDate,
 				EndDate = activityDto.EndDate,
+				ActivityType = isConverted ? actType : KidActivityType.Undefined
 				//ActivityType = (KidActivityType)activityDto.ActivityType
 			};
 
