@@ -87,8 +87,8 @@ public static class KidActivityEndpoints
 			var activity = new KidActivity()
 			{
 				KidId = id,
-				StartDate = activityDto.StartDate,
-				EndDate = activityDto.EndDate,
+				StartDate = activityDto.StartDate.Kind == DateTimeKind.Utc ? activityDto.StartDate : activityDto.StartDate.ToUniversalTime(),
+				EndDate = activityDto.EndDate.Kind == DateTimeKind.Utc ? activityDto.EndDate : activityDto.EndDate.ToUniversalTime(),
 				ActivityType = isConverted ? actType : KidActivityType.Undefined
 				//ActivityType = (KidActivityType)activityDto.ActivityType
 			};
@@ -128,8 +128,8 @@ public static class KidActivityEndpoints
 			// Try parse the string as ActivityType
 			bool isConverted = Enum.TryParse(activityDto.ActivityType, ignoreCase: true, out KidActivityType actType);
 
-			activity.StartDate = activityDto.StartDate == DateTime.MinValue ? activity.StartDate : activityDto.StartDate;
-			activity.EndDate = activityDto.EndDate == DateTime.MinValue ? activity.EndDate : activityDto.EndDate;
+			activity.StartDate = activityDto.StartDate == DateTime.MinValue ? activity.StartDate : activityDto.StartDate.ToUniversalTime();
+			activity.EndDate = activityDto.EndDate == DateTime.MinValue ? activity.EndDate : activityDto.EndDate.ToUniversalTime();
 			//activity.ActivityType = activityToUpdate.ActivityType;
 			activity.ActivityType = isConverted ? actType : KidActivityType.Undefined;
 

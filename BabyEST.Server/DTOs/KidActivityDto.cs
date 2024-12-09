@@ -14,6 +14,7 @@ internal record class KidActivityDto
 	public KidActivityDto() { }
 
 	public KidActivityDto(KidActivity kidActivity) =>
-		(Id, ActivityType, StartDate, EndDate, KidName) = (kidActivity.Id, kidActivity.ActivityType.ToString(), kidActivity.StartDate, kidActivity.EndDate, kidActivity.Kid.Name);
+		(Id, ActivityType, StartDate, EndDate, KidName) =
+		(kidActivity.Id, kidActivity.ActivityType.ToString(), kidActivity.StartDate.ToLocalTime(), kidActivity.EndDate.ToLocalTime(), kidActivity.Kid.Name);
 
 }
