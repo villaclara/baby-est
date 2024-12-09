@@ -6,8 +6,8 @@ internal record class KidActivityDto
 {
 	public long Id { get; set; }
 	public string ActivityType { get; set; } = null!;
-	public DateTime StartDate { get; set; }
-	public DateTime EndDate { get; set; }
+	public DateTime StartDate { get; set; } = DateTime.MinValue;
+	public DateTime EndDate { get; set; } = DateTime.MinValue;
 
 	public string KidName { get; set; } = null!;
 

@@ -144,6 +144,7 @@ public static class KidEndpoints
 		}
 	}
 
+	//Updates the Kid received from Body. Can only update the Name and BirthDate.
 	private static async Task<IResult> UpdateKid([FromRoute] int id, [FromBody] KidDto kidToUpdate, ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
 		// Get current user id
@@ -165,12 +166,6 @@ public static class KidEndpoints
 		{
 			kid.Name = kidToUpdate.Name;
 			kid.BirthDate = DateOnly.ParseExact(kidToUpdate.BirthDate, "yyyy-MM-dd");
-			// TODO
-			// Error here when ediitng the Kid when not specifying the properties
-
-			// TODO
-			// Test the stuff with normal DB
-
 
 			await dbctx.SaveChangesAsync();
 

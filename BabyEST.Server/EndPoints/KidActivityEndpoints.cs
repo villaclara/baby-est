@@ -39,9 +39,6 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Activities not found.");
 		}
 
-		// TODO
-		// Here the Kid property is not set in act. 
-		// Same in GetActivity method
 		var activitiesDto = new List<KidActivityDto>();
 		foreach (var act in activities)
 		{
@@ -84,7 +81,8 @@ public static class KidActivityEndpoints
 
 		try
 		{
-			bool isConverted = Enum.TryParse(activityDto.ActivityType, true, out KidActivityType actType);
+			// Try to parse string as ActivityType
+			bool isConverted = Enum.TryParse(activityDto.ActivityType, ignoreCase: true, out KidActivityType actType);
 
 			var activity = new KidActivity()
 			{
@@ -107,7 +105,7 @@ public static class KidActivityEndpoints
 		}
 	}
 
-	private static async Task<IResult> UpdateActivity([FromRoute] int id, [FromRoute] int aId, [FromBody] KidActivityDto activityToUpdate, ClaimsPrincipal principal, ApplicationDbContext dbctx)
+	private static async Task<IResult> UpdateActivity([FromRoute] int id, [FromRoute] int aId, [FromBody] KidActivityDto activityDto, ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
 		// Get current user id
 		var pid = principal.FindFirstValue("id");
@@ -117,18 +115,23 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		var activity = dbctx.KidActivities.Where(k => k.Id == id && k.Id == aId).FirstOrDefault();
+		var activity = dbctx.KidActivities.Where(a => a.Id == aId && a.KidId == id).FirstOrDefault();
 		if (activity == null)
 		{
-			Log.Warning("{@Method} - Activity with id ({@id}) not found. Return.", nameof(UpdateActivity), id);
+			Log.Warning("{@Method} - Activity with id ({@id}) not found. Return.", nameof(UpdateActivity), aId);
 			return TypedResults.BadRequest("Activity not found.");
 		}
 
+
 		try
 		{
-			activity.StartDate = activityToUpdate.StartDate;
-			activity.EndDate = activityToUpdate.EndDate;
+			// Try parse the string as ActivityType
+			bool isConverted = Enum.TryParse(activityDto.ActivityType, ignoreCase: true, out KidActivityType actType);
+
+			activity.StartDate = activityDto.StartDate == DateTime.MinValue ? activity.StartDate : activityDto.StartDate;
+			activity.EndDate = activityDto.EndDate == DateTime.MinValue ? activity.EndDate : activityDto.EndDate;
 			//activity.ActivityType = activityToUpdate.ActivityType;
+			activity.ActivityType = isConverted ? actType : KidActivityType.Undefined;
 
 			await dbctx.SaveChangesAsync();
 
@@ -151,7 +154,7 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		var activity = dbctx.KidActivities.Where(k => k.Id == id && k.Id == aId).FirstOrDefault();
+		var activity = dbctx.KidActivities.Where(a => a.Id == aId && a.KidId == id).FirstOrDefault();
 		if (activity == null)
 		{
 			return TypedResults.BadRequest("Activity not found, maybe already removed.");

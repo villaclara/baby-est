@@ -52,8 +52,7 @@ public static class ParentEndpoints
 		(int kidId, string newParentEmail) = (kidAndParent.kidId, kidAndParent.pEmail);
 
 		// Check if the current Parent is really parent of Kid
-		var kid = dbContext.Parents.Where(p => p.Id == parentId).FirstOrDefault()?
-			.Kids.Where(k => k.Id == kidId).FirstOrDefault();
+		var kid = dbContext.Kids.Where(k => k.Id == kidId && k.Parents.Any(p => p.Id == parentId)).FirstOrDefault();
 
 		if (kid == null)
 		{
@@ -69,10 +68,7 @@ public static class ParentEndpoints
 			return TypedResults.BadRequest("No parents found with email.");
 		}
 
-		// TODO
-		// Add New Parent to Kid -- not sure if it is correct
 		kid.Parents.Add(newParent);
-		//dbContext.Update(kid);
 		await dbContext.SaveChangesAsync();
 
 		return TypedResults.Ok("Parent added to kid.");
