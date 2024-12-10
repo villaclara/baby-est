@@ -1,79 +1,114 @@
 <div class="container">
 
-
-    <p>Baby Eating Sleeping Timer</p>
-
-
-    <div>
-        <button (click)="changeRegistering(false)"> Вхід </button>
-        <button (click)="changeRegistering(true)"> Реєстрація </button>
+    
+    
+    <div class="p-4">
+        <span>
+            <img src="./assets/img/baby-girl_icon.png" height="40" width="40"/>
+        </span>
     </div>
 
-    @if(!isRegistering) 
+    <p class="h4" style="font-family: Verdana, Geneva, Tahoma, sans-serif;">Baby 
+        <br/>
+        <span class="text-danger">E</span>ating 
+        <span class="text-danger">S</span>leeping
+          Timer</p>
+    
+    <div class="row p-4">
+            <div class="col mx-2">
+                <div class="d-grid">
+                    <button class="btn btn-secondary {{logbutclass}}" (click)="changeRegistering(false)">
+                        <span class="fw-bolder">Вхід</span>  
+                    </button>
+                </div>
+            </div>
+
+            <div class="col mx-2">
+                <div class="d-grid isactived">
+        
+                    <button class="btn btn-secondary {{regbutclass}}" (click)="changeRegistering(true)">
+                        <span class="fw-bolder">Реєстрація</span>  
+                    </button>
+                </div>
+            </div>
+        </div>
+    
+    @if(!isRegistering)
     {
          <!-- Login Form -->
-    <div>
-        <div>
-            <span> Вхід </span>
+    <div class="row my-auto">
+        <div class="pt-5">
+            <span class="h3"> Вхід </span>
         </div>
-        <form #loginForm="ngForm">
+        <form #loginForm="ngForm" class="p-2">
 
-            <div>
+            <div class="pt-2">
                 <label>Email</label>
-                <div>
-                    <input name="name" [(ngModel)]="user.email" required type="email"/>
+                <div class="col-8 mx-auto">
+                    <input name="name" [(ngModel)]="user.email" required email #name="ngModel" class="form-control" placeholder="me@gmail.com"/>
+                    <span class="form-text" [hidden]="name.valid || name.untouched">Некоректний email</span>
                 </div>
             </div>
 
-            <div>
+            <div class="pt-3">
                 <label>Password</label>
-                <div>
-                    <input name="pwd" [(ngModel)]="user.password" required type="password"/>
+                <div class="col-8 mx-auto">
+                    <input name="pwd" [(ngModel)]="user.password" required type="password" #pwdl="ngModel" class="form-control"/>
+                    <span class="form-text" [hidden]="user.password.length >= 6 || pwdl.untouched">Мінімум 6 символів</span>
                 </div>
             </div>
 
-            <button [disabled]="loginForm.invalid" (click)="login(loginForm)">Увійти</button>
+            <div class="pt-4 col-8 mx-auto d-grid">
+
+                <button class="btn btn-primary rounded-1" [disabled]="loginForm.invalid || user.password.length < 6" (click)="login(loginForm)">Увійти</button>
+            </div>
         </form>
     </div>
     }
     @else {
          <!-- Register Form -->
-    <div>
-        <div>
-            <span> Реєстрація </span>
+    <div class="row my-auto">
+        <div class="pt-5">
+            <span class="h3"> Реєстрація </span>
         </div>
-        <form #loginForm="ngForm">
+        <form #registerForm="ngForm" class="p-2">
 
-            <div>
+            <div class="pt-2">
                 <label>Email</label>
-                <div>
-                    <input name="name" [(ngModel)]="user.email" type="email" required email #name="ngModel"/>
+                <div class="col-8 mx-auto">
+                    <input name="name" [(ngModel)]="user.email" type="email" required email #name="ngModel" class="form-control" placeholder="me@gmail.com"/>
+                    <span class="form-text" [hidden]="name.valid || name.untouched">Некоректний email</span>
                 </div>
             </div>
 
-            <div>
+            <div class="pt-3">
                 <label>Password</label>
-                <div>
-                    <input name="pwd" [(ngModel)]="user.password" required type="password" #pwd="ngModel"/>
-                    <br/><span [hidden]="user.password.length >= 6 || pwd.untouched">Мінімум 6 символів</span>
+                <div class="col-8 mx-auto">
+                    <input name="pwd" [(ngModel)]="user.password" required type="password" #pwd="ngModel" class="form-control"/>
+                    <span class="form-text" [hidden]="user.password.length >= 6 || pwd.untouched">Мінімум 6 символів</span>
                 </div>
             </div>
 
-            <div>
+            <div class="pt-3">
                 <label>Confirm Password</label>
-                <div>
-                    <input name="pwd1" [(ngModel)]="confirmPassword" required type="password"/>
+                <div class="col-8 mx-auto">
+                    <input name="pwd1" [(ngModel)]="confirmPassword" required type="password" class="form-control"/>
                 </div>
             </div>
 
             @if(user.password != confirmPassword)
             {
                 <div>
-                    <span> Паролі не співпадають. </span>
+                    <span class="form-text"> Паролі не співпадають. </span>
                 </div>
 
             }
-            <button [disabled]="loginForm.invalid || user.password != confirmPassword || user.password.length < 6"  (click)="register(loginForm)">Зареєструватись</button>
+            <div class="pt-4 col-8 mx-auto d-grid">
+
+                <button class="btn btn-primary" [disabled]="registerForm.invalid || user.password != confirmPassword || user.password.length < 6"  (click)="register(registerForm)">
+                    <span>Зареєструватись</span>
+                </button>
+            </div>
         </form>
     </div>
     }

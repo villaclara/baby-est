@@ -17,8 +17,9 @@ export class SigningpageComponent {
   user = new UserFormInput('', '');
 
 
-  isRegistering: boolean = true;
-
+  isRegistering: boolean = false;
+  logbutclass: string = "";
+  regbutclass: string = "notactive";
   confirmPassword: string = "";
 
   login (form: NgForm) {
@@ -31,6 +32,16 @@ export class SigningpageComponent {
 
   changeRegistering (value: boolean) {
     this.isRegistering = value;
+    if(this.isRegistering)
+    {
+      this.regbutclass = "";
+      this.logbutclass = "notactive";
+    }
+    else
+    {
+      this.logbutclass = "";
+      this.regbutclass = "notactive";
+    }
   }
 }
 

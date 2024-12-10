@@ -5,3 +5,7 @@ input.ng-touched.ng-invalid {
 input.ng-touched.ng-valid {
     border:solid green 2px;
 }
+
+.notactive {
+    opacity: 0.8;
+}
