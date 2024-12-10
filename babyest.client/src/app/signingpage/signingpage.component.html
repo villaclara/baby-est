@@ -1,0 +1,85 @@
+<div class="container">
+
+
+    <p>Baby Eating Sleeping Timer</p>
+
+
+    <div>
+        <button (click)="changeRegistering(false)"> Вхід </button>
+        <button (click)="changeRegistering(true)"> Реєстрація </button>
+    </div>
+
+    @if(!isRegistering) 
+    {
+         <!-- Login Form -->
+    <div>
+        <div>
+            <span> Вхід </span>
+        </div>
+        <form #loginForm="ngForm">
+
+            <div>
+                <label>Email</label>
+                <div>
+                    <input name="name" [(ngModel)]="user.email" required type="email"/>
+                </div>
+            </div>
+
+            <div>
+                <label>Password</label>
+                <div>
+                    <input name="pwd" [(ngModel)]="user.password" required type="password"/>
+                </div>
+            </div>
+
+            <button [disabled]="loginForm.invalid" (click)="login(loginForm)">Увійти</button>
+        </form>
+    </div>
+    }
+    @else {
+         <!-- Register Form -->
+    <div>
+        <div>
+            <span> Реєстрація </span>
+        </div>
+        <form #loginForm="ngForm">
+
+            <div>
+                <label>Email</label>
+                <div>
+                    <input name="name" [(ngModel)]="user.email" type="email" required email #name="ngModel"/>
+                </div>
+            </div>
+
+            <div>
+                <label>Password</label>
+                <div>
+                    <input name="pwd" [(ngModel)]="user.password" required type="password" #pwd="ngModel"/>
+                    <br/><span [hidden]="user.password.length >= 6 || pwd.untouched">Мінімум 6 символів</span>
+                </div>
+            </div>
+
+            <div>
+                <label>Confirm Password</label>
+                <div>
+                    <input name="pwd1" [(ngModel)]="confirmPassword" required type="password"/>
+                </div>
+            </div>
+
+            @if(user.password != confirmPassword)
+            {
+                <div>
+                    <span> Паролі не співпадають. </span>
+                </div>
+
+            }
+            <button [disabled]="loginForm.invalid || user.password != confirmPassword || user.password.length < 6"  (click)="register(loginForm)">Зареєструватись</button>
+        </form>
+    </div>
+    }
+   
+
+
+</div>
+
+

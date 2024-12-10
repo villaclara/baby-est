@@ -1,5 +1,6 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
+import { SigningpageComponent } from './signingpage/signingpage.component';
 
 interface WeatherForecast {
   date: string;
@@ -17,7 +18,8 @@ class LoginUser {
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
-
+  standalone: true,
+  imports: [SigningpageComponent, HttpClientModule]
 })
 export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {
