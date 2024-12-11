@@ -45,7 +45,7 @@
             <div class="pt-2">
                 <label>Email</label>
                 <div class="col-8 mx-auto">
-                    <input name="name" [(ngModel)]="user.email" required email #name="ngModel" class="form-control" placeholder="me@gmail.com"/>
+                    <input name="name" [(ngModel)]="user.email" required email #name="ngModel" class="form-control" placeholder="me@gmail.com" (focus)="clearErrorMessage()"/>
                     <span class="form-text" [hidden]="name.valid || name.untouched">Некоректний email</span>
                 </div>
             </div>
@@ -53,7 +53,7 @@
             <div class="pt-3">
                 <label>Password</label>
                 <div class="col-8 mx-auto">
-                    <input name="pwd" [(ngModel)]="user.password" required type="password" #pwdl="ngModel" class="form-control"/>
+                    <input name="pwd" [(ngModel)]="user.password" required type="password" #pwdl="ngModel" class="form-control" (focus)="clearErrorMessage()"/>
                     <span class="form-text" [hidden]="user.password.length >= 6 || pwdl.untouched">Мінімум 6 символів</span>
                 </div>
             </div>
@@ -113,7 +113,9 @@
     </div>
     }
    
-
+    <div>
+        <span [hidden]="errorMessage.length == 0">{{errorMessage}}</span>
+    </div>
 
 </div>
 
