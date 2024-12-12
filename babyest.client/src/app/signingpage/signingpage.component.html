@@ -60,7 +60,7 @@
 
             <div class="pt-4 col-8 mx-auto d-grid">
 
-                <button class="btn btn-primary rounded-1" [disabled]="loginForm.invalid || user.password.length < 6" (click)="login(loginForm)">Увійти</button>
+                <button class="btn btn-primary rounded-1" [disabled]="loginForm.invalid || user.password.length < 6" (click)="login()">Увійти</button>
             </div>
         </form>
     </div>
@@ -105,7 +105,7 @@
             }
             <div class="pt-4 col-8 mx-auto d-grid">
 
-                <button class="btn btn-primary" [disabled]="registerForm.invalid || user.password != confirmPassword || user.password.length < 6"  (click)="register(registerForm)">
+                <button class="btn btn-primary" [disabled]="registerForm.invalid || user.password != confirmPassword || user.password.length < 6"  (click)="register()">
                     <span>Зареєструватись</span>
                 </button>
             </div>

@@ -1,11 +1,10 @@
-import { HttpClient, HttpStatusCode, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
+import { HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms'
 import { catchError, map, ObservableInput, tap, throwError } from 'rxjs';
+import { AuthServiceService } from '../services/AuthService/auth-service.service';
+import { UserFormData } from '../models/user-form-data';
 
-class UserFormInput {
-  constructor(public email: string, public password: string) { }
-}
 
 @Component({
   selector: 'app-signingpage',
@@ -16,25 +15,15 @@ class UserFormInput {
 })
 export class SigningpageComponent {
 
-  constructor(private http : HttpClient) {  }
+  constructor(private authService : AuthServiceService) {  }
 
   // login/register stuff
-  user = new UserFormInput('', '');
+  user = new UserFormData('', '');
   confirmPassword: string = "";
 
-  httpOptions = {
-    headers: new HttpHeaders({
-      'Content-Type': 'application/json',
-    })
-  }
-
-  headers1: HttpHeaders = new HttpHeaders({
-    'Content-Type': 'application/json' });
-
-
-  login (form: NgForm) {
+  login () {
     // The result is StatusCode with Text "Logged in" or "Incorrect credentials". We display the result text based on statuscode.
-    this.http.post('/auth/login', JSON.stringify({ email: this.user.email, password: this.user.password }), { headers: this.headers1 })
+    this.authService.tryLogin(new UserFormData(this.user.email, this.user.password))
       .subscribe({
         // success
         next: (data: any) => {
@@ -53,7 +42,7 @@ export class SigningpageComponent {
   }
 
 
-  clearErrorMessage() {
+  clearErrorMessage() : void {
     this.errorMessage = '';
   }
 
@@ -74,9 +63,9 @@ export class SigningpageComponent {
 
   }
 
-  register (form: NgForm) {
+  register () {
    // The result is StatusCode with Text "Logged in" or "Incorrect credentials". We display the result text based on statuscode.
-   this.http.post('/auth/register', JSON.stringify({ email: this.user.email, password: this.user.password }), { headers: this.headers1 })
+   this.authService.tryRegister(this.user)
    .subscribe({
      // success
      next: (data: any) => {
