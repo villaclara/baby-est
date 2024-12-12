@@ -75,15 +75,19 @@ export class SigningpageComponent {
   }
 
   register (form: NgForm) {
-    this.http.post('/auth/register', JSON.stringify({email: this.user.email, password: this.user.password}), { headers: this.headers1, observe: 'response' })
-    .subscribe(res => { console.log('Response status', res.status);
-      this.errorMessage = "Register complete.";
-      if(res.status != HttpStatusCode.Ok) 
-      {
-        this.errorMessage = res.status.toString();
-      }
-    });
-  }
+   // The result is StatusCode with Text "Logged in" or "Incorrect credentials". We display the result text based on statuscode.
+   this.http.post('/auth/register', JSON.stringify({ email: this.user.email, password: this.user.password }), { headers: this.headers1 })
+   .subscribe({
+     // success
+     next: (data: any) => {
+       this.errorMessage = data;
+     },
+     // error
+     error: (err : any) => {
+       this.errorMessage = err.error;
+     }
+  });
+}
 
   errorMessage: string = "";
 
