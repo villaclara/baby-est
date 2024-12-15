@@ -27,4 +27,8 @@ export class AuthServiceService {
    tryRegister(user: UserFormData) : Observable<any> {
     return this.http.post('/auth/register', JSON.stringify({ email: user.email, password: user.password }), { headers: this.headers1 });
    }
+
+   tryLogout() : Observable<any> {
+    return this.http.get('/auth/logout', { headers: this.headers1 });
+   }
 }

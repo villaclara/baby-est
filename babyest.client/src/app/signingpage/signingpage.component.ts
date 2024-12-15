@@ -4,6 +4,7 @@ import {FormsModule, NgForm} from '@angular/forms'
 import { catchError, map, ObservableInput, tap, throwError } from 'rxjs';
 import { AuthServiceService } from '../services/AuthService/auth-service.service';
 import { UserFormData } from '../models/user-form-data';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -15,7 +16,9 @@ import { UserFormData } from '../models/user-form-data';
 })
 export class SigningpageComponent {
 
-  constructor(private authService : AuthServiceService) {  }
+  constructor(private authService : AuthServiceService,
+    private router: Router
+  ) {  }
 
   // login/register stuff
   user = new UserFormData('', '');
@@ -26,8 +29,10 @@ export class SigningpageComponent {
     this.authService.tryLogin(new UserFormData(this.user.email, this.user.password))
       .subscribe({
         // success
-        next: (data: any) => {
+        next: async (data: any) => {
           this.errorMessage = data;
+          await new Promise(f => setTimeout(f, 1000));
+          this.router.navigateByUrl('');
         },
         // error
         error: (err : any) => {
@@ -69,7 +74,8 @@ export class SigningpageComponent {
    .subscribe({
      // success
      next: (data: any) => {
-       this.errorMessage = data;
+       this.errorMessage = data + "Please login.";
+       this.isRegistering = false;
      },
      // error
      error: (err : any) => {
@@ -97,9 +103,6 @@ export class SigningpageComponent {
       this.regbutclass = "notactive";
     }
   }
-
-  
-
  
 }
 
