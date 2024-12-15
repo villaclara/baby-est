@@ -1,6 +1,7 @@
 import { HttpClient, HttpHeaders, HttpClientModule } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { SigningpageComponent } from './signingpage/signingpage.component';
+import { ParentDetailComponent } from "./parent/parent-detail/parent-detail.component";
 
 interface WeatherForecast {
   date: string;
@@ -19,7 +20,7 @@ class LoginUser {
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   standalone: true,
-  imports: [SigningpageComponent, HttpClientModule]
+  imports: [ParentDetailComponent, HttpClientModule, ParentDetailComponent]
 })
 export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {
