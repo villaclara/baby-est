@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Parent } from '../../models/parent';
 import { Kid } from '../../models/kid';
 import { CommonModule } from '@angular/common';
 import { AuthServiceService } from '../../services/AuthService/auth-service.service';
 import { Router } from '@angular/router';
+import { ParentServiceService } from '../../services/ParentService/parent-service.service';
 
 
 @Component({
@@ -15,9 +16,16 @@ import { Router } from '@angular/router';
 })
 
 
-export class ParentDetailComponent {
+export class ParentDetailComponent implements OnInit {
 
-  constructor(private authService: AuthServiceService, private router: Router) { }
+  constructor(private authService: AuthServiceService, 
+    private router: Router,
+  private parentService: ParentServiceService) { }
+  
+  
+  ngOnInit(): void {
+    this.currentParent = this.parentService.getParentInfo();
+  }
 
 
   currentParent: Parent = { Email : "test@test.com", Id : 1, Kids : [

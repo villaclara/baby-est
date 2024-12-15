@@ -13,7 +13,7 @@ export class ParentServiceService {
   constructor(private http: HttpClient) { }
 
   getParentInfo() : Parent {
-    this.http.get<Parent>('api/parent').subscribe(
+    this.http.get<Parent>('/api/parent/kids').subscribe(
       (data : Parent) => 
         { 
           this.p = data; 

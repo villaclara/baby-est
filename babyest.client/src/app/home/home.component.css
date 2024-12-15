@@ -1,0 +1,4 @@
+/* To highlight the current section in the Footer. */
+.active-link {
+    filter: brightness(80%);
+}

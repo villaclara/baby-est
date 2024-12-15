@@ -21,7 +21,7 @@ class LoginUser {
   templateUrl: './app.component.html',
   styleUrl: './app.component.css',
   standalone: true,
-  imports: [HttpClientModule, RouterOutlet, RouterLink]
+  imports: [HttpClientModule, RouterOutlet]
 })
 export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {
