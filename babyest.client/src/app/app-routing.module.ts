@@ -17,7 +17,7 @@ const routes: Routes = [
   { path: 'signin', component: SigningpageComponent, pathMatch: 'full' },
   { path: '',
     children: [
-      { path: 'main', component: DashboardMainComponent },
+      { path: 'main/:id', component: DashboardMainComponent },
       { path: 'parent', component: ParentDetailComponent }
     ],
     component: HomeComponent

@@ -1,10 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { Parent } from '../../models/parent';
+import { KidsOfParent, Parent } from '../../models/parent';
 import { Kid } from '../../models/kid';
 import { CommonModule } from '@angular/common';
 import { AuthServiceService } from '../../services/AuthService/auth-service.service';
 import { Router } from '@angular/router';
 import { ParentServiceService } from '../../services/ParentService/parent-service.service';
+import { map } from 'rxjs';
 
 
 @Component({
@@ -24,19 +25,32 @@ export class ParentDetailComponent implements OnInit {
   
   
   ngOnInit(): void {
-    this.currentParent = this.parentService.getParentInfo();
+
+    this.parentService.getParentInfo().subscribe(
+      (data : any) => 
+      {
+        this.currentParent = {
+                    Id : data.id,
+                    Email : data.email,
+                    Kids: data.kids as KidsOfParent[]
+                  };
+      });
+
   }
 
 
-  currentParent: Parent = { Email : "test@test.com", Id : 1, Kids : [
-    {KidId : 1, KidName: "Kid1"},
-    {KidId : 2, KidName: "Kid2"},
-    {KidId : 5, KidName: "Kid3"},
-    {KidId : 6, KidName: "Kid4"}] };
+  currentParent : Parent = { Id : 0, Email: '', Kids : []};
+  // currentParent: Parent = { Email : "test@test.com", Id : 1, Kids : [
+  //   {KidId : 1, KidName: "Kid1"},
+  //   {KidId : 2, KidName: "Kid2"},
+  //   {KidId : 5, KidName: "Kid3"},
+  //   {KidId : 6, KidName: "Kid4"}] };
 
-  kids: Kid[] = [ { Name: "Kid1", BirthDate: "2024-08-08", Parents: ["test"], Activities : []}];
+  // kids: Kid[] = [ { Name: "Kid1", BirthDate: "2024-08-08", Parents: ["test"], Activities : []}];
 
-
+  selectKid(kidId : number) : void {
+    this.router.navigate(['/main/', kidId]);
+  }
 
   
   logout() : void {
