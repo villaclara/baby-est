@@ -2,6 +2,7 @@
 using BabyEST.Server.Database;
 using BabyEST.Server.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace BabyEST.Server.EndPoints;
@@ -28,15 +29,16 @@ public static class ParentEndpoints
 			Log.Warning("{@Method} - Error when parsing claim id of user ({@current}).", nameof(AddNewParentToKid), currentParentId);
 			return TypedResults.BadRequest("Not found user with.");
 		}
+		Log.Information("GET KIDS OF PARENT WITH ID {@ID}", parentId);
 
-		var parent = dbContext.Parents.Where(p => p.Id == parentId).FirstOrDefault();
+		var parent = dbContext.Parents.Where(p => p.Id == parentId).Include(p => p.Kids).FirstOrDefault();
 		if (parent is null)
 		{
 			return TypedResults.BadRequest("Parent id not found.");
 		}
 
 		var pDto = new ParentDto(parent);
-		return TypedResults.Ok(pDto.Kids);
+		return TypedResults.Ok(pDto);
 	}
 
 	public static async Task<IResult> AddNewParentToKid([FromBody] FormKidAndParentId kidAndParent, ApplicationDbContext dbContext, ClaimsPrincipal principal)

@@ -7,7 +7,7 @@ internal record class KidDto
 	public string Name { get; set; } = null!;
 	public string BirthDate { get; set; }
 	public ICollection<KidActivityDto> Activities { get; set; } = [];
-	public ICollection<string> Parents { get; set; } = null!;
+	public ICollection<string> Parents { get; set; } = [];
 
 	public KidDto() { }
 

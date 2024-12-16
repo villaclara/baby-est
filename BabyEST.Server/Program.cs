@@ -24,7 +24,10 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("LocalSqlConnection")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
+	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+	{
+		options.LoginPath = "/api/unauthorized"; // to bypass default Cookie Redirect to Login page. It simply returns "403"
+	});
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
@@ -81,6 +84,9 @@ app.MapGroup("/api/kid")
 app.MapGroup("/api/kid/{id}/activity")
 	.MapKidActivityEndpoints()
 	.RequireAuthorization();
+
+app.MapGet("/api/unauthorized", () => "403")
+	.AllowAnonymous();
 
 app.MapGet("/log", (ClaimsPrincipal principal) =>
 {

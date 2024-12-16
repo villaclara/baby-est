@@ -39,7 +39,7 @@ namespace BabyEST.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Kids");
+                    b.ToTable("Kids", (string)null);
                 });
 
             modelBuilder.Entity("BabyEST.Server.Models.KidActivity", b =>
@@ -66,7 +66,7 @@ namespace BabyEST.Server.Migrations
 
                     b.HasIndex("KidId");
 
-                    b.ToTable("KidActivities");
+                    b.ToTable("KidActivities", (string)null);
                 });
 
             modelBuilder.Entity("BabyEST.Server.Models.Parent", b =>
@@ -87,7 +87,7 @@ namespace BabyEST.Server.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Parents");
+                    b.ToTable("Parents", (string)null);
                 });
 
             modelBuilder.Entity("KidParent", b =>
@@ -102,7 +102,7 @@ namespace BabyEST.Server.Migrations
 
                     b.HasIndex("ParentsId");
 
-                    b.ToTable("KidParent");
+                    b.ToTable("KidParent", (string)null);
                 });
 
             modelBuilder.Entity("BabyEST.Server.Models.KidActivity", b =>
