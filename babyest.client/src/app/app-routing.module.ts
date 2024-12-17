@@ -17,10 +17,11 @@ const routes: Routes = [
   { path: 'signin', component: SigningpageComponent, pathMatch: 'full' },
   { path: '',
     children: [
+      // { path: '', redirectTo: ('main/:id'), pathMatch: 'prefix'},
+      { path: 'parent', component: ParentDetailComponent },
       { path: 'main/:id', component: DashboardMainComponent },
-      { path: 'parent', component: ParentDetailComponent }
     ],
-    component: HomeComponent
+    component: HomeComponent,
   }
 ];
 

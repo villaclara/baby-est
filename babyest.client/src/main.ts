@@ -7,6 +7,7 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { importProvidersFrom } from '@angular/core';
 import { AppRoutingModule } from './app/app-routing.module';
+import { CurrentKidService } from './app/services/CurrentKid/current-kid.service';
 
 // platformBrowserDynamic().bootstrapModule(AppModule, {
 //   ngZoneEventCoalescing: true

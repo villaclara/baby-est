@@ -1,11 +1,28 @@
 
 
+
+
 <!-- HomeComponent is used in Routing.
  It allows to display Footer only in some pages, except SignInPage.
  It has router-outlink to Child Components displayed inside
  and Footer. -->
 
-<div>
+
+<!-- Header -->
+<div class="container">
+    <div class="row border-bottom border-black">
+        <div class="col-9 text-start">
+            Baby Est
+        </div>
+        <div class="col-3">
+            Sync
+        </div>
+    </div>
+</div>
+
+
+<!-- Main Section of other components -->
+<div class="container p-3">
     <router-outlet></router-outlet>
 </div>
 
@@ -24,7 +41,7 @@
                     </div>
                     
                     <div class="col">
-                        <a class="btn btn-info" routerLink="/main" routerLinkActive="active-link">
+                        <a class="btn btn-info" routerLink="{{mainLink}}" routerLinkActive="active-link">
                             <img src="../../../assets/img/dashboard-layout-48.png" height="30" width="30">
                         </a>
                     </div>

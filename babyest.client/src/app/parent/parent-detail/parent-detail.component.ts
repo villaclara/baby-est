@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { KidsOfParent, Parent } from '../../models/parent';
 import { Kid } from '../../models/kid';
 import { CommonModule } from '@angular/common';
@@ -6,6 +6,7 @@ import { AuthServiceService } from '../../services/AuthService/auth-service.serv
 import { Router } from '@angular/router';
 import { ParentServiceService } from '../../services/ParentService/parent-service.service';
 import { map } from 'rxjs';
+import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
 
 
 @Component({
@@ -21,7 +22,8 @@ export class ParentDetailComponent implements OnInit {
 
   constructor(private authService: AuthServiceService, 
     private router: Router,
-  private parentService: ParentServiceService) { }
+    private parentService: ParentServiceService,
+    private currentKidService : CurrentKidService) { }
   
   
   ngOnInit(): void {
@@ -29,11 +31,20 @@ export class ParentDetailComponent implements OnInit {
     this.parentService.getParentInfo().subscribe(
       (data : any) => 
       {
-        this.currentParent = {
-                    Id : data.id,
-                    Email : data.email,
-                    Kids: data.kids as KidsOfParent[]
-                  };
+        // bypass the redirectUrl by CookieAuthenticaiton of WebApi
+        if(data == "403")
+        {
+          this.router.navigateByUrl('signin');
+        }
+        else 
+        {
+
+          this.currentParent = {
+            Id : data.id,
+            Email : data.email,
+            Kids: data.kids as KidsOfParent[]
+          };
+        }
       });
 
   }
@@ -49,7 +60,14 @@ export class ParentDetailComponent implements OnInit {
   // kids: Kid[] = [ { Name: "Kid1", BirthDate: "2024-08-08", Parents: ["test"], Activities : []}];
 
   selectKid(kidId : number) : void {
+    
+    
+    this.currentKidService.setCurrentKid(kidId);
+    
+    
     this.router.navigate(['/main/', kidId]);
+
+
   }
 
   
@@ -61,6 +79,7 @@ export class ParentDetailComponent implements OnInit {
       }
     );
   }
+
 
 
 }
