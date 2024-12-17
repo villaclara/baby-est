@@ -26,7 +26,18 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 	{
-		options.LoginPath = "/api/unauthorized"; // to bypass default Cookie Redirect to Login page. It simply returns "403"
+		//options.LoginPath = "/api/unauthorized"; // to bypass default Cookie Redirect to Login page. It simply returns "403"
+		options.Events.OnRedirectToLogin = (ctx) =>
+		{
+
+			ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return Task.CompletedTask;
+		};
+		options.Events.OnRedirectToAccessDenied = (ctx) =>
+		{
+			ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
+			return Task.CompletedTask;
+		};
 	});
 builder.Services.AddAuthorization();
 
