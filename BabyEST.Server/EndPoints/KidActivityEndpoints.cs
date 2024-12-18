@@ -49,7 +49,7 @@ public static class KidActivityEndpoints
 		return TypedResults.Ok(activitiesDto);
 	}
 
-	private static IResult GetLastActivityByType([FromRoute] int id, [FromQuery] int actType, ClaimsPrincipal principal, ApplicationDbContext dbctx)
+	private static IResult GetLastActivityByType([FromRoute] int id, [FromQuery] string actType, ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
 		// Get current user id
 		var pid = principal.FindFirstValue("id");
@@ -59,9 +59,20 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		KidActivityType aType = (KidActivityType)actType;
 
-		var activity = dbctx.KidActivities.Where(a => a.KidId == id && a.ActivityType == aType).Include(k => k.Kid).OrderByDescending(a => a.EndDate).First();
+		KidActivityType[] aType = actType.ToLower().Trim() switch
+		{
+			"eat" => [KidActivityType.EatingLeft, KidActivityType.EatingRight, KidActivityType.EatingBoth, KidActivityType.EatingBottle],
+			"sleep" => [KidActivityType.Sleeping],
+			_ => [KidActivityType.Undefined]
+		};
+
+		var activity = dbctx.KidActivities.Where(a => a.KidId == id && aType.Contains(a.ActivityType))
+			.Include(k => k.Kid)
+			.Take(10)
+			.OrderByDescending(a => a.StartDate)
+			.First();
+
 		if (activity is null)
 		{
 			return TypedResults.BadRequest("No activities");
