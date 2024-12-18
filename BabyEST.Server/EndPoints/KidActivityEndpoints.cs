@@ -15,6 +15,7 @@ public static class KidActivityEndpoints
 	{
 		builder.MapGet("", GetAllActivitiesForKid);
 		builder.MapGet("{aId}", GetActivity);
+		builder.MapGet("last", GetLastActivityByType);
 		builder.MapPost("", AddActivity);
 		builder.MapPut("{aId}", UpdateActivity);
 		builder.MapDelete("{aId}", RemoveActivity);
@@ -32,7 +33,7 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		var activities = dbctx.KidActivities.Where(a => a.KidId == id).Include(k => k.Kid);
+		var activities = dbctx.KidActivities.Where(a => a.KidId == id).Include(k => k.Kid).OrderByDescending(a => a.StartDate);
 
 		if (activities is null)
 		{
@@ -46,6 +47,27 @@ public static class KidActivityEndpoints
 		}
 
 		return TypedResults.Ok(activitiesDto);
+	}
+
+	private static IResult GetLastActivityByType([FromRoute] int id, [FromQuery] int actType, ClaimsPrincipal principal, ApplicationDbContext dbctx)
+	{
+		// Get current user id
+		var pid = principal.FindFirstValue("id");
+		if (!int.TryParse(pid, out int parentId))
+		{
+			Log.Warning("{@Method} - Could not parse current user id ({@pid}).", nameof(GetAllActivitiesForKid), pid);
+			return TypedResults.BadRequest("Could not parse current user id.");
+		}
+
+		KidActivityType aType = (KidActivityType)actType;
+
+		var activity = dbctx.KidActivities.Where(a => a.KidId == id && a.ActivityType == aType).Include(k => k.Kid).OrderByDescending(a => a.EndDate).First();
+		if (activity is null)
+		{
+			return TypedResults.BadRequest("No activities");
+		}
+		return TypedResults.Ok(new KidActivityDto(activity));
+
 	}
 
 	private static IResult GetActivity([FromRoute] int id, [FromRoute] int aId, ClaimsPrincipal principal, ApplicationDbContext dbctx)
