@@ -1,1 +1,39 @@
-<p>kid-header-info works!</p>
+<div class="container">
+
+    <div class="row">
+        
+        <!-- Icon, Name and Age on left -->
+        <div class="col-4">
+            <div class="row">
+                <img src="../../../assets/img/baby-boy_icon.png" width="30" height="30"/>
+            </div>
+
+            <div class="row">
+                {{kid.Name}}
+
+            </div>
+            <div class="row">
+                {{kidAge }} день
+            </div> 
+        </div>
+
+
+        <!-- Time since last Activities -->
+        <div class="col-8 bottom-0">
+            <div class="row">
+                <span>Від сну: </span>
+            </div>
+            <div class="row">
+                <span> {{ timeSinceLastSleep }} </span>
+            </div>
+
+            <div class="row">
+                <span>Від годування:</span>
+            </div>
+            <div class="row">
+                <span> {{ timeSinceLastEat }}</span>
+            </div>
+        </div>
+    </div>
+
+</div>
