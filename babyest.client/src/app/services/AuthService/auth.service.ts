@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 })
 
 
-export class AuthServiceService {
+export class AuthService {
 
   constructor(private http : HttpClient) {
 

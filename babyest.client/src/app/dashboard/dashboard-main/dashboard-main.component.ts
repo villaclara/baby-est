@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { KidHeaderInfoComponent } from "../kid-header-info/kid-header-info.component";
 import { MainTimerComponent } from "../main-timer/main-timer.component";
 import { LastActivitiesComponent } from "../last-activities/last-activities.component";
-import { KidServiceService } from '../../services/KidService/kid-service.service';
+import { KidService } from '../../services/KidService/kid.service';
 import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
 import { Kid } from '../../models/kid';
 import { Router } from '@angular/router';
@@ -28,7 +28,7 @@ export class DashboardMainComponent implements OnInit {
 
   kidId: number = 0;
 
-  constructor(private kidService: KidServiceService,
+  constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private router: Router
   ) {
@@ -76,7 +76,8 @@ export class DashboardMainComponent implements OnInit {
             ActivityType: data.activityType,
             Id: data.Id
           };
-          const timeSinceLastEat = this.lastEatActivity.EndDate.getTime() - this.lastEatActivity.StartDate.getTime();
+          this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate.getTime()) / 1000);
+          console.log(this.timeSinceLastEat);
         }
       });
 
@@ -95,7 +96,8 @@ export class DashboardMainComponent implements OnInit {
             ActivityType: data.activityType,
             Id: data.Id
           };
-          this.timeSinceLastSleep = this.lastSleepActivity.EndDate.getTime() - this.lastSleepActivity.StartDate.getTime();
+          this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate.getTime()) / 1000);
+          console.log(this.timeSinceLastSleep);
         }
       });
   }

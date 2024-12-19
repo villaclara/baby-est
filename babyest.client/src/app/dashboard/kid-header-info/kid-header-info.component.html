@@ -24,14 +24,14 @@
                 <span>Від сну: </span>
             </div>
             <div class="row">
-                <span> {{ timeSinceLastSleep }} </span>
+                <span> {{ timeSinceLastSleep | shortTimerCounter }} </span>
             </div>
 
             <div class="row">
                 <span>Від годування:</span>
             </div>
             <div class="row">
-                <span> {{ timeSinceLastEat }}</span>
+                <span> {{ timeSinceLastEat | shortTimerCounter }}</span>
             </div>
         </div>
     </div>

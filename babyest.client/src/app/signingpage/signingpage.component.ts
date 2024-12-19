@@ -2,7 +2,7 @@ import { HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import {FormsModule, NgForm} from '@angular/forms'
 import { catchError, map, ObservableInput, tap, throwError } from 'rxjs';
-import { AuthServiceService } from '../services/AuthService/auth-service.service';
+import { AuthService } from '../services/AuthService/auth.service';
 import { UserFormData } from '../models/user-form-data';
 import { Router } from '@angular/router';
 
@@ -16,7 +16,7 @@ import { Router } from '@angular/router';
 })
 export class SigningpageComponent {
 
-  constructor(private authService : AuthServiceService,
+  constructor(private authService : AuthService,
     private router: Router
   ) {  }
 

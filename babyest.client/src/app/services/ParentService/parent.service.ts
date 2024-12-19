@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
 @Injectable({
   providedIn: 'root'
 })
-export class ParentServiceService {
+export class ParentService {
 
   p : Parent = { Email:'', Id:0, Kids:[]}; 
 

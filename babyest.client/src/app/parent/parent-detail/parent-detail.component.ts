@@ -2,9 +2,9 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { KidsOfParent, Parent } from '../../models/parent';
 import { Kid } from '../../models/kid';
 import { CommonModule } from '@angular/common';
-import { AuthServiceService } from '../../services/AuthService/auth-service.service';
+import { AuthService } from '../../services/AuthService/auth.service';
 import { Router } from '@angular/router';
-import { ParentServiceService } from '../../services/ParentService/parent-service.service';
+import { ParentService } from '../../services/ParentService/parent.service';
 import { map } from 'rxjs';
 import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
 
@@ -20,9 +20,9 @@ import { CurrentKidService } from '../../services/CurrentKid/current-kid.service
 
 export class ParentDetailComponent implements OnInit {
 
-  constructor(private authService: AuthServiceService, 
+  constructor(private authService: AuthService, 
     private router: Router,
-    private parentService: ParentServiceService,
+    private parentService: ParentService,
     private currentKidService : CurrentKidService) { }
   
   

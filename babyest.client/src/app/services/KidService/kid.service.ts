@@ -8,7 +8,7 @@ import { KidActivity } from '../../models/kid-activity';
 @Injectable({
   providedIn: 'root'
 })
-export class KidServiceService {
+export class KidService {
 
   constructor(private http: HttpClient, 
     private currentKidService : CurrentKidService
