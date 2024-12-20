@@ -1,7 +1,7 @@
 export interface KidActivity {
     Id : number;
     ActivityType : string;
-    StartDate : Date;
-    EndDate : Date;
+    StartDate : Date | undefined;
+    EndDate : Date | undefined;
     KidName : string;
 }

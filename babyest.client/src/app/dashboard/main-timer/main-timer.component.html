@@ -1,18 +1,51 @@
 
     <!-- Stopwatch -->
 
-    <div class="row">
+    <div class="row p-4">
         <div class="col">
             <div class="row">
                 <span>Зараз: </span>
             </div>
 
-            <div class="row">
-                <img src="../../../assets/img/play_icon.png" />
-                <button type="button" (click)="setTimerRunning()">start/stop</button>
+            <div class="row justify-content-center" >
+                <button class="btn" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''">
+                    <img src="{{startStopImageLink}}" class="" style="height: 40px; width: 60px;" />
+                </button>
             </div>
             <div class="row">
                 <span> {{ timePassed | timerCounterPipe }}</span>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Choose Activity Section -->
+    <div class="row">
+        <div class="col card" style="min-height: 50px;" (click)="selectActivity('sleeping')">
+            <div class="my-auto">
+                <span>Сон</span>
+            </div>
+        </div>
+
+        <div class="col card" (click)="startSelectEatingType()">
+            <div class="my-auto">
+                <span>Годування</span>
+            </div>  
+        </div>
+
+        <div class="row p-0 m-0 row-cols-2" [hidden]="!isEatingSelected">
+
+            <div class="col border" (click)="selectActivity('eatingLeft')">
+                <span>Ліва</span>
+            </div>
+            <div class="col border" (click)="selectActivity('eatingRight')">
+                <span>Права</span>
+            </div>
+            <div class="col border" (click)="selectActivity('eatingBoth')">
+                <span>Обидві</span>
+            </div>
+            <div class="col border" (click)="selectActivity('eatingBottle')">
+                <span>Пляшечка</span>
             </div>
         </div>
     </div>

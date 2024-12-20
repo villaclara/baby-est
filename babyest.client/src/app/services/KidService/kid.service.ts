@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Kid } from '../../models/kid';
@@ -11,10 +11,12 @@ import { KidActivity } from '../../models/kid-activity';
 export class KidService {
 
   constructor(private http: HttpClient, 
-    private currentKidService : CurrentKidService
-  ) {
+    private currentKidService : CurrentKidService) {
 
    }
+
+    headers1: HttpHeaders = new HttpHeaders({
+         'Content-Type': 'application/json' });
 
   getKidById(kidId: number) : Observable<Kid> {
     const url = 'api/kid/' + this.currentKidService.getCurrentKid();
@@ -35,5 +37,16 @@ export class KidService {
   getLastEatingById(kidId: number) : Observable<KidActivity> {
     let url : string = `api/kid/${kidId}/activity/last?actType=eat`;
     return this.http.get<KidActivity>(url);
+  }
+
+  addActivityToKid(kidId: number, activity : KidActivity) : Observable<any> {
+    let url = `api/kid/${kidId}/activity`;
+    return this.http.post(url, JSON.stringify({ 
+      id: 0, 
+      activityType : activity.ActivityType, 
+      startDate : activity.StartDate, 
+      endDate : activity.EndDate, 
+      kidName: activity.KidName }), 
+    { headers: this.headers1 });
   }
 }

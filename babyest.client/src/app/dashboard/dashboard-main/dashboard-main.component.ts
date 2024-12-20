@@ -71,7 +71,7 @@ export class DashboardMainComponent implements OnInit {
           ActivityType: data.activityType,
           Id: data.Id
         };
-        this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate.getTime()) / 1000);
+        this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate!.getTime()) / 1000);
       });
 
     // Get Last Sleep Kid. Used in KidHeaderInfo Component.
@@ -85,8 +85,22 @@ export class DashboardMainComponent implements OnInit {
           ActivityType: data.activityType,
           Id: data.Id
         };
-        this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate.getTime()) / 1000);
+        this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate!.getTime()) / 1000);
       });
+  }
+
+
+  sendNewKidActivity(activity : KidActivity) : void {
+    
+    console.log('dashboard - ' + activity.ActivityType + activity.StartDate + activity.EndDate + '....name - ' + activity.KidName);
+    if(activity.EndDate != undefined)
+      {
+        
+        this.kidService.addActivityToKid(this.kidId, activity)
+        .subscribe((data : any) => {
+          console.log(data);
+        });
+    }
   }
 
 

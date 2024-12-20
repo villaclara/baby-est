@@ -1,6 +1,6 @@
 
 <app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat" [timeSinceLastSleep]="timeSinceLastSleep"></app-kid-header-info>
 
-<app-main-timer></app-main-timer>
+<app-main-timer (newKidActivity)="sendNewKidActivity($event)"></app-main-timer>
 
 <app-last-activities></app-last-activities>
