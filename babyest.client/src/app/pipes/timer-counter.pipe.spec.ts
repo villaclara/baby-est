@@ -1,4 +1,4 @@
-import { TimerCounterPipe } from './timer-counter-pipe.pipe';
+import { TimerCounterPipe } from './timer-counter.pipe';
 
 describe('TimerCounterPipePipe', () => {
   it('create an instance', () => {

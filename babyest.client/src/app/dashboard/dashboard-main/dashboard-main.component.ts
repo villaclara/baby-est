@@ -20,12 +20,9 @@ export class DashboardMainComponent implements OnInit {
   kid: Kid = { Name: "KidTest", BirthDate: "2024-09-09", Parents: [], Activities: [] };
   lastSleepActivity: KidActivity = { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date() };
   lastEatActivity: KidActivity = { ActivityType: "eating", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date() };
-
-  timeSinceLastSleep : number = 0;
-  timeSinceLastEat : number = 0;
-
+  timeSinceLastSleep: number = 0;
+  timeSinceLastEat: number = 0;
   kidAge: number = 0;
-
   kidId: number = 0;
 
   constructor(private kidService: KidService,
@@ -34,6 +31,8 @@ export class DashboardMainComponent implements OnInit {
   ) {
     this.kidId = this.currentKidService.getCurrentKid();
   }
+
+
   ngOnInit(): void {
 
     // Get general info about Kid. Used in KidHeaderInfo Component
@@ -64,41 +63,29 @@ export class DashboardMainComponent implements OnInit {
     // Get Last Eating of Kid. Used in KidHeaderInfo Component.
     this.kidService.getLastEatingById(this.kidId)
       .subscribe((data: any) => {
-        // bypass the redirectUrl by CookieAuthenticaiton of WebApi
-        if (data == "403") {
-          this.router.navigateByUrl('signin');
-        }
-        else {
-          this.lastEatActivity = {
-            StartDate: new Date(data.startDate),
-            EndDate: new Date(data.endDate),
-            KidName: data.kidName,
-            ActivityType: data.activityType,
-            Id: data.Id
-          };
-          this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate.getTime()) / 1000);
-          console.log(this.timeSinceLastEat);
-        }
+
+        this.lastEatActivity = {
+          StartDate: new Date(data.startDate),
+          EndDate: new Date(data.endDate),
+          KidName: data.kidName,
+          ActivityType: data.activityType,
+          Id: data.Id
+        };
+        this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate.getTime()) / 1000);
       });
 
-      // Get Last Sleep Kid. Used in KidHeaderInfo Component.
-      this.kidService.getLastSleepById(this.kidId)
+    // Get Last Sleep Kid. Used in KidHeaderInfo Component.
+    this.kidService.getLastSleepById(this.kidId)
       .subscribe((data: any) => {
-        // bypass the redirectUrl by CookieAuthenticaiton of WebApi
-        if (data == "403") {
-          this.router.navigateByUrl('signin');
-        }
-        else {
-          this.lastSleepActivity = {
-            StartDate: new Date(data.startDate),
-            EndDate: new Date(data.endDate),
-            KidName: data.kidName,
-            ActivityType: data.activityType,
-            Id: data.Id
-          };
-          this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate.getTime()) / 1000);
-          console.log(this.timeSinceLastSleep);
-        }
+
+        this.lastSleepActivity = {
+          StartDate: new Date(data.startDate),
+          EndDate: new Date(data.endDate),
+          KidName: data.kidName,
+          ActivityType: data.activityType,
+          Id: data.Id
+        };
+        this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate.getTime()) / 1000);
       });
   }
 

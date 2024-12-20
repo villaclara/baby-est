@@ -9,8 +9,8 @@
 
             <div class="row">
                 <img src="../../../assets/img/play_icon.png" />
+                <button type="button" (click)="setTimerRunning()">start/stop</button>
             </div>
-
             <div class="row">
                 <span> {{ timePassed | timerCounterPipe }}</span>
             </div>

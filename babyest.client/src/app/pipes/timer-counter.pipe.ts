@@ -1,5 +1,4 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { Timespan } from '../models/timespan';
 import { Observable } from 'rxjs';
 
 @Pipe({
