@@ -24,14 +24,16 @@
                 <span>Від сну: </span>
             </div>
             <div class="row">
-                <span> {{ timeSinceLastSleep | shortTimerCounter }} </span>
+                <span *ngIf="timeSinceLastSleep >= 0; else nowSleeping"> {{ timeSinceLastSleep | shortTimerCounter }} </span>
+                <ng-template #nowSleeping><span>---</span></ng-template>
             </div>
 
             <div class="row">
                 <span>Від годування:</span>
             </div>
             <div class="row">
-                <span> {{ timeSinceLastEat | shortTimerCounter }}</span>
+                <span *ngIf="timeSinceLastEat >= 0; else newEating"> {{ timeSinceLastEat | shortTimerCounter }}</span>
+                <ng-template #newEating><span>---</span></ng-template>
             </div>
         </div>
     </div>

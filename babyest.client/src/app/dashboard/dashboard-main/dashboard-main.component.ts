@@ -18,10 +18,14 @@ import { KidActivity } from '../../models/kid-activity';
 export class DashboardMainComponent implements OnInit {
 
   kid: Kid = { Name: "KidTest", BirthDate: "2024-09-09", Parents: [], Activities: [] };
-  lastSleepActivity: KidActivity = { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date() };
-  lastEatActivity: KidActivity = { ActivityType: "eating", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date() };
+
+  lastSleepActivity: KidActivity = { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date(), IsActiveNow: false };
+  lastEatActivity: KidActivity = { ActivityType: "eating", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date(), IsActiveNow: false };
+  currentActivity: KidActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date(), IsActiveNow: false };
+
   timeSinceLastSleep: number = 0;
   timeSinceLastEat: number = 0;
+
   kidAge: number = 0;
   kidId: number = 0;
 
@@ -61,7 +65,7 @@ export class DashboardMainComponent implements OnInit {
 
 
     // Get Last Eating of Kid. Used in KidHeaderInfo Component.
-    this.kidService.getLastEatingById(this.kidId)
+    this.kidService.getLastEatingByKidId(this.kidId)
       .subscribe((data: any) => {
 
         this.lastEatActivity = {
@@ -69,13 +73,24 @@ export class DashboardMainComponent implements OnInit {
           EndDate: new Date(data.endDate),
           KidName: data.kidName,
           ActivityType: data.activityType,
-          Id: data.Id
+          Id: data.Id,
+          IsActiveNow: data.isActiveNow
         };
-        this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate!.getTime()) / 1000);
+
+        // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
+        // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
+
+        if (this.lastEatActivity.IsActiveNow == true) {
+          this.currentActivity = this.lastEatActivity;
+          this.timeSinceLastEat = -1;
+        }
+        else {
+          this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate!.getTime()) / 1000);
+        }
       });
 
     // Get Last Sleep Kid. Used in KidHeaderInfo Component.
-    this.kidService.getLastSleepById(this.kidId)
+    this.kidService.getLastSleepByKidId(this.kidId)
       .subscribe((data: any) => {
 
         this.lastSleepActivity = {
@@ -83,21 +98,49 @@ export class DashboardMainComponent implements OnInit {
           EndDate: new Date(data.endDate),
           KidName: data.kidName,
           ActivityType: data.activityType,
-          Id: data.Id
+          Id: data.Id,
+          IsActiveNow: data.isActiveNow
         };
-        this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate!.getTime()) / 1000);
+
+        // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
+        // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
+
+        if (this.lastSleepActivity.IsActiveNow == true) {
+          this.currentActivity = this.lastSleepActivity;
+          this.timeSinceLastSleep = -1;
+        }
+        else {
+          this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate!.getTime()) / 1000);
+        }
       });
+
+
+
   }
 
 
-  sendNewKidActivity(activity : KidActivity) : void {
-    
+  sendNewKidActivity(activity: KidActivity): void {
+
     console.log('dashboard - ' + activity.ActivityType + activity.StartDate + activity.EndDate + '....name - ' + activity.KidName);
-    if(activity.EndDate != undefined)
-      {
-        
-        this.kidService.addActivityToKid(this.kidId, activity)
-        .subscribe((data : any) => {
+
+    if (activity.EndDate == undefined) {
+      activity.EndDate = new Date("1970-01-01");
+      this.kidService.addActivityToKid(this.kidId, activity)
+        .subscribe((data: any) => {
+          console.log(data);
+        });
+
+
+
+    }
+    else {
+
+      ///////
+      ////////
+      ///////
+      ///// KidActivity.Id number is 0, and we can not use PUT.
+      this.kidService.updateActivity(this.kidId, activity)
+        .subscribe((data: any) => {
           console.log(data);
         });
     }

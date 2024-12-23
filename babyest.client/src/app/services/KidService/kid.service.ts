@@ -29,12 +29,12 @@ export class KidService {
     return this.http.get<KidActivity[]>(url);
   }
 
-  getLastSleepById(kidId: number) : Observable<KidActivity> {
+  getLastSleepByKidId(kidId: number) : Observable<KidActivity> {
     let url : string = `api/kid/${kidId}/activity/last?actType=sleep`;
     return this.http.get<KidActivity>(url);
   }
 
-  getLastEatingById(kidId: number) : Observable<KidActivity> {
+  getLastEatingByKidId(kidId: number) : Observable<KidActivity> {
     let url : string = `api/kid/${kidId}/activity/last?actType=eat`;
     return this.http.get<KidActivity>(url);
   }
@@ -46,6 +46,19 @@ export class KidService {
       activityType : activity.ActivityType, 
       startDate : activity.StartDate, 
       endDate : activity.EndDate, 
+      isActiveNow : activity.IsActiveNow,
+      kidName: activity.KidName }), 
+    { headers: this.headers1 });
+  }
+
+  updateActivity(kidId: number, activity: KidActivity) : Observable<any> {
+    let url = `api/kid/${kidId}/activity/${activity.Id}`;
+    return this.http.put(url, JSON.stringify({ 
+      id: 0, 
+      activityType : activity.ActivityType, 
+      startDate : activity.StartDate, 
+      endDate : activity.EndDate,
+      isActiveNow : activity.IsActiveNow, 
       kidName: activity.KidName }), 
     { headers: this.headers1 });
   }
