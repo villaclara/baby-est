@@ -6,6 +6,7 @@ public class KidActivity
 	public KidActivityType ActivityType { get; set; }
 	public DateTime StartDate { get; set; }
 	public DateTime EndDate { get; set; }
+	public bool IsActiveNow { get; set; } = false;
 
 	public int KidId { get; set; } // foreign key property
 	public Kid Kid { get; set; } = null!;

@@ -122,7 +122,8 @@ public static class KidActivityEndpoints
 				KidId = id,
 				StartDate = activityDto.StartDate.Kind == DateTimeKind.Utc ? activityDto.StartDate : activityDto.StartDate.ToUniversalTime(),
 				EndDate = activityDto.EndDate.Kind == DateTimeKind.Utc ? activityDto.EndDate : activityDto.EndDate.ToUniversalTime(),
-				ActivityType = isConverted ? actType : KidActivityType.Undefined
+				ActivityType = isConverted ? actType : KidActivityType.Undefined,
+				IsActiveNow = activityDto.IsActiveNow
 				//ActivityType = (KidActivityType)activityDto.ActivityType
 			};
 
@@ -165,7 +166,7 @@ public static class KidActivityEndpoints
 			activity.EndDate = activityDto.EndDate == DateTime.MinValue ? activity.EndDate : activityDto.EndDate.ToUniversalTime();
 			//activity.ActivityType = activityToUpdate.ActivityType;
 			activity.ActivityType = isConverted ? actType : KidActivityType.Undefined;
-
+			activity.IsActiveNow = activityDto.IsActiveNow;
 			await dbctx.SaveChangesAsync();
 
 			return TypedResults.Created($"/api/kid/{activity.Id}");
