@@ -40,6 +40,8 @@ export class MainTimerComponent implements OnInit, OnChanges{
 
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
+    console.log(`onchanges - ${this.currentActivity.Id}`);
+    console.log(this.currentActivity.EndDate);
     if(this.currentActivity.IsActiveNow == true)
       {
         let timeDiff = new Date().getTime() - this.currentActivity.StartDate!.getTime();
@@ -48,6 +50,7 @@ export class MainTimerComponent implements OnInit, OnChanges{
         timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed +=1);
         this.startStopImageLink = '../../../assets/img/stop_icon.png';  
         this.currentActivityName = this.currentActivity.ActivityType;
+
       }
   }
 
@@ -81,6 +84,7 @@ export class MainTimerComponent implements OnInit, OnChanges{
       this.currentActivity.StartDate = new Date();
       this.currentActivity.IsActiveNow = true;
       console.log(this.currentActivity.StartDate);
+      console.log(this.currentActivity.EndDate);
 
 
       // Send the info to the parent to send to Api.
@@ -102,18 +106,20 @@ export class MainTimerComponent implements OnInit, OnChanges{
       this.currentActivity.EndDate = new Date();
       this.currentActivity.IsActiveNow = false;
 
+      console.log(`id- ${this.currentActivity.Id}`);
       // Send the info to the parent to send to Api.
       // Parent decides wheter to add or update activity.
       this.newKidActivity.emit(this.currentActivity);
 
       // Reset this.currentActivity
-      this.currentActivity = { 
-        ActivityType : '', 
-        Id : 0, 
-        KidName : '', 
-        EndDate : undefined, 
-        StartDate : undefined, 
-        IsActiveNow : false };
+      // this.currentActivity = { 
+      //   ActivityType : '', 
+      //   Id : 0, 
+      //   KidName : '', 
+      //   EndDate : undefined, 
+      //   StartDate : undefined, 
+      //   IsActiveNow : false 
+      // };
 
     }
   }

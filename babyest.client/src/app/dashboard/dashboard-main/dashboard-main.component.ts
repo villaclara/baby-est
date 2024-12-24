@@ -19,15 +19,17 @@ export class DashboardMainComponent implements OnInit {
 
   kid: Kid = { Name: "KidTest", BirthDate: "2024-09-09", Parents: [], Activities: [] };
 
-  lastSleepActivity: KidActivity = { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date(), IsActiveNow: false };
-  lastEatActivity: KidActivity = { ActivityType: "eating", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date(), IsActiveNow: false };
-  currentActivity: KidActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: new Date(), EndDate: new Date(), IsActiveNow: false };
+  lastSleepActivity: KidActivity = { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+  lastEatActivity: KidActivity = { ActivityType: "eating", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+  currentActivity: KidActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
 
   timeSinceLastSleep: number = 0;
   timeSinceLastEat: number = 0;
 
   kidAge: number = 0;
   kidId: number = 0;
+
+  errorMessage: string = '';
 
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
@@ -73,7 +75,7 @@ export class DashboardMainComponent implements OnInit {
           EndDate: new Date(data.endDate),
           KidName: data.kidName,
           ActivityType: data.activityType,
-          Id: data.Id,
+          Id: data.id,
           IsActiveNow: data.isActiveNow
         };
 
@@ -87,6 +89,8 @@ export class DashboardMainComponent implements OnInit {
         else {
           this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate!.getTime()) / 1000);
         }
+
+        console.log(`lasteatact - this.act.enddate ${this.currentActivity.EndDate}`);
       });
 
     // Get Last Sleep Kid. Used in KidHeaderInfo Component.
@@ -98,7 +102,7 @@ export class DashboardMainComponent implements OnInit {
           EndDate: new Date(data.endDate),
           KidName: data.kidName,
           ActivityType: data.activityType,
-          Id: data.Id,
+          Id: data.id,
           IsActiveNow: data.isActiveNow
         };
 
@@ -112,6 +116,9 @@ export class DashboardMainComponent implements OnInit {
         else {
           this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate!.getTime()) / 1000);
         }
+
+        console.log(`lastsleep - this.act.enddate ${this.currentActivity.EndDate}`);
+
       });
 
 
@@ -123,25 +130,56 @@ export class DashboardMainComponent implements OnInit {
 
     console.log('dashboard - ' + activity.ActivityType + activity.StartDate + activity.EndDate + '....name - ' + activity.KidName);
 
+    // Add new Activity. 
+    // Also update required  Input() props in child components.
     if (activity.EndDate == undefined) {
       activity.EndDate = new Date("1970-01-01");
       this.kidService.addActivityToKid(this.kidId, activity)
-        .subscribe((data: any) => {
-          console.log(data);
+        .subscribe({
+          next: (data: any) => {
+            this.currentActivity.Id = data;
+
+
+            // change time Since last activity to become '---' depending on current activityType.
+            activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() ?
+              this.timeSinceLastSleep = -1 : this.timeSinceLastEat = -1;
+          },
+          error: (error) => {
+            console.log(error);
+            this.errorMessage = 'Помилка. Спробуй ще раз.';
+          }
         });
 
 
-
     }
+    // Update activity on Timer stop.
+    // Also update required Input() props in child components.
     else {
-
-      ///////
-      ////////
-      ///////
-      ///// KidActivity.Id number is 0, and we can not use PUT.
       this.kidService.updateActivity(this.kidId, activity)
-        .subscribe((data: any) => {
-          console.log(data);
+        .subscribe({
+          next: (data: any) => {
+            this.currentActivity.Id = data;
+
+
+            // change time Since last activity to reset to 0 depending on updated (ended) activityType.
+            activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() ?
+              this.timeSinceLastSleep = 0 : this.timeSinceLastEat = 0;
+
+
+            // reset the current Activity values
+            this.currentActivity = {
+              ActivityType: '',
+              Id: 0,
+              KidName: '',
+              EndDate: undefined,
+              StartDate: undefined,
+              IsActiveNow: false
+            };
+          },
+          error: (error) => {
+            console.log(error);
+            this.errorMessage = 'Помилка. Спробуй ще раз.';
+          }
         });
     }
   }

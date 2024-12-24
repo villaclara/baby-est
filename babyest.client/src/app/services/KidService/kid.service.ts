@@ -54,7 +54,7 @@ export class KidService {
   updateActivity(kidId: number, activity: KidActivity) : Observable<any> {
     let url = `api/kid/${kidId}/activity/${activity.Id}`;
     return this.http.put(url, JSON.stringify({ 
-      id: 0, 
+      id: activity.Id, 
       activityType : activity.ActivityType, 
       startDate : activity.StartDate, 
       endDate : activity.EndDate,
