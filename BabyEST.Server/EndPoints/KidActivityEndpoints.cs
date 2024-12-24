@@ -130,7 +130,8 @@ public static class KidActivityEndpoints
 			dbctx.KidActivities.Add(activity);
 			await dbctx.SaveChangesAsync();
 
-			return TypedResults.Created($"/api/kid/{id}/activity/{activity.Id}");
+			//return TypedResults.Created($"/api/kid/{id}/activity/{activity.Id}");
+			return TypedResults.Ok(activity.Id);
 		}
 		catch (Exception ex)
 		{
@@ -169,7 +170,8 @@ public static class KidActivityEndpoints
 			activity.IsActiveNow = activityDto.IsActiveNow;
 			await dbctx.SaveChangesAsync();
 
-			return TypedResults.Created($"/api/kid/{activity.Id}");
+			//return TypedResults.Created($"/api/kid/{activity.Id}");
+			return TypedResults.Ok(activity.Id);
 		}
 		catch (Exception ex)
 		{
