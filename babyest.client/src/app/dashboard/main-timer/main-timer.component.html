@@ -1,51 +1,67 @@
+<!-- Stopwatch -->
 
-    <!-- Stopwatch -->
+<div class="row p-4">
+    <div class="col">
+        <div class="row">
+            <span>Зараз: {{currentActivityName}}</span>
+        </div>
 
-    <div class="row p-4">
-        <div class="col">
-            <div class="row">
-                <span>Зараз: {{currentActivityName}}</span>
-            </div>
-
-            <div class="row justify-content-center" >
-                <button class="btn" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''">
-                    <img src="{{startStopImageLink}}" class="" style="height: 40px; width: 60px;" />
-                </button>
-            </div>
-            <div class="row">
-                <span> {{ timePassed | timerCounterPipe }}</span>
-            </div>
+        <div class="row justify-content-center">
+            <button class="btn" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''">
+                <img src="{{startStopImageLink}}" class="" style="height: 40px; width: 60px;" />
+            </button>
+        </div>
+        <div class="row">
+            <span> {{ timePassed | timerCounterPipe }}</span>
         </div>
     </div>
+</div>
 
 
-    <!-- Choose Activity Section -->
+<!-- Choose Activity Section -->
+<div [ngStyle]="{'pointer-events' : this.currentActivity.IsActiveNow ? 'none' : ''} ">
+
     <div class="row">
-        <div class="col card" style="min-height: 50px;" (click)="selectActivity('sleeping')">
-            <div class="my-auto">
-                <span>Сон</span>
-            </div>
-        </div>
-
-        <div class="col card" (click)="startSelectEatingType()">
-            <div class="my-auto">
-                <span>Годування</span>
-            </div>  
-        </div>
-
-        <div class="row p-0 m-0 row-cols-2" [hidden]="!isEatingSelected">
-
-            <div class="col border" (click)="selectActivity('eatingLeft')">
-                <span>Ліва</span>
-            </div>
-            <div class="col border" (click)="selectActivity('eatingRight')">
-                <span>Права</span>
-            </div>
-            <div class="col border" (click)="selectActivity('eatingBoth')">
-                <span>Обидві</span>
-            </div>
-            <div class="col border" (click)="selectActivity('eatingBottle')">
-                <span>Пляшечка</span>
-            </div>
+        <div class="col card mx-2" [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'sleeping'}"
+        style="min-height: 50px;" (click)="selectActivity('sleeping')">
+        <div class="my-auto">
+            <span>Сон</span>
         </div>
     </div>
+    
+    <div class="col card mx-2" [ngClass]="{'activeActivity': isEatingSelected}" (click)="startSelectEatingType()">
+        <div class="my-auto">
+            <span>Годування</span>
+        </div>
+    </div>
+    
+    <div class="col-12">
+        
+        <div class="row pt-3 justify-content-center" [hidden]="!isEatingSelected">
+            
+            <div class="col-4 border mx-2"
+            [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingleft'}"
+            (click)="selectActivity('eatingLeft')">
+            <span>Ліва</span>
+        </div>
+        <div class="col-4 border mx-2"
+        [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingright'}"
+        (click)="selectActivity('eatingRight')">
+        <span>Права</span>
+    </div>
+</div>
+<div class="row pt-2 justify-content-center" [hidden]="!isEatingSelected">
+    <div class="col-4 border mx-2"
+    [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingboth'}"
+    (click)="selectActivity('eatingBoth')">
+    <span>Обидві</span>
+</div>
+<div class="col-4 border mx-2"
+[ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingbottle'}"
+(click)="selectActivity('eatingBottle')">
+<span>Пляшечка</span>
+</div>
+</div>
+</div>
+</div>
+</div>
