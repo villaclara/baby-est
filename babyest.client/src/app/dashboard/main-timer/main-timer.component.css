@@ -2,3 +2,12 @@
     border-color: blue !important;
     color: darkolivegreen;
 }
+
+img.playImg {
+    max-height: 15vw;
+    max-width: 15vw;
+}
+
+img.activityTypeImg {
+    max-height: 6vw;
+}

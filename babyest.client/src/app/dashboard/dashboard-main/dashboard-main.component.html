@@ -1,6 +1,16 @@
+<div [ngClass]="{
+    'bg-sleeping' : currentActivity.ActivityType.toLowerCase() === 'sleeping',
+    'bg-eating' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping'
+    }" class="">
 
-<app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat" [timeSinceLastSleep]="timeSinceLastSleep"></app-kid-header-info>
+    <div class="container">
 
-<app-main-timer (newKidActivity)="sendNewKidActivity($event)" [currentActivity]="currentActivity"></app-main-timer>
+        <app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat"
+            [timeSinceLastSleep]="timeSinceLastSleep"></app-kid-header-info>
 
-<app-last-activities></app-last-activities>
+        <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
+            [currentActivity]="currentActivity"></app-main-timer>
+
+        <app-last-activities></app-last-activities>
+    </div>
+</div>

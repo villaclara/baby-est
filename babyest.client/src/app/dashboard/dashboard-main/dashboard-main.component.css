@@ -1,0 +1,8 @@
+.bg-sleeping {
+    background-color: lightblue;
+    min-height: 80vh;
+}
+
+.bg-eating {
+    background-color: lightpink;
+}

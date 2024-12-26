@@ -7,11 +7,12 @@ import { CurrentKidService } from '../../services/CurrentKid/current-kid.service
 import { Kid } from '../../models/kid';
 import { Router } from '@angular/router';
 import { KidActivity } from '../../models/kid-activity';
+import { NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard-main',
   standalone: true,
-  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent],
+  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })
@@ -61,7 +62,7 @@ export class DashboardMainComponent implements OnInit {
           const timeinmilliseconds = new Date().getTime() - birth;
           const millisecondsInDay: number = 1000 * 60 * 60 * 24;
 
-          this.kidAge = Math.floor(timeinmilliseconds / millisecondsInDay);
+          this.kidAge = Math.floor(timeinmilliseconds / millisecondsInDay) + 1;
         }
       });
 
@@ -129,6 +130,7 @@ export class DashboardMainComponent implements OnInit {
   sendNewKidActivity(activity: KidActivity): void {
 
     console.log('dashboard - ' + activity.ActivityType + activity.StartDate + activity.EndDate + '....name - ' + activity.KidName);
+
 
     // Add new Activity. 
     // Also update required  Input() props in child components.

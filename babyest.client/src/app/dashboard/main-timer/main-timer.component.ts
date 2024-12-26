@@ -28,7 +28,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
   // timePass$ = timer(1, 1000).subscribe(() => { this.timePassed += 1000; console.log(this.timePassed) });
   //a = timer(1, 1000).subscribe(() => this.timePassed +=1);
 
-  currentActivityName: string = '';
+  currentActivityName: string = 'Чіл';
 
   isEatingSelected: boolean = false;
 
@@ -48,7 +48,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
       this.isRunningTimer = true;
       timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
       this.startStopImageLink = '../../../assets/img/stop_icon.png';
-      this.currentActivityName = this.currentActivity.ActivityType;
+      this.currentActivityName = this.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
 
       // if ANY eating we set the IsEatingSelected to True
       this.isEatingSelected = this.currentActivity.ActivityType.toLowerCase() != 'sleeping'
@@ -125,6 +125,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
       // Stop tracking current Activity. Set EndDate
       this.currentActivity.EndDate = new Date();
       this.currentActivity.IsActiveNow = false;
+      this.currentActivityName = this.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
 
       console.log(`id- ${this.currentActivity.Id}`);
       // Send the info to the parent to send to Api.
@@ -144,5 +145,19 @@ export class MainTimerComponent implements OnInit, OnChanges {
     }
   }
 
+
+  private changeCurrentActivityNameUA(newActivity : string) : string {
+    switch(newActivity.toLowerCase()) {
+      case ('sleeping') : {
+        return 'Сон';
+      }
+      case ('') : {
+        return 'Чіл';
+      }
+      default : {
+        return 'Їда';
+      }
+    }
+  }
 
 }
