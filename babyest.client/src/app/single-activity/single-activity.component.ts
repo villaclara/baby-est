@@ -23,7 +23,6 @@ export class SingleActivityComponent implements OnInit{
     this.activityNameUA = this.translator.changeCurrentActivityFullNameUA(this.activity.ActivityType);
 
 
-    // IF WE HAVE ONGOING ACTIVITY THIS WILL FAIL
     this.activityTime = Math.ceil(new Date(this.activity.EndDate!).getTime() - new Date(this.activity.StartDate!).getTime()) / 1000;
     console.log(this.activityTime);
   }

@@ -23,7 +23,7 @@ export class DashboardMainComponent implements OnInit {
   lastSleepActivity: KidActivity = { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   lastEatActivity: KidActivity = { ActivityType: "eating", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   currentActivity: KidActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
-  activities : KidActivity[] = [];
+  activities: KidActivity[] = [];
 
   timeSinceLastSleep: number = 0;
   timeSinceLastEat: number = 0;
@@ -124,23 +124,29 @@ export class DashboardMainComponent implements OnInit {
       });
 
 
-      this.kidService.getKidActivitiesById(this.kidId)
+    this.kidService.getKidActivitiesById(this.kidId)
       .subscribe((data: any) => {
         console.log("get all acts");
-        for(let i = 0; i < 3; i++)
-        {
-          console.log(`push ${i} activity.`);
+        let i = 0;
+        for (let k = 0; k < 3; k++) {
+
+          // If the first activity is Active then skip it and reset the loop variable
+          if (data[i].isActiveNow == true) {
+            i++;
+            k--;
+            continue;
+          }
+
           this.activities.push(
             {
-              ActivityType : data[i].activityType,
-              EndDate : data[i].endDate,
-              StartDate : data[i].startDate,
-              Id : data[i].id,
-              IsActiveNow : data[i].isActiveNow,
-              KidName : ''
+              ActivityType: data[i].activityType,
+              EndDate: data[i].endDate,
+              StartDate: data[i].startDate,
+              Id: data[i].id,
+              IsActiveNow: data[i].isActiveNow,
+              KidName: ''
             });
-          console.log(`actcount - ${this.activities.length}`);
-          console.log(`type - ${data[i].activityType}`);
+            i++;
         }
       })
   }
