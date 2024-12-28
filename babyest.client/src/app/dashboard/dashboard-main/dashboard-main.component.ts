@@ -23,6 +23,7 @@ export class DashboardMainComponent implements OnInit {
   lastSleepActivity: KidActivity = { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   lastEatActivity: KidActivity = { ActivityType: "eating", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   currentActivity: KidActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+  activities : KidActivity[] = [];
 
   timeSinceLastSleep: number = 0;
   timeSinceLastEat: number = 0;
@@ -91,7 +92,7 @@ export class DashboardMainComponent implements OnInit {
           this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate!.getTime()) / 1000);
         }
 
-        console.log(`lasteatact - this.act.enddate ${this.currentActivity.EndDate}`);
+        console.log(`lasteatact - this.act.enddate ${this.lastEatActivity.EndDate}`);
       });
 
     // Get Last Sleep Kid. Used in KidHeaderInfo Component.
@@ -118,12 +119,30 @@ export class DashboardMainComponent implements OnInit {
           this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate!.getTime()) / 1000);
         }
 
-        console.log(`lastsleep - this.act.enddate ${this.currentActivity.EndDate}`);
+        console.log(`lastsleep - this.act.enddate ${this.lastSleepActivity.EndDate}`);
 
       });
 
 
-
+      this.kidService.getKidActivitiesById(this.kidId)
+      .subscribe((data: any) => {
+        console.log("get all acts");
+        for(let i = 0; i < 3; i++)
+        {
+          console.log(`push ${i} activity.`);
+          this.activities.push(
+            {
+              ActivityType : data[i].activityType,
+              EndDate : data[i].endDate,
+              StartDate : data[i].startDate,
+              Id : data[i].id,
+              IsActiveNow : data[i].isActiveNow,
+              KidName : ''
+            });
+          console.log(`actcount - ${this.activities.length}`);
+          console.log(`type - ${data[i].activityType}`);
+        }
+      })
   }
 
 

@@ -1,0 +1,16 @@
+
+<div class="row border-bottom">
+    <div class="col text-start">
+        <div class="">
+            <div class="row">
+                <span>{{activity.EndDate | date:'dd/MM/yyyy'}} - 
+                    <span>{{activityNameUA}}</span>
+                    
+                </span>
+            </div>
+            <div class="row">
+                <span> {{activity.StartDate | date:'HH:mm' }} - {{activity.EndDate | date:'HH:mm' }} -- {{activityTime | shortTimerCounter}}</span>
+            </div>
+        </div>
+    </div>
+</div>

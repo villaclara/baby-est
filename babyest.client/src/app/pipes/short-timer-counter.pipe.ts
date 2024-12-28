@@ -21,11 +21,16 @@ export class ShortTimerCounterPipe implements PipeTransform {
     value -= 60 * minutes;
   }
 
+  else if(value > 0 && value < 60)
+  {
+    minutes += 1;
+  }
+
   let minStr : string = minutes < 10 ? '0' + minutes.toString() : minutes.toString();
   let hourStr : string = hours < 10 ? '0' + hours.toString() : hours.toString();
 
 
-  return `${hourStr} : ${minStr}`;
+  return `${hourStr} г : ${minStr} хв`;
   }
 
 }

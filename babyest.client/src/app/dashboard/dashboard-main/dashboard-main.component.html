@@ -11,6 +11,6 @@
         <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
             [currentActivity]="currentActivity"></app-main-timer>
 
-        <app-last-activities></app-last-activities>
+        <app-last-activities [activities]="activities"></app-last-activities>
     </div>
 </div>
