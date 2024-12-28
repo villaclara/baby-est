@@ -1,12 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { SingleActivityComponent } from '../../single-activity/single-activity.component';
 import { KidActivity } from '../../models/kid-activity';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-last-activities',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor],
+  imports: [SingleActivityComponent, NgFor, NgIf, NgClass],
   templateUrl: './last-activities.component.html',
   styleUrl: './last-activities.component.css'
 })

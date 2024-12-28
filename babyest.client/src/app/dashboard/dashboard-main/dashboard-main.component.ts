@@ -124,6 +124,8 @@ export class DashboardMainComponent implements OnInit {
       });
 
 
+      // TODO
+      // No need to get all activities list. Only 3 last. 
     this.kidService.getKidActivitiesById(this.kidId)
       .subscribe((data: any) => {
         console.log("get all acts");
@@ -157,7 +159,7 @@ export class DashboardMainComponent implements OnInit {
     console.log('dashboard - ' + activity.ActivityType + activity.StartDate + activity.EndDate + '....name - ' + activity.KidName);
 
 
-    // Add new Activity. 
+    // Add new Activity to api. 
     // Also update required  Input() props in child components.
     if (activity.EndDate == undefined) {
       activity.EndDate = new Date("1970-01-01");
@@ -179,8 +181,9 @@ export class DashboardMainComponent implements OnInit {
 
 
     }
-    // Update activity on Timer stop.
+    // Update activity on Timer stop and push update to api. 
     // Also update required Input() props in child components.
+    // Also update the last activities local list.
     else {
       this.kidService.updateActivity(this.kidId, activity)
         .subscribe({
@@ -202,6 +205,10 @@ export class DashboardMainComponent implements OnInit {
               StartDate: undefined,
               IsActiveNow: false
             };
+
+            // add to last activities list and delete the last one
+            this.activities.unshift(activity);
+            this.activities.pop();
           },
           error: (error) => {
             console.log(error);

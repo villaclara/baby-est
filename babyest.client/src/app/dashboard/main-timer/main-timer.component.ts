@@ -4,13 +4,13 @@ import { interval, map, Observable, Subject, takeUntil, timer } from 'rxjs';
 import { TimerCounterPipe } from '../../pipes/timer-counter.pipe';
 import { KidActivity } from '../../models/kid-activity';
 import { KidService } from '../../services/KidService/kid.service';
-import { Kid } from '../../models/kid';
 import { ActivityNameTranslator } from '../../utils/activity-name-translator';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-main-timer',
   standalone: true,
-  imports: [CommonModule, TimerCounterPipe],
+  imports: [CommonModule, TimerCounterPipe, NgIf],
   templateUrl: './main-timer.component.html',
   styleUrl: './main-timer.component.css'
 })
@@ -29,7 +29,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
   // timePass$ = timer(1, 1000).subscribe(() => { this.timePassed += 1000; console.log(this.timePassed) });
   //a = timer(1, 1000).subscribe(() => this.timePassed +=1);
 
-  currentActivityName: string = 'Чіл';
+  currentActivityNameUA: string = 'Чіл';
 
   isEatingSelected: boolean = false;
 
@@ -42,15 +42,14 @@ export class MainTimerComponent implements OnInit, OnChanges {
 
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
-    console.log(`onchanges - ${this.currentActivity.Id}`);
-    console.log(this.currentActivity.EndDate);
+   
     if (this.currentActivity.IsActiveNow == true) {
       let timeDiff = new Date().getTime() - this.currentActivity.StartDate!.getTime();
       this.timePassed = Math.floor(timeDiff / 1000);
       this.isRunningTimer = true;
       timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
       this.startStopImageLink = '../../../assets/img/stop_icon.png';
-      this.currentActivityName = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
+      this.currentActivityNameUA = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
 
       // if ANY eating we set the IsEatingSelected to True
       this.isEatingSelected = this.currentActivity.ActivityType.toLowerCase() != 'sleeping'
@@ -106,6 +105,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
       // Set current Activity and Start tracking the activity
       this.currentActivity.StartDate = new Date();
       this.currentActivity.IsActiveNow = true;
+      this.currentActivityNameUA = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
       console.log(this.currentActivity.StartDate);
       console.log(this.currentActivity.EndDate);
 
@@ -127,7 +127,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
       // Stop tracking current Activity. Set EndDate
       this.currentActivity.EndDate = new Date();
       this.currentActivity.IsActiveNow = false;
-      this.currentActivityName = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
+      this.currentActivityNameUA = 'Чіл';
 
       console.log(`id- ${this.currentActivity.Id}`);
       // Send the info to the parent to send to Api.

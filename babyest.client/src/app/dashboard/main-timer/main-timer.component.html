@@ -5,12 +5,14 @@
         <div class="col">
             <div class="row">
                 <span class="fs-5">Зараз:
-                    <span class="fs-2">{{currentActivityName}}</span>
+                    <span class="fs-2">{{currentActivityNameUA}}</span>
                 </span>
             </div>
 
-            <div class="row justify-content-center">
-                <button class="btn" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''"
+            <div *ngIf="currentActivity.ActivityType.toLowerCase() != ''">
+
+                <div class="row justify-content-center">
+                    <button class="btn" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''"
                     style="border: none;">
                     <img src="{{startStopImageLink}}" class="playImg" />
                 </button>
@@ -19,6 +21,7 @@
                 <span class="fw-bolder h2 p-0 m-0"> {{ timePassed | timerCounterPipe }}</span>
                 <span class="text-secondary small">год&nbsp;&nbsp;&nbsp;&nbsp;хв&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;с&nbsp;&nbsp;</span>
             </div>
+        </div>
         </div>
     </div>
 

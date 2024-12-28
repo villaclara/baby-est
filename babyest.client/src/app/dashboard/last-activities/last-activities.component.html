@@ -4,7 +4,7 @@
     </div>
     <div class="row">
         <div *ngFor="let activity of activities; index as i">
-            <app-single-activity class="mt-2" [activity]="activity"></app-single-activity>
+            <app-single-activity class="mt-2" [activity]="activity" [ngClass]="{'fw-bolder' : i == 0}"></app-single-activity>
         </div>
     </div>
 </div>

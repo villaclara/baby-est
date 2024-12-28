@@ -19,10 +19,7 @@ export class SingleActivityComponent implements OnInit{
   private translator : ActivityNameTranslator = new ActivityNameTranslator();
   
   ngOnInit(): void {
-    console.log("single changes");
     this.activityNameUA = this.translator.changeCurrentActivityFullNameUA(this.activity.ActivityType);
-
-
     this.activityTime = Math.ceil(new Date(this.activity.EndDate!).getTime() - new Date(this.activity.StartDate!).getTime()) / 1000;
     console.log(this.activityTime);
   }
