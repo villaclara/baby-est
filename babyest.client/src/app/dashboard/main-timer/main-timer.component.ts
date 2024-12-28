@@ -128,6 +128,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
       this.currentActivity.EndDate = new Date();
       this.currentActivity.IsActiveNow = false;
       this.currentActivityNameUA = 'Чіл';
+      this.timePassed = 0;
 
       console.log(`id- ${this.currentActivity.Id}`);
       // Send the info to the parent to send to Api.
