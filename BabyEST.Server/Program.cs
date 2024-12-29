@@ -3,6 +3,7 @@ using BabyEST.Server.Database;
 using BabyEST.Server.EndPoints;
 using BabyEST.Server.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Serilog;
 
@@ -40,6 +41,11 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 		};
 	});
 builder.Services.AddAuthorization();
+
+builder.Services.Configure<JsonOptions>(options =>
+{
+	options.SerializerOptions.PropertyNamingPolicy = null;
+});
 
 var app = builder.Build();
 
