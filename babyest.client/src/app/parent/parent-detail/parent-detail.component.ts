@@ -1,11 +1,9 @@
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { KidsOfParent, Parent } from '../../models/parent';
-import { Kid } from '../../models/kid';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/AuthService/auth.service';
 import { Router } from '@angular/router';
 import { ParentService } from '../../services/ParentService/parent.service';
-import { map } from 'rxjs';
 import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
 
 
@@ -20,66 +18,53 @@ import { CurrentKidService } from '../../services/CurrentKid/current-kid.service
 
 export class ParentDetailComponent implements OnInit {
 
-  constructor(private authService: AuthService, 
+  errorMessageDisplayed: string = '';
+  constructor(private authService: AuthService,
     private router: Router,
     private parentService: ParentService,
-    private currentKidService : CurrentKidService) { }
-  
-  
+    private currentKidService: CurrentKidService) { }
+
+  currentParent: Parent = { Id: 0, Email: '', Kids: [] };
+
   ngOnInit(): void {
-
     this.parentService.getParentInfo().subscribe(
-      (data : any) => 
       {
-        // bypass the redirectUrl by CookieAuthenticaiton of WebApi
-        if(data == "403")
-        {
-          this.router.navigateByUrl('signin');
-        }
-        else 
-        {
-
-          this.currentParent = {
-            Id : data.id,
-            Email : data.email,
-            Kids: data.kids as KidsOfParent[]
-          };
+        next: (data: Parent) => {
+          this.currentParent = data;
+          this.currentParent.Kids = data.Kids as KidsOfParent[];
+        },
+        error: (err: Error) => {
+          this.errorMessageDisplayed = err.message;
         }
       });
+    }
+
+    // currentParent: Parent = { Email : "test@test.com", Id : 1, Kids : [
+    //   {KidId : 1, KidName: "Kid1"},
+    //   {KidId : 2, KidName: "Kid2"},
+    //   {KidId : 5, KidName: "Kid3"},
+    //   {KidId : 6, KidName: "Kid4"}] };
+
+    // kids: Kid[] = [ { Name: "Kid1", BirthDate: "2024-08-08", Parents: ["test"], Activities : []}];
+
+    selectKid(kidId: number): void {
+
+      this.currentKidService.setCurrentKid(kidId);
+      this.router.navigate(['/main/', kidId]);
+    }
+
+
+    logout(): void {
+      this.authService.tryLogout().subscribe(
+        {
+          next: () => this.router.navigate(['/signin']),
+          error: (err: Error) => {
+            this.errorMessageDisplayed = err.message;
+          }
+        }
+      );
+    }
+
+
 
   }
-
-
-  currentParent : Parent = { Id : 0, Email: '', Kids : []};
-  // currentParent: Parent = { Email : "test@test.com", Id : 1, Kids : [
-  //   {KidId : 1, KidName: "Kid1"},
-  //   {KidId : 2, KidName: "Kid2"},
-  //   {KidId : 5, KidName: "Kid3"},
-  //   {KidId : 6, KidName: "Kid4"}] };
-
-  // kids: Kid[] = [ { Name: "Kid1", BirthDate: "2024-08-08", Parents: ["test"], Activities : []}];
-
-  selectKid(kidId : number) : void {
-    
-    
-    this.currentKidService.setCurrentKid(kidId);
-    
-    
-    this.router.navigate(['/main/', kidId]);
-
-
-  }
-
-  
-  logout() : void {
-    this.authService.tryLogout().subscribe(
-      { 
-        next: () => this.router.navigate(['/signin']), 
-        error: () => {}
-      }
-    );
-  }
-
-
-
-}

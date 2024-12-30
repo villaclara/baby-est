@@ -31,7 +31,7 @@ export class DashboardMainComponent implements OnInit {
   kidAge: number = 0;
   kidId: number = 0;
 
-  errorMessage: string = '';
+  errorMessageDisplayed: string = '';
 
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
@@ -45,115 +45,98 @@ export class DashboardMainComponent implements OnInit {
 
     // Get general info about Kid. Used in KidHeaderInfo Component
     this.kidService.getKidById(this.currentKidService.getCurrentKid())
-      .subscribe((data: any) => {
-        // bypass the redirectUrl by CookieAuthenticaiton of WebApi
-        if (data == "403") {
-          this.router.navigateByUrl('signin');
-        }
-        else {
+      .subscribe(
+        {
+          next: (data: Kid) => {
+            this.kid = data;
 
-          this.kid = {
-            Name: data.name,
-            BirthDate: data.birthDate,
-            Activities: [],
-            Parents: []
-          };
+            const birth = Date.parse(this.kid.BirthDate);
+            const timeinmilliseconds = new Date().getTime() - birth;
+            const millisecondsInDay: number = 1000 * 60 * 60 * 24;
 
-          const birth = Date.parse(this.kid.BirthDate);
-          const timeinmilliseconds = new Date().getTime() - birth;
-          const millisecondsInDay: number = 1000 * 60 * 60 * 24;
-
-          this.kidAge = Math.floor(timeinmilliseconds / millisecondsInDay) + 1;
-        }
-      });
+            this.kidAge = Math.floor(timeinmilliseconds / millisecondsInDay) + 1;
+          },
+          error: (err: Error) => {
+            this.errorMessageDisplayed = err.message;
+          }
+        });
 
 
     // Get Last Eating of Kid. Used in KidHeaderInfo Component.
     this.kidService.getLastEatingByKidId(this.kidId)
-      .subscribe((data: any) => {
+      .subscribe(
+        {
+          next: (data: KidActivity) => {
+            this.lastEatActivity = data;
 
-        this.lastEatActivity = {
-          StartDate: new Date(data.startDate),
-          EndDate: new Date(data.endDate),
-          KidName: data.kidName,
-          ActivityType: data.activityType,
-          Id: data.id,
-          IsActiveNow: data.isActiveNow
-        };
+            // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
+            // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
+            if (this.lastEatActivity.IsActiveNow == true) {
+              this.currentActivity = this.lastEatActivity;
+              this.timeSinceLastEat = -1;
+            }
+            else {
+              this.timeSinceLastEat = Math.floor((new Date().getTime() - new Date(this.lastEatActivity.EndDate!).getTime()) / 1000);
+            }
+          },
+          error: (err: Error) => {
+            this.errorMessageDisplayed = err.message;
+          }
+        });
 
-        // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
-        // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
-
-        if (this.lastEatActivity.IsActiveNow == true) {
-          this.currentActivity = this.lastEatActivity;
-          this.timeSinceLastEat = -1;
-        }
-        else {
-          this.timeSinceLastEat = Math.floor((new Date().getTime() - this.lastEatActivity.EndDate!.getTime()) / 1000);
-        }
-
-        console.log(`lasteatact - this.act.enddate ${this.lastEatActivity.EndDate}`);
-      });
 
     // Get Last Sleep Kid. Used in KidHeaderInfo Component.
     this.kidService.getLastSleepByKidId(this.kidId)
-      .subscribe((data: any) => {
+      .subscribe(
+        {
+          next: (data: KidActivity) => {
+            this.lastSleepActivity = data;
 
-        this.lastSleepActivity = {
-          StartDate: new Date(data.startDate),
-          EndDate: new Date(data.endDate),
-          KidName: data.kidName,
-          ActivityType: data.activityType,
-          Id: data.id,
-          IsActiveNow: data.isActiveNow
-        };
-
-        // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
-        // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
-
-        if (this.lastSleepActivity.IsActiveNow == true) {
-          this.currentActivity = this.lastSleepActivity;
-          this.timeSinceLastSleep = -1;
-        }
-        else {
-          this.timeSinceLastSleep = Math.floor((new Date().getTime() - this.lastSleepActivity.EndDate!.getTime()) / 1000);
-        }
-
-        console.log(`lastsleep - this.act.enddate ${this.lastSleepActivity.EndDate}`);
-
-      });
-
-
-      // TODO
-      // No need to get all activities list. Only 3 last. 
-    this.kidService.getKidActivitiesById(this.kidId)
-      .subscribe((data: any) => {
-        console.log("get all acts");
-        let i = 0;
-        for (let k = 0; k < 3; k++) {
-
-          // If the first activity is Active then skip it and reset the loop variable
-          if (data[i].isActiveNow == true) {
-            i++;
-            k--;
-            continue;
+            // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
+            // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
+            if (this.lastSleepActivity.IsActiveNow == true) {
+              this.currentActivity = this.lastSleepActivity;
+              this.timeSinceLastSleep = -1;
+            }
+            else {
+              this.timeSinceLastSleep = Math.floor((new Date().getTime() - new Date(this.lastSleepActivity.EndDate!).getTime()) / 1000);
+            }
+          },
+          error: (err: Error) => {
+            this.errorMessageDisplayed = err.message;
           }
+        });
 
-          this.activities.push(
-            {
-              ActivityType: data[i].activityType,
-              EndDate: data[i].endDate,
-              StartDate: data[i].startDate,
-              Id: data[i].id,
-              IsActiveNow: data[i].isActiveNow,
-              KidName: ''
-            });
-            i++;
-        }
-      })
+
+    // TODO
+    // No need to get all activities list. Only 3 last. 
+    this.kidService.getKidActivitiesById(this.kidId)
+      .subscribe(
+        {
+          next: (data: KidActivity[]) => {
+            console.log("get all acts");
+            let i = 0;
+            for (let k = 0; k < 3; k++) {
+
+              // If the first activity is Active then skip it and reset the loop variable
+              if (data[i].IsActiveNow == true) {
+                i++;
+                k--;
+                continue;
+              }
+
+              this.activities.push(data[i]);
+              i++;
+            }
+          },
+          error: (err: Error) => {
+            this.errorMessageDisplayed = err.message;
+          }
+        });
   }
 
 
+  // Send the new activity to the api
   sendNewKidActivity(activity: KidActivity): void {
 
     console.log('dashboard - ' + activity.ActivityType + activity.StartDate + activity.EndDate + '....name - ' + activity.KidName);
@@ -175,7 +158,7 @@ export class DashboardMainComponent implements OnInit {
           },
           error: (error) => {
             console.log(error);
-            this.errorMessage = 'Помилка. Спробуй ще раз.';
+            this.errorMessageDisplayed = 'Помилка. Спробуй ще раз.';
           }
         });
 
@@ -212,7 +195,7 @@ export class DashboardMainComponent implements OnInit {
           },
           error: (error) => {
             console.log(error);
-            this.errorMessage = 'Помилка. Спробуй ще раз.';
+            this.errorMessageDisplayed = 'Помилка. Спробуй ще раз.';
           }
         });
     }

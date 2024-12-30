@@ -44,7 +44,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
    
     if (this.currentActivity.IsActiveNow == true) {
-      let timeDiff = new Date().getTime() - this.currentActivity.StartDate!.getTime();
+      let timeDiff = new Date().getTime() - new Date(this.currentActivity.StartDate!).getTime();
       this.timePassed = Math.floor(timeDiff / 1000);
       this.isRunningTimer = true;
       timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);

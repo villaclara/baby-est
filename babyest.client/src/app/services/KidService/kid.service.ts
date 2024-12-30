@@ -1,9 +1,10 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { catchError, Observable } from 'rxjs';
 import { Kid } from '../../models/kid';
 import { CurrentKidService } from '../CurrentKid/current-kid.service';
 import { KidActivity } from '../../models/kid-activity';
+import { ErrorHandlerService } from '../ErrorHandler/error-handler.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,8 @@ import { KidActivity } from '../../models/kid-activity';
 export class KidService {
 
   constructor(private http: HttpClient, 
-    private currentKidService : CurrentKidService) {
+    private currentKidService : CurrentKidService,
+  private errorHandler : ErrorHandlerService) {
 
    }
 
@@ -26,17 +28,23 @@ export class KidService {
 
   getKidActivitiesById(kidId: number) : Observable<KidActivity[]> {
     let url = `api/kid/${kidId}/activity`;
-    return this.http.get<KidActivity[]>(url);
+    return this.http.get<KidActivity[]>(url).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
   }
 
   getLastSleepByKidId(kidId: number) : Observable<KidActivity> {
     let url : string = `api/kid/${kidId}/activity/last?actType=sleep`;
-    return this.http.get<KidActivity>(url);
+    return this.http.get<KidActivity>(url).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
   }
 
   getLastEatingByKidId(kidId: number) : Observable<KidActivity> {
     let url : string = `api/kid/${kidId}/activity/last?actType=eat`;
-    return this.http.get<KidActivity>(url);
+    return this.http.get<KidActivity>(url).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
   }
 
   addActivityToKid(kidId: number, activity : KidActivity) : Observable<any> {
@@ -48,7 +56,9 @@ export class KidService {
       endDate : activity.EndDate, 
       isActiveNow : activity.IsActiveNow,
       kidName: activity.KidName }), 
-    { headers: this.headers1 });
+    { headers: this.headers1 }).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
   }
 
   updateActivity(kidId: number, activity: KidActivity) : Observable<any> {
@@ -60,6 +70,8 @@ export class KidService {
       endDate : activity.EndDate,
       isActiveNow : activity.IsActiveNow, 
       kidName: activity.KidName }), 
-    { headers: this.headers1 });
+    { headers: this.headers1 }).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
   }
 }

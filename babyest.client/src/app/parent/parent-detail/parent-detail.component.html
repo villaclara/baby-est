@@ -1,5 +1,7 @@
-<div>
+<div *ngIf="errorMessageDisplayed != ''">{{errorMessageDisplayed}}</div>
 
+
+<div *ngIf="errorMessageDisplayed === ''">    
     <div class="row border-bottom" style="height: 5vw;">
 
     </div>
@@ -29,10 +31,10 @@
             <div *ngFor="let kid1 of currentParent.Kids; index as i">
 
                 <!-- Child Placeholder component -->
-                <div class="col border border-2 border-secondary rounded-2 m-2" (click)="selectKid(kid1.kidId)">
+                <div class="col border border-2 border-secondary rounded-2 m-2" (click)="selectKid(kid1.KidId)">
                     <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40"/>
                 <div>
-                    <span>{{kid1.kidName}}</span>
+                    <span>{{kid1.KidName}}</span>
                 </div>
                 <div>
                     active

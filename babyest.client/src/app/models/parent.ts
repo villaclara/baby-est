@@ -5,6 +5,6 @@ export interface Parent {
 }
 
 export interface KidsOfParent {
-    kidId : number;
-    kidName : string;
+    KidId : number;
+    KidName : string;
 }
