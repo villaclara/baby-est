@@ -8,11 +8,12 @@ import { Kid } from '../../models/kid';
 import { Router } from '@angular/router';
 import { KidActivity } from '../../models/kid-activity';
 import { NgClass } from '@angular/common';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-dashboard-main',
   standalone: true,
-  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass],
+  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass, NgIf],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })
