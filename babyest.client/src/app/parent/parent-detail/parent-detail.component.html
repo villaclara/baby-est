@@ -36,7 +36,7 @@
                 <div>
                     <span>{{kid1.KidName}}</span>
                 </div>
-                <div>
+                <div *ngIf="activeKidId != null && activeKidId == kid1.KidId">
                     active
                 </div>
             </div>

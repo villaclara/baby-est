@@ -16,7 +16,7 @@ export class ShortTimerCounterPipe implements PipeTransform {
     value -= 3600 * hours;      
   }
   
-  if(value > 0 && value < 60)
+  if(value > 10 && value < 60)
   {
     minutes += 1;
   }

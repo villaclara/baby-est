@@ -25,6 +25,7 @@ export class ParentDetailComponent implements OnInit {
     private currentKidService: CurrentKidService) { }
 
   currentParent: Parent = { Id: 0, Email: '', Kids: [] };
+  activeKidId : number | null = null;
 
   ngOnInit(): void {
     this.parentService.getParentInfo().subscribe(
@@ -37,6 +38,8 @@ export class ParentDetailComponent implements OnInit {
           this.errorMessageDisplayed = err.message;
         }
       });
+
+      this.activeKidId = this.currentKidService.getCurrentKid();
     }
 
     // currentParent: Parent = { Email : "test@test.com", Id : 1, Kids : [
@@ -50,6 +53,7 @@ export class ParentDetailComponent implements OnInit {
     selectKid(kidId: number): void {
 
       this.currentKidService.setCurrentKid(kidId);
+      this.activeKidId = kidId;
       this.router.navigate(['/main/', kidId]);
     }
 

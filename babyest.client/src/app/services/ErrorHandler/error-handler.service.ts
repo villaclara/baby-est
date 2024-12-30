@@ -22,7 +22,8 @@ export class ErrorHandlerService {
       // if error.status === 0 (client-side or network error).
       // if error.status === 404 or 500 or whatever (internal error).
       console.error(`Backend returned code ${error.status}, body was: `, error.error);
-      return throwError(() => new Error("Внутрішня помилка. Будь ласка, оновіть сторінку."));
+      // return throwError(() => new Error("Внутрішня помилка. Будь ласка, оновіть сторінку."));
+      return throwError(() => new Error(error.status.toString()));
     }
   }
 }

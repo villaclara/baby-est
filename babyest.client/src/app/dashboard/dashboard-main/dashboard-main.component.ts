@@ -57,8 +57,8 @@ export class DashboardMainComponent implements OnInit {
 
             this.kidAge = Math.floor(timeinmilliseconds / millisecondsInDay) + 1;
           },
-          error: (err: Error) => {
-            this.errorMessageDisplayed = err.message;
+          error: (err : Error) => {
+              this.errorMessageDisplayed = err.message;
           }
         });
 
@@ -80,8 +80,16 @@ export class DashboardMainComponent implements OnInit {
               this.timeSinceLastEat = Math.floor((new Date().getTime() - new Date(this.lastEatActivity.EndDate!).getTime()) / 1000);
             }
           },
-          error: (err: Error) => {
-            this.errorMessageDisplayed = err.message;
+          error: (err : Error) => {
+            if(err.message === '404')
+            {
+              this.timeSinceLastEat = -1;
+
+            }
+            else 
+            {
+              this.errorMessageDisplayed = err.message;
+            }
           }
         });
 
@@ -103,8 +111,16 @@ export class DashboardMainComponent implements OnInit {
               this.timeSinceLastSleep = Math.floor((new Date().getTime() - new Date(this.lastSleepActivity.EndDate!).getTime()) / 1000);
             }
           },
-          error: (err: Error) => {
-            this.errorMessageDisplayed = err.message;
+          error: (err : Error) => {
+            if(err.message === '404')
+            {
+              this.timeSinceLastSleep = -1;
+
+            }
+            else 
+            {
+              this.errorMessageDisplayed = err.message;
+            }
           }
         });
 
@@ -115,19 +131,56 @@ export class DashboardMainComponent implements OnInit {
       .subscribe(
         {
           next: (data: KidActivity[]) => {
-            console.log("get all acts");
-            let i = 0;
-            for (let k = 0; k < 3; k++) {
 
-              // If the first activity is Active then skip it and reset the loop variable
-              if (data[i].IsActiveNow == true) {
-                i++;
-                k--;
-                continue;
+            // Fill the array depending on data length.
+            if(data.length <= 0)
+            {
+              console.log("no recent activities.");
+              return;
+            }
+            // if we have only one Active activity we do nothing, else we push into the array.
+            else if (data.length == 1)
+            {
+              if(data[0].IsActiveNow != true)
+              {
+                this.activities.push(data[0]);
               }
+            }
+            // Put the two items into array.
+            else if(data.length == 2)
+            {
+              let i = 0;
 
-              this.activities.push(data[i]);
-              i++;
+              for (let k = 0; k < data.length; k++) {
+                
+                // If the first activity is Active then skip it and reset the loop variable
+                if (data[i].IsActiveNow == true) {
+                  i++;
+                  k--;
+                  continue;
+                }
+                
+                this.activities.push(data[i]);
+                i++;
+              }
+            }
+            // Default behavior if having more than 3 activities.
+            else if(data.length > 3)
+            {
+
+              let i = 0;
+              for (let k = 0; k < 3; k++) {
+                
+                // If the first activity is Active then skip it and reset the loop variable
+                if (data[i].IsActiveNow == true) {
+                  i++;
+                  k--;
+                  continue;
+                }
+                
+                this.activities.push(data[i]);
+                i++;
+              }
             }
           },
           error: (err: Error) => {
@@ -191,8 +244,14 @@ export class DashboardMainComponent implements OnInit {
             };
 
             // add to last activities list and delete the last one
-            this.activities.unshift(activity);
-            this.activities.pop();
+            if(this.activities.length < 3)
+            {
+              this.activities.push(activity);
+            }
+            else {  
+              this.activities.unshift(activity);
+              this.activities.pop();
+            }
           },
           error: (error) => {
             console.log(error);
