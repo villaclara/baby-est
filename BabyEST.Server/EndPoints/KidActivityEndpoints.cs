@@ -71,11 +71,11 @@ public static class KidActivityEndpoints
 			.Include(k => k.Kid)
 			.Take(10)
 			.OrderByDescending(a => a.StartDate)
-			.First();
+			.FirstOrDefault();
 
 		if (activity is null)
 		{
-			return TypedResults.BadRequest("No activities");
+			return TypedResults.NotFound($"No last activity for type {actType}");
 		}
 		return TypedResults.Ok(new KidActivityDto(activity));
 
