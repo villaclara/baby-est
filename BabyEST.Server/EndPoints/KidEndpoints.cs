@@ -124,6 +124,7 @@ public static class KidEndpoints
 		}
 
 		var kid = dbctx.Kids.Where(k => k.Id == id && k.Parents.Any(p => p.Id == parentId)).FirstOrDefault();
+		var activities = dbctx.KidActivities.Where(a => a.KidId == id).AsEnumerable() ?? [];
 		if (kid == null)
 		{
 			return TypedResults.BadRequest("Kid not found, maybe already removed.");
@@ -133,6 +134,7 @@ public static class KidEndpoints
 		{
 
 			dbctx.Kids.Remove(kid);
+			dbctx.KidActivities.RemoveRange(activities);
 			await dbctx.SaveChangesAsync();
 
 			return TypedResults.NoContent();
