@@ -1,4 +1,21 @@
 /* To highlight the current section in the Footer. */
 .active-link {
-    filter: brightness(80%);
+    filter: brightness(200%);
+}
+
+span {
+    font-family: 'Times New Roman', Times, serif;
+}
+
+a {
+    /* background-color: #d0aeb3; */
+    /* background-color: #9cabcf; */
+    background-color: #404756;
+    color: white;
+}
+
+
+.btn:hover {
+    background-color: #404756;
+    outline: none;
 }
