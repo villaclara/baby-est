@@ -2,28 +2,36 @@
 
 
 <div *ngIf="errorMessageDisplayed === ''" class="container">
-  <div class="row border-bottom" style="height: 5vw;">
+  <div class="row" style="height: 5vw;">
 
   </div>
   <!-- My ACCOUNT -->
-  <div class="row">
-    <p> Аккаунт </p>
-    <div class="col">
-      <div>
-        <img src="../../../assets/img/user.png" height="50" width="50" style="max-width: 100%;" />
+  <p class="display-5"> Аккаунт </p>
+  <div class="container">
+
+    <div class="row card card-body">
+      <div class="col">
+        <div class="row">
+
+          <div class="col-auto">
+            <div>
+              <img src="../../../assets/img/user.png" height="30" width="30" style="max-width: 100%;" />
+            </div>
+          </div>
+          <div class="col text-start">
+            <span>Email:</span><span class="fw-semibold"> {{ currentParent.Email }} </span>
+          </div>
+        </div>
       </div>
-    </div>
-    <div class="col">
-      <span>Email: {{ currentParent.Email }} </span>
     </div>
   </div>
 
 
   <!-- List Of Childs, each selectable -->
-  <div class="container pt-5">
+  <div class="container pt-2">
 
-    <div class="text-start">
-      <span class="h4">Діти</span>
+    <div class="">
+      <p class="display-6">Діти</p>
     </div>
 
     <div class="row row-cols-2 border rounded-1 my-1">
@@ -31,8 +39,8 @@
       <div class="text-wrap" *ngFor="let kid1 of currentParent.Kids; index as i">
 
         <!-- Child Placeholder component -->
-        <div class="col border rounded-2 m-2 p-2 text-wrap w-100" 
-             [ngClass]="kid1.KidId == activeKidId ? 'border-success border-2' : 'border-light'">
+        <div class="col border rounded-4 m-2 p-2 text-wrap w-100" 
+             [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'">
           <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
           (click)="selectKid(kid1.KidId)" />
           <div class="text-wrap">
@@ -53,7 +61,7 @@
         </button>
       </div>
 
-      <div class="col-12 border-top" *ngIf="isPlusKidBtnClicked">
+      <div class="col-12 border-top" *ngIf="isPlusKidBtnClicked" >
         <div class="row text-start gy-2 p-1">
           <div class="col-5 text-end">
             <label for="inputKidName" class="form-text">Ім'я</label>
@@ -99,14 +107,6 @@
 
   </div>
 
-
-  <!-- Settings Secion -->
-  <div class="container">
-
-    <div class="row border">
-      <div>Settings</div>
-    </div>
-  </div>
 
   <div class="container">
     <div class="row">
