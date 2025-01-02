@@ -11,67 +11,102 @@ import { ErrorHandlerService } from '../ErrorHandler/error-handler.service';
 })
 export class KidService {
 
-  constructor(private http: HttpClient, 
-    private currentKidService : CurrentKidService,
-  private errorHandler : ErrorHandlerService) {
+  constructor(private http: HttpClient,
+    private currentKidService: CurrentKidService,
+    private errorHandler: ErrorHandlerService) {
 
-   }
+  }
 
-    headers1: HttpHeaders = new HttpHeaders({
-         'Content-Type': 'application/json' });
+  headers1: HttpHeaders = new HttpHeaders({
+    'Content-Type': 'application/json'
+  });
 
-  getKidById(kidId: number) : Observable<Kid> {
-    const url = 'api/kid/' + this.currentKidService.getCurrentKid();
-    
+  getKidById(kidId: number): Observable<Kid> {
+    const url = 'api/kid/' + kidId;
+
     return this.http.get<Kid>(url);
   }
 
-  getKidActivitiesById(kidId: number) : Observable<KidActivity[]> {
+  addKid(kid: Kid): Observable<any> {
+    return this.http.post<Kid>(`api/kid`, JSON.stringify({
+      Name: kid.Name,
+      BirthDate: kid.BirthDate,
+      Activities: [],
+      Parents: []
+    }),
+      { headers: this.headers1 }).pipe(
+        catchError(err => this.errorHandler.handle(err))
+      );
+  }
+
+  updateKid(kid: Kid, kidId : number) : Observable<any> {
+    const url = `api/kid/${kidId}`;
+    return this.http.put<Kid>(url, JSON.stringify({
+      Name : kid.Name,
+      BirthDate : kid.BirthDate,
+      Activities : [],
+      Parents: []
+    }),
+    { 
+      headers: this.headers1 
+    }).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
+  }
+
+  deleteKidById(kidId : number) : Observable<any> {
+    const url = `api/kid/${kidId}`;
+    return this.http.delete(url);
+  }
+
+  getKidActivitiesById(kidId: number): Observable<KidActivity[]> {
     let url = `api/kid/${kidId}/activity`;
     return this.http.get<KidActivity[]>(url).pipe(
       catchError(err => this.errorHandler.handle(err))
     );
   }
 
-  getLastSleepByKidId(kidId: number) : Observable<KidActivity> {
-    let url : string = `api/kid/${kidId}/activity/last?actType=sleep`;
+  getLastSleepByKidId(kidId: number): Observable<KidActivity> {
+    let url: string = `api/kid/${kidId}/activity/last?actType=sleep`;
     return this.http.get<KidActivity>(url).pipe(
       catchError(err => this.errorHandler.handle(err))
     );
   }
 
-  getLastEatingByKidId(kidId: number) : Observable<KidActivity> {
-    let url : string = `api/kid/${kidId}/activity/last?actType=eat`;
+  getLastEatingByKidId(kidId: number): Observable<KidActivity> {
+    let url: string = `api/kid/${kidId}/activity/last?actType=eat`;
     return this.http.get<KidActivity>(url).pipe(
       catchError(err => this.errorHandler.handle(err))
     );
   }
 
-  addActivityToKid(kidId: number, activity : KidActivity) : Observable<any> {
+  addActivityToKid(kidId: number, activity: KidActivity): Observable<any> {
     let url = `api/kid/${kidId}/activity`;
-    return this.http.post(url, JSON.stringify({ 
-      id: 0, 
-      activityType : activity.ActivityType, 
-      startDate : activity.StartDate, 
-      endDate : activity.EndDate, 
-      isActiveNow : activity.IsActiveNow,
-      kidName: activity.KidName }), 
-    { headers: this.headers1 }).pipe(
-      catchError(err => this.errorHandler.handle(err))
-    );
+    return this.http.post(url, JSON.stringify({
+      id: 0,
+      activityType: activity.ActivityType,
+      startDate: activity.StartDate,
+      endDate: activity.EndDate,
+      isActiveNow: activity.IsActiveNow,
+      kidName: activity.KidName
+    }),
+      { headers: this.headers1 }).pipe(
+        catchError(err => this.errorHandler.handle(err))
+      );
   }
 
-  updateActivity(kidId: number, activity: KidActivity) : Observable<any> {
+  updateActivity(kidId: number, activity: KidActivity): Observable<any> {
     let url = `api/kid/${kidId}/activity/${activity.Id}`;
-    return this.http.put(url, JSON.stringify({ 
-      id: activity.Id, 
-      activityType : activity.ActivityType, 
-      startDate : activity.StartDate, 
-      endDate : activity.EndDate,
-      isActiveNow : activity.IsActiveNow, 
-      kidName: activity.KidName }), 
-    { headers: this.headers1 }).pipe(
-      catchError(err => this.errorHandler.handle(err))
-    );
+    return this.http.put(url, JSON.stringify({
+      id: activity.Id,
+      activityType: activity.ActivityType,
+      startDate: activity.StartDate,
+      endDate: activity.EndDate,
+      isActiveNow: activity.IsActiveNow,
+      kidName: activity.KidName
+    }),
+      { headers: this.headers1 }).pipe(
+        catchError(err => this.errorHandler.handle(err))
+      );
   }
 }

@@ -1,67 +1,121 @@
 <div *ngIf="errorMessageDisplayed != ''">{{errorMessageDisplayed}}</div>
 
 
-<div *ngIf="errorMessageDisplayed === ''">    
-    <div class="row border-bottom" style="height: 5vw;">
+<div *ngIf="errorMessageDisplayed === ''" class="container">
+  <div class="row border-bottom" style="height: 5vw;">
 
+  </div>
+  <!-- My ACCOUNT -->
+  <div class="row">
+    <p> Аккаунт </p>
+    <div class="col">
+      <div>
+        <img src="../../../assets/img/user.png" height="50" width="50" style="max-width: 100%;" />
+      </div>
     </div>
-    <!-- My ACCOUNT -->
-    <div class="row">
-        <p> Аккаунт </p>
-        <div class="col">
-            <div>
-                <img src="../../../assets/img/user.png" height="50" width="50"/>
-            </div>
-        </div>
-        <div class="col">
-            <span>Email: {{ currentParent.Email }} </span>
-        </div>
+    <div class="col">
+      <span>Email: {{ currentParent.Email }} </span>
     </div>
+  </div>
 
 
-    <!-- List Of Childs, each selectable -->
-    <div class="container py-5">
-        
-        <div class="text-start">
-            <span class="h4">Діти</span>
-        </div>
+  <!-- List Of Childs, each selectable -->
+  <div class="container pt-5">
 
-        <div class="row row-cols-3 border rounded-1 my-3">
-            
-            <div *ngFor="let kid1 of currentParent.Kids; index as i">
-
-                <!-- Child Placeholder component -->
-                <div class="col border border-2 border-secondary rounded-2 m-2" (click)="selectKid(kid1.KidId)">
-                    <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40"/>
-                <div>
-                    <span>{{kid1.KidName}}</span>
-                </div>
-                <div *ngIf="activeKidId != null && activeKidId == kid1.KidId">
-                    active
-                </div>
-            </div>
-        </div>
-
-         </div>
+    <div class="text-start">
+      <span class="h4">Діти</span>
     </div>
 
+    <div class="row row-cols-2 border rounded-1 my-1">
 
-    <!-- Settings Secion -->
-    <div class="container">
+      <div class="text-wrap" *ngFor="let kid1 of currentParent.Kids; index as i">
 
-        <div class="row border">
-            <div>Settings</div>
+        <!-- Child Placeholder component -->
+        <div class="col border rounded-2 m-2 p-2 text-wrap w-100" 
+             [ngClass]="kid1.KidId == activeKidId ? 'border-success border-2' : 'border-light'">
+          <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
+          (click)="selectKid(kid1.KidId)" />
+          <div class="text-wrap">
+            {{kid1.KidName}}
+          </div>
+          <div>
+            <button class="btn btn-sm btn-outline-secondary" (click)="plusKidBtnClick(kid1.KidId)">
+              <span>Редаг.</span>
+            </button>
+          </div>
         </div>
-    </div>
 
-    <div class="container">
-        <div class="row">
-            <div class="mt-5 d-grid">
-                <button class="btn btn-danger" (click)="logout()">
-                    <span>Вийти</span>
+      </div>
+
+      <div class="col align-content-center">
+        <button class="btn btn-primary w-50 m-2 p-2" (click)="plusKidBtnClick(-1)">
+          <span class="fs-5 fw-bold">+</span>
+        </button>
+      </div>
+
+      <div class="col-12 border-top" *ngIf="isPlusKidBtnClicked">
+        <div class="row text-start gy-2 p-1">
+          <div class="col-5 text-end">
+            <label for="inputKidName" class="form-text">Ім'я</label>
+          </div>
+          <div class="col-7">
+            <input type="text" name="inputKidName" class="form-control" [(ngModel)]="kidModelName" />
+          </div>
+
+
+          <div class="col-5 text-end">
+            <label for="inputKidBirth" class="form-text">Дата народження</label>
+          </div>
+          <div class="col-7">
+            <input type="date" value="kidModelBirth | date : 'yyyy-MM-dd'" name="inputKidBirth" class="form-control" [ngModel]="kidModelBirth | date : 'yyyy-MM-dd'" (ngModelChange)="kidModelBirth=$event"/>
+          </div>
+
+
+          <div class="col-12 text-center" *ngIf="!isEditingKid">
+            <button class="btn btn-success" (click)="addKidBtnClick()">
+              <span>Додати</span>
+            </button>
+          </div>
+
+          <div class="col-12" *ngIf="isEditingKid">
+
+            <div class="row">
+
+              <div class="col text-center">
+                <button class="btn btn-success" (click)="updateKidBtnClick()">
+                  <span>Зберегти</span>
                 </button>
+              </div>
+              <div class="col text-center">
+                <button class="btn btn-danger" (click)="deleteKidBtnClick()">
+                  <span>Видалити</span>
+                </button>
+              </div>
             </div>
+          </div>
         </div>
+      </div>
     </div>
-   
+
+  </div>
+
+
+  <!-- Settings Secion -->
+  <div class="container">
+
+    <div class="row border">
+      <div>Settings</div>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="mt-5 d-grid">
+        <button class="btn btn-danger" (click)="logout()">
+          <span>Вийти</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
 </div>

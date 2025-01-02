@@ -15,7 +15,7 @@ export class ErrorHandlerService {
     if (error.status === 401 || error.status === 403) {
       // Unathorized or Forbidden - redirect to signin page.
       console.error("status 401 in parent service");
-      // this.router.navigateByUrl('signin');
+      this.router.navigateByUrl('signin');
       return throwError(() => new Error(error.status.toString()));
     }
     else {
