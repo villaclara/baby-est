@@ -5,6 +5,7 @@ import { AppComponent } from './app.component';
 import { SigningpageComponent } from './signingpage/signingpage.component';
 import { DashboardMainComponent } from './dashboard/dashboard-main/dashboard-main.component';
 import { HomeComponent } from './home/home.component';
+import { HistoryComponent } from './history/history/history.component';
 
 // HomeComponent is empty component with only router-outlet and footer displayed. 
 // Because we need to display footer in pages except /signin
@@ -20,6 +21,7 @@ const routes: Routes = [
       // { path: '', redirectTo: ('main/:id'), pathMatch: 'prefix'},
       { path: 'parent', component: ParentDetailComponent },
       { path: 'main/:id', component: DashboardMainComponent },
+      { path: 'history', component: HistoryComponent}
     ],
     component: HomeComponent,
   }
