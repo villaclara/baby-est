@@ -32,6 +32,7 @@ export class ParentDetailComponent implements OnInit {
   isPlusKidBtnClicked: boolean = false;
   isEditingKid: boolean = false;
   selectedEditingKidId: number = 0;
+  newParentEmail : string = '';
   constructor(private authService: AuthService,
     private router: Router,
     private parentService: ParentService,
@@ -148,6 +149,26 @@ export class ParentDetailComponent implements OnInit {
   onBackBtnClick() : void {
     this.isEditingKid = false;
     this.isPlusKidBtnClicked = false;
+  }
+
+
+  addNewParent() : void {
+    if(this.newParentEmail === '')
+    {
+      return;
+    }
+    
+    this.parentService.addNewParentToKid(this.selectedEditingKidId, this.newParentEmail).subscribe(
+      {
+        next: () => {
+          this.initializeParentInfo();
+          this.newParentEmail = '';
+        },
+        error: (err) => { console.log (err.message) }
+      }
+    );
+
+
   }
 
   private initializeParentInfo(): void {
