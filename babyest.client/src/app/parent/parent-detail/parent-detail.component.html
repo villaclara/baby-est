@@ -34,17 +34,25 @@
       <p class="display-6">Діти</p>
     </div>
 
-    <div class="row row-cols-2 border rounded-1 my-1">
+    <div class="row row-cols-1 border rounded-1 my-1">
 
-      <div class="text-wrap" *ngFor="let kid1 of currentParent.Kids; index as i">
+      <!-- <div class="text-wrap" *ngFor="let kid1 of currentParent.Kids; index as i">
 
-        <!-- Child Placeholder component -->
+        <!-- Child Placeholder component 
         <div class="col border rounded-4 m-2 p-2 text-wrap w-100" 
              [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'">
           <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
           (click)="selectKid(kid1.KidId)" />
           <div class="text-wrap">
             {{kid1.KidName}}
+          </div>
+          <div class="" *ngFor="let par of kid1.Parents; index as j">
+            <div class="text-wrap" *ngIf="par == currentParent.Email">
+              {{par}} (Я)
+            </div>
+            <div class="text-wrap" *ngIf="par != currentParent.Email">
+              {{par}}
+            </div>
           </div>
           <div>
             <button class="btn btn-sm btn-outline-secondary" (click)="plusKidBtnClick(kid1.KidId)">
@@ -53,15 +61,90 @@
           </div>
         </div>
 
+      </div> -->
+
+      <div class="col">
+
+        <div *ngFor="let kid1 of currentParent.Kids; index as i">
+          <div class="text-start border rounded-4 my-2 py-2 text-wrap w-100" *ngIf="!isEditingKid">
+            <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
+            <div class="row">
+              <div class="col-9">
+                <label for="btn-check-selectKid_{{kid1.KidId}}" class="col-12">
+                  <div class="row">
+                    <div class="col-auto my-auto">
+                      <input type="radio" [value]="kid1.KidId" [(ngModel)]="activeKidId"
+                        id="btn-check-selectKid_{{kid1.KidId}}" class="btn" name="activekididaso"
+                        (change)="onKidSelected(kid1.KidId)" />
+                    </div>
+                    <div class="col-auto ps-0">
+                      <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
+                        (click)="selectKid(kid1.KidId)" />
+                    </div>
+                    <div class="col">
+                      {{kid1.KidName}}
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <div class="col-3">
+                <div class="row ps-3">
+                  <div class="col-auto">
+                    <button class="btn btn-outline-info" (click)="plusKidBtnClick(kid1.KidId)">
+                      <span>E</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="text-start border rounded-4 my-2 py-2 text-wrap w-100" *ngIf="isEditingKid && selectedEditingKidId == kid1.KidId">
+            <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
+            <div class="row">
+              <div class="col-9">
+                <label for="btn-check-selectKid_{{kid1.KidId}}" class="col-12">
+                  <div class="row">
+                    <div class="col-auto my-auto">
+                      <input type="radio" [value]="kid1.KidId" [(ngModel)]="activeKidId"
+                        id="btn-check-selectKid_{{kid1.KidId}}" class="btn" name="activekididaso"
+                        (change)="onKidSelected(kid1.KidId)" />
+                    </div>
+                    <div class="col-auto ps-0">
+                      <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
+                        (click)="selectKid(kid1.KidId)" />
+                    </div>
+                    <div class="col">
+                      {{kid1.KidName}}
+                    </div>
+                  </div>
+                </label>
+              </div>
+              <div class="col-3">
+                <div class="row ps-3">
+                  <div class="col-auto">
+                    <button class="btn btn-outline-info" (click)="plusKidBtnClick(kid1.KidId)">
+                      <span>E</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
       </div>
 
-      <div class="col align-content-center">
+
+
+      <div class="col align-content-center" *ngIf="!isEditingKid">
         <button class="btn btn-primary w-50 m-2 p-2" (click)="plusKidBtnClick(-1)">
           <span class="fs-5 fw-bold">+</span>
         </button>
       </div>
 
-      <div class="col-12 border-top" *ngIf="isPlusKidBtnClicked" >
+      <div class="col-12 border-top" *ngIf="isEditingKid">
         <div class="row text-start gy-2 p-1">
           <div class="col-5 text-end">
             <label for="inputKidName" class="form-text">Ім'я</label>
@@ -75,20 +158,33 @@
             <label for="inputKidBirth" class="form-text">Дата народження</label>
           </div>
           <div class="col-7">
-            <input type="date" value="kidModelBirth | date : 'yyyy-MM-dd'" name="inputKidBirth" class="form-control" [ngModel]="kidModelBirth | date : 'yyyy-MM-dd'" (ngModelChange)="kidModelBirth=$event"/>
+            <input type="date" value="kidModelBirth | date : 'yyyy-MM-dd'" name="inputKidBirth" class="form-control"
+              [ngModel]="kidModelBirth | date : 'yyyy-MM-dd'" (ngModelChange)="kidModelBirth=$event" />
           </div>
 
 
-          <div class="col-12 text-center" *ngIf="!isEditingKid">
-            <button class="btn btn-success" (click)="addKidBtnClick()">
-              <span>Додати</span>
-            </button>
-          </div>
-
-          <div class="col-12" *ngIf="isEditingKid">
-
+          <div class="col-12 text-center" *ngIf="isEditingKid && selectedEditingKidId == -1">
             <div class="row">
+              <div class="col text-center">
 
+                <button class="btn btn-success" (click)="addKidBtnClick()">
+                  <span>Додати</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="row pt-1">
+              <div class="col text-center">
+                <button class="btn btn-outline-dark" (click)="onBackBtnClick()">
+                  <span>Назад</span>
+                </button>
+              </div>
+            </div>
+          </div>
+          
+
+          <div class="col-12" *ngIf="isEditingKid && selectedEditingKidId != -1">
+            <div class="row">
               <div class="col text-center">
                 <button class="btn btn-success" (click)="updateKidBtnClick()">
                   <span>Зберегти</span>
@@ -97,6 +193,13 @@
               <div class="col text-center">
                 <button class="btn btn-danger" (click)="deleteKidBtnClick()">
                   <span>Видалити</span>
+                </button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col text-center">
+                <button class="btn btn-outline-dark" (click)="onBackBtnClick()">
+                  <span>Назад</span>
                 </button>
               </div>
             </div>

@@ -21,6 +21,13 @@ import { Kid } from '../../models/kid';
 
 export class ParentDetailComponent implements OnInit {
 
+
+  onKidSelected(id : number) {
+    this.currentKidService.setCurrentKid(id);
+    this.activeKidId = this.currentKidService.getCurrentKid();
+    this.router.navigateByUrl('main/' + this.activeKidId);
+}
+
   errorMessageDisplayed: string = '';
   isPlusKidBtnClicked: boolean = false;
   isEditingKid: boolean = false;
@@ -31,6 +38,8 @@ export class ParentDetailComponent implements OnInit {
     private currentKidService: CurrentKidService,
     private kidService: KidService) { }
 
+
+
   currentParent: Parent = { Id: 0, Email: '', Kids: [] };
   activeKidId: number | null = null;
 
@@ -39,15 +48,17 @@ export class ParentDetailComponent implements OnInit {
   ngOnInit(): void {
     this.initializeParentInfo();
     this.activeKidId = this.currentKidService.getCurrentKid();
+    console.log(this.activeKidId);
   }
 
   plusKidBtnClick(kidNumber: number): void {
 
     // No kid selected, we want to add new one.
     if (kidNumber == -1) {
-      this.isEditingKid = false;
       this.kidModelBirth = new Date();
       this.kidModelName = '';
+      this.selectedEditingKidId = -1;
+      this.isEditingKid = true;
     }
     // else display the selected kid info.
     else {
@@ -68,46 +79,47 @@ export class ParentDetailComponent implements OnInit {
 
   addKidBtnClick(): void {
     this.isPlusKidBtnClicked = false;
+    this.isEditingKid = false;
 
     // Allow the starting value of Date to be converted to string and send to api.
-    let dateOnly : string = '';
+    let dateOnly: string = '';
     try {
       dateOnly = this.kidModelBirth.toISOString().split('T')[0];
     }
-    catch
-    {
+    catch {
       dateOnly = this.kidModelBirth.toString();
     }
     let kid: Kid = { Name: this.kidModelName, BirthDate: dateOnly, Activities: [], Parents: [] };
     this.kidService.addKid(kid)
       .subscribe({
         next: () => {
-        this.initializeParentInfo();
-      },
-    error: (err) => console.log(err.message)
-  });
+          this.initializeParentInfo();
+        },
+        error: (err) => console.log(err.message)
+      });
 
   }
 
   updateKidBtnClick(): void {
-    
+
     // Allow the starting value of Date to be converted to string and send to api.
-    let dateOnly : string = '';
+    let dateOnly: string = '';
     try {
       dateOnly = this.kidModelBirth.toISOString().split('T')[0];
     }
-    catch
-    {
+    catch {
       dateOnly = this.kidModelBirth.toString();
     }
     let kid: Kid = { Name: this.kidModelName, BirthDate: dateOnly, Activities: [], Parents: [] };
     this.kidService.updateKid(kid, this.selectedEditingKidId)
       .subscribe({
         next: () => {
-        this.initializeParentInfo();
-      },
+          this.initializeParentInfo();
+        },
         error: (err) => console.log(err.message)
       });
+
+    this.isEditingKid = false;
   }
 
   deleteKidBtnClick(): void {
@@ -133,6 +145,10 @@ export class ParentDetailComponent implements OnInit {
     this.router.navigate(['/main/', kidId]);
   }
 
+  onBackBtnClick() : void {
+    this.isEditingKid = false;
+    this.isPlusKidBtnClicked = false;
+  }
 
   private initializeParentInfo(): void {
     this.parentService.getParentInfo().subscribe(

@@ -7,4 +7,5 @@ export interface Parent {
 export interface KidsOfParent {
     KidId : number;
     KidName : string;
+    Parents : string[];
 }

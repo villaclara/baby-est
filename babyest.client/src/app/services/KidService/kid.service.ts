@@ -21,6 +21,12 @@ export class KidService {
     'Content-Type': 'application/json'
   });
 
+
+  getKidsForParent() : Observable<Kid[]> {
+    const url = `api/kid`;
+    return this.http.get<Kid[]>(url);
+  }
+
   getKidById(kidId: number): Observable<Kid> {
     const url = 'api/kid/' + kidId;
 
