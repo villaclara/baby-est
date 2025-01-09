@@ -187,7 +187,11 @@ export class ParentDetailComponent implements OnInit {
   logout(): void {
     this.authService.tryLogout().subscribe(
       {
-        next: () => this.router.navigate(['/signin']),
+        next: () => {
+          localStorage.removeItem("activekid");
+          this.router.navigate(['/signin'])
+        },
+          
         error: (err: Error) => {
           this.errorMessageDisplayed = err.message;
         }
