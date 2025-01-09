@@ -31,7 +31,7 @@ public static class ParentEndpoints
 		}
 		Log.Information("GET KIDS OF PARENT WITH ID {@ID}", parentId);
 
-		var parent = dbContext.Parents.Where(p => p.Id == parentId).Include(p => p.Kids).FirstOrDefault();
+		var parent = dbContext.Parents.Where(p => p.Id == parentId).Include(p => p.Kids).ThenInclude(k => k.Parents).FirstOrDefault();
 		if (parent is null)
 		{
 			return TypedResults.BadRequest("Parent id not found.");

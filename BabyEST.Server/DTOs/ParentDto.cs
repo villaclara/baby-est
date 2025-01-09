@@ -15,9 +15,14 @@ public record class ParentDto
 		Email = user.Email;
 		foreach (var kid in user.Kids)
 		{
-			Kids.Add(new(kid.Id, kid.Name));
+			var parentsList = new List<string>();
+			foreach (var parent in kid.Parents)
+			{
+				parentsList.Add(parent.Email);
+			}
+			Kids.Add(new(kid.Id, kid.Name, parentsList));
 		}
 	}
 
-	public record KidSimple(int KidId, string KidName);
+	public record KidSimple(int KidId, string KidName, List<string> Parents);
 }

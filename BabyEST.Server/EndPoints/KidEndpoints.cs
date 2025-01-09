@@ -4,6 +4,7 @@ using BabyEST.Server.Database;
 using BabyEST.Server.DTOs;
 using BabyEST.Server.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 namespace BabyEST.Server.EndPoints;
@@ -31,7 +32,7 @@ public static class KidEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		var kids = dbctx.Kids.Where(k => k.Parents.Any(p => p.Id == parentId));
+		var kids = dbctx.Kids.Where(k => k.Parents.Any(p => p.Id == parentId)).Include(k => k.Parents);
 
 		if (kids is null)
 		{
@@ -57,7 +58,7 @@ public static class KidEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
-		var kid = dbctx.Kids.Where(k => k.Id == id && k.Parents.Any(p => p.Id == parentId)).FirstOrDefault();
+		var kid = dbctx.Kids.Where(k => k.Id == id && k.Parents.Any(p => p.Id == parentId)).Include(k => k.Parents).FirstOrDefault();
 
 		if (kid is null)
 		{
