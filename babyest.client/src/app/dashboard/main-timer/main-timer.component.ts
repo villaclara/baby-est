@@ -1,23 +1,28 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from '@angular/core';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { interval, map, Observable, Subject, takeUntil, timer } from 'rxjs';
 import { TimerCounterPipe } from '../../pipes/timer-counter.pipe';
 import { KidActivity } from '../../models/kid-activity';
 import { KidService } from '../../services/KidService/kid.service';
 import { ActivityNameTranslator } from '../../utils/activity-name-translator';
 import { NgIf } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-main-timer',
   standalone: true,
-  imports: [CommonModule, TimerCounterPipe, NgIf],
+  imports: [CommonModule, TimerCounterPipe, NgIf, FormsModule],
   templateUrl: './main-timer.component.html',
   styleUrl: './main-timer.component.css'
 })
 
-export class MainTimerComponent implements OnInit, OnChanges {
+export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(private kidService: KidService) { }
+  
+  ngOnDestroy(): void {
+    this.timerDone$.unsubscribe();
+  }
 
 
   isRunningTimer: boolean = false;
@@ -39,6 +44,7 @@ export class MainTimerComponent implements OnInit, OnChanges {
 
   @Input() currentActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
 
+  nowDate : string = '';
 
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
@@ -60,7 +66,11 @@ export class MainTimerComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(): void {
-
+    // const dat = new Date();
+    // let hours = dat.getHours() < 10 ? "0" + dat.getHours() : dat.getHours();
+    // let minutes = dat.getMinutes() < 10 ? "0" + dat.getMinutes() : dat.getMinutes();
+    // this.nowDate = hours + ":" + minutes;
+    // console.log(this.nowDate);
   }
 
   startSelectEatingType(): void {
@@ -100,14 +110,12 @@ export class MainTimerComponent implements OnInit, OnChanges {
       this.timePassed = 0;
       this.startStopImageLink = '../../../assets/img/stop_icon.png';
       this.isRunningTimer = true;
-      console.log(this.isRunningTimer);
 
       // Set current Activity and Start tracking the activity
+      this.nowDate = '';
       this.currentActivity.StartDate = new Date();
       this.currentActivity.IsActiveNow = true;
       this.currentActivityNameUA = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
-      console.log(this.currentActivity.StartDate);
-      console.log(this.currentActivity.EndDate);
 
 
       // Send the info to the parent to send to Api.
@@ -125,7 +133,20 @@ export class MainTimerComponent implements OnInit, OnChanges {
       this.isEatingSelected = false;
 
       // Stop tracking current Activity. Set EndDate
-      this.currentActivity.EndDate = new Date();
+      if(this.nowDate != '')
+      {
+        let y = new Date().getFullYear();
+        let m = new Date().getMonth() < 9 ? "0" + (new Date().getMonth() + 1) : new Date().getMonth();
+        let d = new Date().getDate() < 10 ? "0" + new Date().getDate() : new Date().getDate();
+        let ddd = y + "-" + m + "-" + d + "T" + this.nowDate + ":00";
+        this.currentActivity.EndDate = new Date(ddd);
+      }
+      else 
+      {
+        this.currentActivity.EndDate = new Date();
+      }
+
+
       this.currentActivity.IsActiveNow = false;
       this.currentActivityNameUA = 'Чіл';
       this.timePassed = 0;
