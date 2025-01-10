@@ -72,6 +72,14 @@ export class KidService {
     );
   }
 
+
+  getLastSomeValueKidActivitiesById(kidId: number, actsCount: number): Observable<KidActivity[]> {
+    let url = `api/kid/${kidId}/activity?last=${actsCount}`;
+    return this.http.get<KidActivity[]>(url).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
+  }
+
   getLastSleepByKidId(kidId: number): Observable<KidActivity> {
     let url: string = `api/kid/${kidId}/activity/last?actType=sleep`;
     return this.http.get<KidActivity>(url).pipe(
