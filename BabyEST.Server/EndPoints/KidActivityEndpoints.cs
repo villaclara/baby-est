@@ -23,6 +23,9 @@ public static class KidActivityEndpoints
 		return builder;
 	}
 
+	private static bool KidExistsOrBelongsToParent(int kidId, int parentId, ApplicationDbContext dbctx) =>
+		dbctx.Kids.Any(k => k.Id == kidId && k.Parents.Any(p => p.Id == parentId));
+
 	private static IResult GetAllActivitiesForKid([FromRoute] int id, ClaimsPrincipal principal, ApplicationDbContext dbctx)
 	{
 		// Get current user id
@@ -31,6 +34,11 @@ public static class KidActivityEndpoints
 		{
 			Log.Warning("{@Method} - Could not parse current user id ({@pid}).", nameof(GetAllActivitiesForKid), pid);
 			return TypedResults.BadRequest("Could not parse current user id.");
+		}
+
+		if (!KidExistsOrBelongsToParent(id, parentId, dbctx))
+		{
+			return TypedResults.BadRequest("Kid with provided Id not found or you are not parent.");
 		}
 
 		var activities = dbctx.KidActivities.Where(a => a.KidId == id).Include(k => k.Kid).OrderByDescending(a => a.StartDate);
@@ -59,6 +67,10 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
+		if (!KidExistsOrBelongsToParent(id, parentId, dbctx))
+		{
+			return TypedResults.BadRequest("Kid with provided Id not found or you are not parent.");
+		}
 
 		KidActivityType[] aType = actType.ToLower().Trim() switch
 		{
@@ -91,6 +103,11 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
+		if (!KidExistsOrBelongsToParent(id, parentId, dbctx))
+		{
+			return TypedResults.BadRequest("Kid with provided Id not found or you are not parent.");
+		}
+
 		var activity = dbctx.KidActivities.Where(a => a.Id == aId && a.KidId == id).Include(k => k.Kid).FirstOrDefault();
 
 		if (activity is null)
@@ -110,6 +127,11 @@ public static class KidActivityEndpoints
 		{
 			Log.Warning("{@Method} - Could not parse current user id ({@pid}).", nameof(AddActivity), pid);
 			return TypedResults.BadRequest("Could not parse current user id.");
+		}
+
+		if (!KidExistsOrBelongsToParent(id, parentId, dbctx))
+		{
+			return TypedResults.BadRequest("Kid with provided Id not found or you are not parent.");
 		}
 
 		try
@@ -150,6 +172,11 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Could not parse current user id.");
 		}
 
+		if (!KidExistsOrBelongsToParent(id, parentId, dbctx))
+		{
+			return TypedResults.BadRequest("Kid with provided Id not found or you are not parent.");
+		}
+
 		var activity = dbctx.KidActivities.Where(a => a.Id == aId && a.KidId == id).FirstOrDefault();
 		if (activity == null)
 		{
@@ -188,6 +215,11 @@ public static class KidActivityEndpoints
 		{
 			Log.Warning("{@Method} - Could not parse current user id ({@pid}).", nameof(RemoveActivity), pid);
 			return TypedResults.BadRequest("Could not parse current user id.");
+		}
+
+		if (!KidExistsOrBelongsToParent(id, parentId, dbctx))
+		{
+			return TypedResults.BadRequest("Kid with provided Id not found or you are not parent.");
 		}
 
 		var activity = dbctx.KidActivities.Where(a => a.Id == aId && a.KidId == id).FirstOrDefault();
