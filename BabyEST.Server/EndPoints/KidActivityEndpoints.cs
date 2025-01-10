@@ -26,7 +26,7 @@ public static class KidActivityEndpoints
 	private static bool KidExistsOrBelongsToParent(int kidId, int parentId, ApplicationDbContext dbctx) =>
 		dbctx.Kids.Any(k => k.Id == kidId && k.Parents.Any(p => p.Id == parentId));
 
-	private static IResult GetAllActivitiesForKid([FromRoute] int id, ClaimsPrincipal principal, ApplicationDbContext dbctx)
+	private static IResult GetAllActivitiesForKid([FromRoute] int id, ClaimsPrincipal principal, ApplicationDbContext dbctx, [FromQuery] int? last = null)
 	{
 		// Get current user id
 		var pid = principal.FindFirstValue("id");
@@ -46,6 +46,11 @@ public static class KidActivityEndpoints
 		if (activities is null)
 		{
 			return TypedResults.BadRequest("Activities not found.");
+		}
+
+		if (last is not null)
+		{
+			activities = (IOrderedQueryable<KidActivity>)activities.Take(last.Value);
 		}
 
 		var activitiesDto = new List<KidActivityDto>();
