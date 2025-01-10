@@ -19,7 +19,7 @@ import { FormsModule } from '@angular/forms';
 export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
 
   constructor(private kidService: KidService) { }
-  
+
   ngOnDestroy(): void {
     this.timerDone$.unsubscribe();
   }
@@ -38,17 +38,17 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
 
   isEatingSelected: boolean = false;
 
-  private translator : ActivityNameTranslator = new ActivityNameTranslator();
+  private translator: ActivityNameTranslator = new ActivityNameTranslator();
 
   @Output() newKidActivity: EventEmitter<KidActivity> = new EventEmitter<KidActivity>();
 
   @Input() currentActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
 
-  nowDate : string = '';
+  nowDate: string = '';
 
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
-   
+
     if (this.currentActivity.IsActiveNow == true) {
       let timeDiff = new Date().getTime() - new Date(this.currentActivity.StartDate!).getTime();
       this.timePassed = Math.floor(timeDiff / 1000);
@@ -133,16 +133,14 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
       this.isEatingSelected = false;
 
       // Stop tracking current Activity. Set EndDate
-      if(this.nowDate != '')
-      {
+      if (this.nowDate != '') {
         let y = new Date().getFullYear();
         let m = new Date().getMonth() < 9 ? "0" + (new Date().getMonth() + 1) : new Date().getMonth();
         let d = new Date().getDate() < 10 ? "0" + new Date().getDate() : new Date().getDate();
         let ddd = y + "-" + m + "-" + d + "T" + this.nowDate + ":00";
         this.currentActivity.EndDate = new Date(ddd);
       }
-      else 
-      {
+      else {
         this.currentActivity.EndDate = new Date();
       }
 
@@ -151,7 +149,6 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
       this.currentActivityNameUA = 'Чіл';
       this.timePassed = 0;
 
-      console.log(`id- ${this.currentActivity.Id}`);
       // Send the info to the parent to send to Api.
       // Parent decides wheter to add or update activity.
       this.newKidActivity.emit(this.currentActivity);

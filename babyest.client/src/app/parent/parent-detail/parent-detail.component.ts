@@ -49,7 +49,6 @@ export class ParentDetailComponent implements OnInit {
   ngOnInit(): void {
     this.initializeParentInfo();
     this.activeKidId = this.currentKidService.getCurrentKid();
-    console.log(this.activeKidId);
   }
 
   plusKidBtnClick(kidNumber: number): void {
