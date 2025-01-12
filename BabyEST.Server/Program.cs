@@ -1,7 +1,5 @@
-using System.Security.Claims;
 using BabyEST.Server.Database;
 using BabyEST.Server.EndPoints;
-using BabyEST.Server.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
@@ -17,20 +15,20 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<ITest, Test>();
 
+// Add Environment variables
+builder.Configuration.AddEnvironmentVariables();
 
 //builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("db"));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("LocalSqlConnection")));
+	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
 	{
-		//options.LoginPath = "/api/unauthorized"; // to bypass default Cookie Redirect to Login page. It simply returns "403"
+		//options.LoginPath = "/api/unauthorized"; // to bypass default Cookie Redirect to Login page. It returns status code.
 		options.Events.OnRedirectToLogin = (ctx) =>
 		{
-
 			ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
 			return Task.CompletedTask;
 		};
@@ -42,6 +40,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 	});
 builder.Services.AddAuthorization();
 
+// Start the Names with Upper Case Letter when returning Json objects.
 builder.Services.Configure<JsonOptions>(options =>
 {
 	options.SerializerOptions.PropertyNamingPolicy = null;
@@ -64,26 +63,6 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-var summaries = new[]
-{
-	"Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-};
-
-app.MapGet("/weatherforecast", () =>
-{
-	var forecast = Enumerable.Range(1, 5).Select(index =>
-		new WeatherForecast
-		(
-			DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-			Random.Shared.Next(-20, 55),
-			summaries[Random.Shared.Next(summaries.Length)]
-		))
-		.ToArray();
-	return forecast;
-})
-.WithName("GetWeatherForecast")
-.WithOpenApi();
-
 app.MapFallbackToFile("/index.html");
 
 app.MapGroup("/auth")
@@ -91,8 +70,7 @@ app.MapGroup("/auth")
 
 app.MapGroup("/api/parent")
 	.MapParentEndpoints()
-	.RequireAuthorization()
-	.WithOpenApi();
+	.RequireAuthorization();
 
 app.MapGroup("/api/kid")
 	.MapKidEndpoints()
@@ -105,23 +83,5 @@ app.MapGroup("/api/kid/{id}/activity")
 app.MapGet("/api/unauthorized", () => "403")
 	.AllowAnonymous();
 
-app.MapGet("/log", (ClaimsPrincipal principal) =>
-{
-	//Dictionary<string, string> claims = [];
-	//foreach (var c in ctx.User.Claims)
-	//{
-	//	claims.Add(c.Type, c.Value);
-	//}
-
-	//return claims;
-
-	//return principal.Claims.Where(c => c.Type == "id").FirstOrDefault()?.Value;
-	return principal.FindFirstValue("id");
-}).RequireAuthorization();
 
 app.Run();
-
-internal record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-	public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
