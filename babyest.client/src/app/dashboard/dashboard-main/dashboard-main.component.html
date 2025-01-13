@@ -1,21 +1,27 @@
-<div *ngIf="errorMessageDisplayed != ''">{{errorMessageDisplayed}}</div>
+<div *ngIf="isLoading" >
+    <app-loading-spinner></app-loading-spinner>
+</div>
 
-<div *ngIf="errorMessageDisplayed === ''">
+<div *ngIf="!isLoading">
 
-    <div [ngClass]="{
-        'bg-sleeping' : currentActivity.ActivityType.toLowerCase() === 'sleeping',
-        'bg-eating' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping'
-    }" class="">
+    <div *ngIf="errorMessageDisplayed != ''">{{errorMessageDisplayed}}</div>
+    <div *ngIf="errorMessageDisplayed === ''">
 
-        <div class="container">
+        <div [ngClass]="{
+            'bg-sleeping' : currentActivity.ActivityType.toLowerCase() === 'sleeping',
+            'bg-eating' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping'
+        }" class="">
 
-            <app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat"
-                [timeSinceLastSleep]="timeSinceLastSleep"></app-kid-header-info>
+            <div class="container">
 
-            <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
-                [currentActivity]="currentActivity"></app-main-timer>
+                <app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat"
+                    [timeSinceLastSleep]="timeSinceLastSleep"></app-kid-header-info>
 
-            <app-last-activities [activities]="activities"></app-last-activities>
+                <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
+                    [currentActivity]="currentActivity"></app-main-timer>
+
+                <app-last-activities [activities]="activities"></app-last-activities>
+            </div>
         </div>
     </div>
 </div>

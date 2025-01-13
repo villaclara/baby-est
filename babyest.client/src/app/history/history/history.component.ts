@@ -3,12 +3,12 @@ import { SingleActivityComponent } from '../../single-activity/single-activity.c
 import { KidService } from '../../services/KidService/kid.service';
 import { KidActivity } from '../../models/kid-activity';
 import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
-import { NgFor } from '@angular/common';
+import { NgFor, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor],
+  imports: [SingleActivityComponent, NgFor, NgIf],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css'
 })
@@ -20,11 +20,14 @@ export class HistoryComponent implements OnInit {
 
   activities : KidActivity[] = [];
 
+  isLoading: boolean = true;
+
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
     this.kidService.getKidActivitiesById(currentKidId).subscribe({
       next: (data : KidActivity[]) => {
         this.activities = data;
+        this.isLoading = false;
       },
       error: (err) => console.log(err.message)
     })

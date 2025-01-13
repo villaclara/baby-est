@@ -1,13 +1,21 @@
+<div *ngIf="isLoading">
+    <app-loading-spinner></app-loading-spinner>
+</div>
 
-<div class="container">
 
-    <p class="fw-bolder">Колись тут буде нормальна історія.</p>
-    
-    <div class="card mt-4 border-dark">
-        <div class="card-body p-1">
-            <div *ngFor="let activity of activities; index as i" class="my-2 border-bottom border-dark">
-                <app-single-activity [activity]="activity"></app-single-activity>
+<div *ngIf="!isLoading">
+
+    <div class="container">
+
+        <p class="fw-bolder">Колись тут буде нормальна історія.</p>
+
+        <div class="card mt-4 border-dark">
+            <div class="card-body p-1">
+                <div *ngFor="let activity of activities; index as i" class="my-2 border-bottom border-dark">
+                    <app-single-activity [activity]="activity"></app-single-activity>
+                </div>
             </div>
         </div>
     </div>
+
 </div>

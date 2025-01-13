@@ -9,11 +9,12 @@ import { Router } from '@angular/router';
 import { KidActivity } from '../../models/kid-activity';
 import { NgClass } from '@angular/common';
 import { NgIf } from '@angular/common';
+import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
 
 @Component({
   selector: 'app-dashboard-main',
   standalone: true,
-  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass, NgIf],
+  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass, NgIf, LoadingSpinnerComponent],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })
@@ -33,7 +34,7 @@ export class DashboardMainComponent implements OnInit {
   kidId: number = 0;
 
   errorMessageDisplayed: string = '';
-
+  isLoading: boolean = true;
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private router: Router
@@ -171,11 +172,15 @@ export class DashboardMainComponent implements OnInit {
                 i++;
               }
             }
+
+        this.isLoading = false;
+
           },
           error: (err: Error) => {
             this.errorMessageDisplayed = err.message;
           }
         });
+
   }
 
 

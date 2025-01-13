@@ -1,159 +1,171 @@
-<div *ngIf="errorMessageDisplayed != ''">{{errorMessageDisplayed}}</div>
+<div *ngIf="isLoading">
+  <app-loading-spinner></app-loading-spinner>
+</div>
 
 
-<div *ngIf="errorMessageDisplayed === ''" class="container">
-  <div class="row" style="height: 5vw;">
+<div *ngIf="!isLoading">
 
-  </div>
-  <!-- My ACCOUNT -->
-  <p class="display-5"> Аккаунт </p>
-  <div class="container">
+  <div *ngIf="errorMessageDisplayed != ''">{{errorMessageDisplayed}}</div>
+  <div *ngIf="errorMessageDisplayed === ''" class="container">
+    <div class="row" style="height: 5vw;">
 
-    <div class="row card card-body">
-      <div class="col">
-        <div class="row">
+    </div>
+    <!-- My ACCOUNT -->
+    <p class="display-5"> Аккаунт </p>
+    <div class="container">
 
-          <div class="col-auto">
-            <div>
-              <img src="../../../assets/img/user.png" height="30" width="30" style="max-width: 100%;" />
+      <div class="row card card-body">
+        <div class="col">
+          <div class="row">
+
+            <div class="col-auto">
+              <div>
+                <img src="../../../assets/img/user.png" height="30" width="30" style="max-width: 100%;" />
+              </div>
             </div>
-          </div>
-          <div class="col text-start">
-            <span>Email:</span><span class="fw-semibold"> {{ currentParent.Email }} </span>
-          </div>
+            <div class="col text-start">
+              <span>Email:</span><span class="fw-semibold"> {{ currentParent.Email }} </span>
+            </div>
 
-          <div class="col-auto pe-0 me-0">
-            <div class="btn-group">
-              <button type="button" class="btn-outline-dark btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-gear" viewBox="0 0 16 16">
-                  <path d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0"/>
-                  <path d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z"/>
-                </svg>
-              </button>
+            <div class="col-auto pe-0 me-0">
+              <div class="btn-group">
+                <button type="button" class="btn-outline-dark btn dropdown-toggle" data-bs-toggle="dropdown"
+                  aria-expanded="false">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="bi bi-gear"
+                    viewBox="0 0 16 16">
+                    <path
+                      d="M8 4.754a3.246 3.246 0 1 0 0 6.492 3.246 3.246 0 0 0 0-6.492M5.754 8a2.246 2.246 0 1 1 4.492 0 2.246 2.246 0 0 1-4.492 0" />
+                    <path
+                      d="M9.796 1.343c-.527-1.79-3.065-1.79-3.592 0l-.094.319a.873.873 0 0 1-1.255.52l-.292-.16c-1.64-.892-3.433.902-2.54 2.541l.159.292a.873.873 0 0 1-.52 1.255l-.319.094c-1.79.527-1.79 3.065 0 3.592l.319.094a.873.873 0 0 1 .52 1.255l-.16.292c-.892 1.64.901 3.434 2.541 2.54l.292-.159a.873.873 0 0 1 1.255.52l.094.319c.527 1.79 3.065 1.79 3.592 0l.094-.319a.873.873 0 0 1 1.255-.52l.292.16c1.64.893 3.434-.902 2.54-2.541l-.159-.292a.873.873 0 0 1 .52-1.255l.319-.094c1.79-.527 1.79-3.065 0-3.592l-.319-.094a.873.873 0 0 1-.52-1.255l.16-.292c.893-1.64-.902-3.433-2.541-2.54l-.292.159a.873.873 0 0 1-1.255-.52zm-2.633.283c.246-.835 1.428-.835 1.674 0l.094.319a1.873 1.873 0 0 0 2.693 1.115l.291-.16c.764-.415 1.6.42 1.184 1.185l-.159.292a1.873 1.873 0 0 0 1.116 2.692l.318.094c.835.246.835 1.428 0 1.674l-.319.094a1.873 1.873 0 0 0-1.115 2.693l.16.291c.415.764-.42 1.6-1.185 1.184l-.291-.159a1.873 1.873 0 0 0-2.693 1.116l-.094.318c-.246.835-1.428.835-1.674 0l-.094-.319a1.873 1.873 0 0 0-2.692-1.115l-.292.16c-.764.415-1.6-.42-1.184-1.185l.159-.291A1.873 1.873 0 0 0 1.945 8.93l-.319-.094c-.835-.246-.835-1.428 0-1.674l.319-.094A1.873 1.873 0 0 0 3.06 4.377l-.16-.292c-.415-.764.42-1.6 1.185-1.184l.292.159a1.873 1.873 0 0 0 2.692-1.115z" />
+                  </svg>
+                </button>
 
-              <ul class="dropdown-menu">
-                <li (click)="logout()" class="border">
-                  <span class="btn">Вийти</span>
-                </li>
-              </ul>
+                <ul class="dropdown-menu">
+                  <li (click)="logout()" class="border">
+                    <span class="btn">Вийти</span>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
 
-  <!-- List Of Childs, each selectable -->
-  <div class="container pt-2">
+    <!-- List Of Childs, each selectable -->
+    <div class="container pt-2">
 
-    <div class="">
-      <p class="display-6">Діти</p>
-    </div>
+      <div class="">
+        <p class="display-6">Діти</p>
+      </div>
 
-    <div class="row row-cols-1 border rounded-1 my-1">
+      <div class="row row-cols-1 border rounded-1 my-1">
 
-      <!-- <div class="text-wrap" *ngFor="let kid1 of currentParent.Kids; index as i">
-
-         Child Placeholder component 
+        <!-- <div class="text-wrap" *ngFor="let kid1 of currentParent.Kids; index as i">
+        
+        Child Placeholder component 
         <div class="col border rounded-4 m-2 p-2 text-wrap w-100" 
-             [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'">
-          <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
-          (click)="selectKid(kid1.KidId)" />
-          <div class="text-wrap">
-            {{kid1.KidName}}
+        [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'">
+        <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
+        (click)="selectKid(kid1.KidId)" />
+        <div class="text-wrap">
+          {{kid1.KidName}}
+        </div>
+        <div class="" *ngFor="let par of kid1.Parents; index as j">
+          <div class="text-wrap" *ngIf="par == currentParent.Email">
+            {{par}} (Я)
           </div>
-          <div class="" *ngFor="let par of kid1.Parents; index as j">
-            <div class="text-wrap" *ngIf="par == currentParent.Email">
-              {{par}} (Я)
-            </div>
-            <div class="text-wrap" *ngIf="par != currentParent.Email">
-              {{par}}
-            </div>
-          </div>
-          <div>
-            <button class="btn btn-sm btn-outline-secondary" (click)="plusKidBtnClick(kid1.KidId)">
-              <span>Редаг.</span>
-            </button>
+          <div class="text-wrap" *ngIf="par != currentParent.Email">
+            {{par}}
           </div>
         </div>
+        <div>
+          <button class="btn btn-sm btn-outline-secondary" (click)="plusKidBtnClick(kid1.KidId)">
+            <span>Редаг.</span>
+          </button>
+        </div>
+      </div>
+      
+    </div> -->
 
-      </div> -->
+        <div class="col">
 
-      <div class="col">
-
-        <!-- List of all Kids of Parent -->
-        <div *ngFor="let kid1 of currentParent.Kids; index as i">
-          <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100" *ngIf="!isEditingKid">
-            <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
-            <div class="row">
-              <div class="col-9">
-                <label for="btn-check-selectKid_{{kid1.KidId}}" class="col-12">
-                  <div class="row">
-                    <div class="col-auto my-auto">
-                      <input type="radio" [value]="kid1.KidId" [(ngModel)]="activeKidId"
-                        id="btn-check-selectKid_{{kid1.KidId}}" class="btn" name="activekididaso"
-                        (change)="onKidSelected(kid1.KidId)" />
+          <!-- List of all Kids of Parent -->
+          <div *ngFor="let kid1 of currentParent.Kids; index as i">
+            <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100" *ngIf="!isEditingKid">
+              <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
+              <div class="row">
+                <div class="col-9">
+                  <label for="btn-check-selectKid_{{kid1.KidId}}" class="col-12">
+                    <div class="row">
+                      <div class="col-auto my-auto">
+                        <input type="radio" [value]="kid1.KidId" [(ngModel)]="activeKidId"
+                          id="btn-check-selectKid_{{kid1.KidId}}" class="btn" name="activekididaso"
+                          (change)="onKidSelected(kid1.KidId)" />
+                      </div>
+                      <div class="col-auto ps-0">
+                        <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40"
+                          style="max-width: 100%;" (click)="selectKid(kid1.KidId)" />
+                      </div>
+                      <div class="col">
+                        {{kid1.KidName}}
+                      </div>
                     </div>
-                    <div class="col-auto ps-0">
-                      <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
-                        (click)="selectKid(kid1.KidId)" />
+                  </label>
+                </div>
+                <div class="col-3">
+                  <div class="row ps-3">
+                    <div class="col-auto">
+                      <button class="btn btn-outline-info" (click)="plusKidBtnClick(kid1.KidId)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                          class="bi bi-pencil-fill" viewBox="0 0 16 16">
+                          <path
+                            d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z" />
+                        </svg>
+                      </button>
                     </div>
-                    <div class="col">
-                      {{kid1.KidName}}
-                    </div>
-                  </div>
-                </label>
-              </div>
-              <div class="col-3">
-                <div class="row ps-3">
-                  <div class="col-auto">
-                    <button class="btn btn-outline-info" (click)="plusKidBtnClick(kid1.KidId)">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-fill" viewBox="0 0 16 16">
-                        <path d="M12.854.146a.5.5 0 0 0-.707 0L10.5 1.793 14.207 5.5l1.647-1.646a.5.5 0 0 0 0-.708zm.646 6.061L9.793 2.5 3.293 9H3.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.207zm-7.468 7.468A.5.5 0 0 1 6 13.5V13h-.5a.5.5 0 0 1-.5-.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.5-.5V10h-.5a.5.5 0 0 1-.175-.032l-.179.178a.5.5 0 0 0-.11.168l-2 5a.5.5 0 0 0 .65.65l5-2a.5.5 0 0 0 .168-.11z"/>
-                      </svg>
-                    </button>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <!-- ONLY displaying SELECTED Kid when EDITING -->
-          <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100" *ngIf="isEditingKid && selectedEditingKidId == kid1.KidId">
-            <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
-            <div class="row">
-              <div class="col-9">
-                <label for="btn-check-selectKid_{{kid1.KidId}}" class="col-12">
-                  <div class="row">
-                    <div class="col-auto my-auto">
-                      <input type="radio" [value]="kid1.KidId" [(ngModel)]="activeKidId"
-                        id="btn-check-selectKid_{{kid1.KidId}}" class="btn" name="activekididaso"
-                        (change)="onKidSelected(kid1.KidId)" />
+            <!-- ONLY displaying SELECTED Kid when EDITING -->
+            <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100"
+              *ngIf="isEditingKid && selectedEditingKidId == kid1.KidId">
+              <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
+              <div class="row">
+                <div class="col-9">
+                  <label for="btn-check-selectKid_{{kid1.KidId}}" class="col-12">
+                    <div class="row">
+                      <div class="col-auto my-auto">
+                        <input type="radio" [value]="kid1.KidId" [(ngModel)]="activeKidId"
+                          id="btn-check-selectKid_{{kid1.KidId}}" class="btn" name="activekididaso"
+                          (change)="onKidSelected(kid1.KidId)" />
+                      </div>
+                      <div class="col-auto ps-0">
+                        <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40"
+                          style="max-width: 100%;" (click)="selectKid(kid1.KidId)" />
+                      </div>
+                      <div class="col">
+                        {{kid1.KidName}}
+                      </div>
                     </div>
-                    <div class="col-auto ps-0">
-                      <img src="../../../assets/img/baby-girl_icon.png" height="40" width="40" style="max-width: 100%;"
-                        (click)="selectKid(kid1.KidId)" />
-                    </div>
-                    <div class="col">
-                      {{kid1.KidName}}
-                    </div>
-                  </div>
-                </label>
-              </div>
-              
-
-              <!-- List of Parent section -->
-              <div class="col-12">
-                <div class="row">
-                  <div class="fs-4">
-                    Батьки
-                  </div>
+                  </label>
                 </div>
 
-                <!-- Actual List of Parents -->
-                <div class="row container">
-                  <ul class="mb-0" *ngFor="let par of kid1.Parents; index as j">
+
+                <!-- List of Parent section -->
+                <div class="col-12">
+                  <div class="row">
+                    <div class="fs-4">
+                      Батьки
+                    </div>
+                  </div>
+
+                  <!-- Actual List of Parents -->
+                  <div class="row container">
+                    <ul class="mb-0" *ngFor="let par of kid1.Parents; index as j">
                       <li>
                         <div class="text-wrap" *ngIf="par == currentParent.Email">
                           {{par}} (Я)
@@ -162,106 +174,109 @@
                           {{par}}
                         </div>
                       </li>
-                  </ul>
-                </div>
+                    </ul>
+                  </div>
 
-                <!-- Add new Parent input -->
-                <div class="row">
-                  <div class="input-group">
-                    <input type="text" class="form-control" placeholder="Email нового родича" [(ngModel)]="newParentEmail" aria-describedby="addParentInput">
-                    <button class="btn btn-outline-secondary" type="button" id="addParentInput" (click)="addNewParent()">+</button>
+                  <!-- Add new Parent input -->
+                  <div class="row">
+                    <div class="input-group">
+                      <input type="text" class="form-control" placeholder="Email нового родича"
+                        [(ngModel)]="newParentEmail" aria-describedby="addParentInput">
+                      <button class="btn btn-outline-secondary" type="button" id="addParentInput"
+                        (click)="addNewParent()">+</button>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
+            </div>
           </div>
+
         </div>
 
-      </div>
 
 
+        <!-- EDIT/ADD Kid section -->
+        <div class="col align-content-center" *ngIf="!isEditingKid">
+          <button class="btn btn-primary w-50 m-2 p-2" (click)="plusKidBtnClick(-1)">
+            <span class="fs-5 fw-bold">+</span>
+          </button>
+        </div>
 
-      <!-- EDIT/ADD Kid section -->
-      <div class="col align-content-center" *ngIf="!isEditingKid">
-        <button class="btn btn-primary w-50 m-2 p-2" (click)="plusKidBtnClick(-1)">
-          <span class="fs-5 fw-bold">+</span>
-        </button>
-      </div>
+        <div class="col-12 border-top" *ngIf="isEditingKid">
+          <!-- Name section for ADDING/EDIDTING Kid -->
+          <div class="row text-start gy-2 p-1">
+            <div class="col-5 text-end">
+              <label for="inputKidName" class="form-text">Ім'я</label>
+            </div>
+            <div class="col-7">
+              <input type="text" name="inputKidName" class="form-control" [(ngModel)]="kidModelName" />
+            </div>
 
-      <div class="col-12 border-top" *ngIf="isEditingKid">
-        <!-- Name section for ADDING/EDIDTING Kid -->
-        <div class="row text-start gy-2 p-1">
-          <div class="col-5 text-end">
-            <label for="inputKidName" class="form-text">Ім'я</label>
-          </div>
-          <div class="col-7">
-            <input type="text" name="inputKidName" class="form-control" [(ngModel)]="kidModelName" />
-          </div>
-
-          <!-- Birth section for ADDING/EDITING Kid -->
-          <div class="col-5 text-end">
-            <label for="inputKidBirth" class="form-text">Дата народження</label>
-          </div>
-          <div class="col-7">
-            <input type="date" value="kidModelBirth | date : 'yyyy-MM-dd'" name="inputKidBirth" class="form-control"
-              [ngModel]="kidModelBirth | date : 'yyyy-MM-dd'" (ngModelChange)="kidModelBirth=$event" />
-          </div>
+            <!-- Birth section for ADDING/EDITING Kid -->
+            <div class="col-5 text-end">
+              <label for="inputKidBirth" class="form-text">Дата народження</label>
+            </div>
+            <div class="col-7">
+              <input type="date" value="kidModelBirth | date : 'yyyy-MM-dd'" name="inputKidBirth" class="form-control"
+                [ngModel]="kidModelBirth | date : 'yyyy-MM-dd'" (ngModelChange)="kidModelBirth=$event" />
+            </div>
 
 
-          <!-- Buttons for ADDING new Kid -->
-          <div class="col-12 text-center" *ngIf="isEditingKid && selectedEditingKidId == -1">
-            <div class="row">
-              <div class="col text-center">
+            <!-- Buttons for ADDING new Kid -->
+            <div class="col-12 text-center" *ngIf="isEditingKid && selectedEditingKidId == -1">
+              <div class="row">
+                <div class="col text-center">
 
-                <button class="btn btn-success" (click)="addKidBtnClick()">
-                  <span>Додати</span>
-                </button>
+                  <button class="btn btn-success" (click)="addKidBtnClick()">
+                    <span>Додати</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="row pt-1">
+                <div class="col text-center">
+                  <button class="btn btn-outline-dark" (click)="onBackBtnClick()">
+                    <span>Назад</span>
+                  </button>
+                </div>
               </div>
             </div>
 
-            <div class="row pt-1">
-              <div class="col text-center">
-                <button class="btn btn-outline-dark" (click)="onBackBtnClick()">
-                  <span>Назад</span>
-                </button>
-              </div>
-            </div>
-          </div>
-          
 
-          <!-- Kid Parents List and Add new Parent to kid Section -->
+            <!-- Kid Parents List and Add new Parent to kid Section -->
 
-          
-          <!-- Save/Delete buttons for selected EDITING Kid -->
-          <div class="col-12" *ngIf="isEditingKid && selectedEditingKidId != -1">
-            <div class="row">
-              <div class="col text-center">
-                <button class="btn btn-success" (click)="updateKidBtnClick()">
-                  <span>Зберегти</span>
-                </button>
+
+            <!-- Save/Delete buttons for selected EDITING Kid -->
+            <div class="col-12" *ngIf="isEditingKid && selectedEditingKidId != -1">
+              <div class="row">
+                <div class="col text-center">
+                  <button class="btn btn-success" (click)="updateKidBtnClick()">
+                    <span>Зберегти</span>
+                  </button>
+                </div>
+                <div class="col text-center">
+                  <button class="btn btn-danger" (click)="deleteKidBtnClick()">
+                    <span>Видалити</span>
+                  </button>
+                </div>
               </div>
-              <div class="col text-center">
-                <button class="btn btn-danger" (click)="deleteKidBtnClick()">
-                  <span>Видалити</span>
-                </button>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col text-center">
-                <button class="btn btn-outline-dark" (click)="onBackBtnClick()">
-                  <span>Назад</span>
-                </button>
+              <div class="row">
+                <div class="col text-center">
+                  <button class="btn btn-outline-dark" (click)="onBackBtnClick()">
+                    <span>Назад</span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
+
     </div>
 
+
+
+
   </div>
-
-
- 
-
 </div>

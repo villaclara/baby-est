@@ -8,12 +8,13 @@ import { CurrentKidService } from '../../services/CurrentKid/current-kid.service
 import { FormsModule } from '@angular/forms';
 import { KidService } from '../../services/KidService/kid.service';
 import { Kid } from '../../models/kid';
+import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
 
 
 @Component({
   selector: 'app-parent-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
   templateUrl: './parent-detail.component.html',
   styleUrl: './parent-detail.component.css'
 })
@@ -46,6 +47,8 @@ export class ParentDetailComponent implements OnInit {
 
   kidModelName: string = '';
   kidModelBirth: Date = new Date();
+
+  isLoading: boolean = true;
   ngOnInit(): void {
     this.initializeParentInfo();
     this.activeKidId = this.currentKidService.getCurrentKid();
@@ -176,6 +179,8 @@ export class ParentDetailComponent implements OnInit {
         next: (data: Parent) => {
           this.currentParent = data;
           this.currentParent.Kids = data.Kids as KidsOfParent[];
+          
+          this.isLoading = false;
         },
         error: (err: Error) => {
           this.errorMessageDisplayed = err.message;
