@@ -20,8 +20,10 @@ builder.Services.AddSwaggerGen();
 builder.Configuration.AddEnvironmentVariables();
 
 //builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("db"));
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -47,6 +49,14 @@ builder.Services.Configure<JsonOptions>(options =>
 });
 
 var app = builder.Build();
+
+//// Apply migrations at startup
+//using (var scope = app.Services.CreateScope())
+//{
+//	var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+//	dbContext.Database.Migrate(); // Applies any pending migrations to the database
+//}
+
 
 app.UseDefaultFiles();
 app.UseStaticFiles();

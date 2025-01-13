@@ -3,7 +3,7 @@
 public class ParentEndpointTests
 {
 	[Fact]
-	public async void AddNewParentToKid_ReturnOk()
+	public void AddNewParentToKid_ReturnOk()
 	{
 		//// Arrange
 		//var dbContext = await Seed.GetContext();

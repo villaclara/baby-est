@@ -5,7 +5,7 @@ namespace BabyEST.Server.DTOs;
 internal record class KidDto
 {
 	public string Name { get; set; } = null!;
-	public string BirthDate { get; set; }
+	public string BirthDate { get; set; } = null!;
 	public ICollection<KidActivityDto> Activities { get; set; } = [];
 	public ICollection<string> Parents { get; set; } = [];
 
