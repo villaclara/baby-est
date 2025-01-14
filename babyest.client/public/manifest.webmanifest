@@ -1,7 +1,7 @@
 {
   "name": "BabyEST",
   "short_name": "babyest",
-  "theme_color": "#fafafa",
+  "theme_color": "#404756",
   "background_color": "#ffffff",
   "display": "standalone",
   "scope": "./",
