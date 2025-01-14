@@ -84,11 +84,17 @@ public static class KidActivityEndpoints
 			_ => [KidActivityType.Undefined]
 		};
 
+		//var activity = dbctx.KidActivities.Where(a => a.KidId == id && aType.Contains(a.ActivityType))
+		//	.Include(k => k.Kid)
+		//	.Take(10)
+		//	.OrderByDescending(a => a.StartDate)
+		//	.FirstOrDefault();
+
 		var activity = dbctx.KidActivities.Where(a => a.KidId == id && aType.Contains(a.ActivityType))
 			.Include(k => k.Kid)
-			.Take(10)
 			.OrderByDescending(a => a.StartDate)
 			.FirstOrDefault();
+
 
 		if (activity is null)
 		{
