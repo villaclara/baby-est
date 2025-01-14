@@ -184,6 +184,7 @@ export class ParentDetailComponent implements OnInit {
         },
         error: (err: Error) => {
           this.errorMessageDisplayed = err.message;
+          this.isLoading = false;
         }
       });
   }

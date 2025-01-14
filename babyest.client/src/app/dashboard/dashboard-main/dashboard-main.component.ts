@@ -130,6 +130,7 @@ export class DashboardMainComponent implements OnInit {
 
             // Fill the array depending on data length.
             if (data.length <= 0) {
+              this.isLoading = false;
               return;
             }
             // if we have only one Active activity we do nothing, else we push into the array.
@@ -173,11 +174,13 @@ export class DashboardMainComponent implements OnInit {
               }
             }
 
-        this.isLoading = false;
+            this.isLoading = false;
+            console.log(this.isLoading);
 
           },
           error: (err: Error) => {
             this.errorMessageDisplayed = err.message;
+            this.isLoading = false;
           }
         });
 

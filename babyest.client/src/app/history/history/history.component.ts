@@ -30,7 +30,11 @@ export class HistoryComponent implements OnInit {
         this.activities = data;
         this.isLoading = false;
       },
-      error: (err) => console.log(err.message)
+      error: (err) => 
+        {
+          console.log(err.message);
+          this.isLoading = false;
+        }
     })
   }
 
