@@ -4,11 +4,12 @@ import { KidService } from '../../services/KidService/kid.service';
 import { KidActivity } from '../../models/kid-activity';
 import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
 import { NgFor, NgIf } from '@angular/common';
+import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor, NgIf],
+  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css'
 })
