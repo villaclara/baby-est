@@ -120,14 +120,17 @@ export class DashboardMainComponent implements OnInit {
             }
           }
         });
-      
+
 
     // Get last 6 activities to form a list of LastActivities. 
     this.kidService.getLastSomeValueKidActivitiesById(this.kidId, 6)
       .subscribe(
         {
           next: (data: KidActivity[]) => {
-
+            console.log(data.length);
+            data.forEach(element => {
+              console.log(element);
+            });
             // Fill the array depending on data length.
             if (data.length <= 0) {
               this.isLoading = false;
@@ -139,43 +142,21 @@ export class DashboardMainComponent implements OnInit {
                 this.activities.push(data[0]);
               }
             }
-            // Put the two items into array.
-            else if (data.length == 2) {
-              let i = 0;
 
-              for (let k = 0; k < data.length; k++) {
+            // if the length more than 1
+            else if (data.length > 1) {
 
-                // If the first activity is Active then skip it and reset the loop variable
-                if (data[i].IsActiveNow == true) {
-                  i++;
-                  k--;
-                  continue;
+              // add element to lastActivities list only if it is not active and length less than 3
+              data.forEach(element => {
+                if (element.IsActiveNow == false) {
+                  if (this.activities.length < 3) {
+                    this.activities.push(element);
+                  }
                 }
-
-                this.activities.push(data[i]);
-                i++;
-              }
+              });
             }
-            // Default behavior if having more than 3 activities.
-            else if (data.length > 3) {
-
-              let i = 0;
-              for (let k = 0; k < 3; k++) {
-
-                // If the first activity is Active then skip it and reset the loop variable
-                if (data[i].IsActiveNow == true) {
-                  i++;
-                  k--;
-                  continue;
-                }
-
-                this.activities.push(data[i]);
-                i++;
-              }
-            }
-
+           
             this.isLoading = false;
-            console.log(this.isLoading);
 
           },
           error: (err: Error) => {
