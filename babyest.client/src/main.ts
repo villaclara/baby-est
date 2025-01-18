@@ -23,7 +23,7 @@ import {ServiceWorkerModule} from '@angular/service-worker'
 //});
 
 
-if ('serviceWorker' in navigator) {
+if ('serviceWorker' in navigator && !isDevMode) {
   navigator.serviceWorker
     .register('/ngsw-worker.js')
     .then((registration) => {

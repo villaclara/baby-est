@@ -127,9 +127,7 @@ export class DashboardMainComponent implements OnInit {
       .subscribe(
         {
           next: (data: KidActivity[]) => {
-            console.log(data.length);
             data.forEach(element => {
-              console.log(element);
             });
             // Fill the array depending on data length.
             if (data.length <= 0) {

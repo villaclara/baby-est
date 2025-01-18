@@ -1,13 +1,26 @@
-.activeActivity {
-    border-color: blue !important;
-    color: darkolivegreen;
-}
-
 img.playImg {
-    max-height: 10vw;
-    max-width: 10vw;
+    max-height: 11vw;
+    max-width: 11vw;
 }
 
 img.activityTypeImg {
     max-height: 6vw;
+}
+
+
+.activeActivitySleep {
+    border-color: rgb(178, 192, 235);
+    background-color: rgb(188, 202, 245);
+    filter: drop-shadow(1px 1px 1px);
+
+}
+
+.activeActivityEat {
+    border-color: #f39fb3;
+    background-color: #f9c4d0;
+    filter: drop-shadow(1px 1px 1px);
+}
+
+.rowWithStartBtn {
+    height: 7vh;
 }

@@ -5,25 +5,47 @@
         <div class="col">
             <div class="row">
                 <span class="fs-5">Зараз:
-                    <span class="fs-2">{{currentActivityNameUA}}</span>
+                    <span class="fs-2">{{currentActivityNameUA}} </span>
+                    <span *ngIf="currentActivity.IsActiveNow" 
+                    (click)="isEditingActivityTimes = !isEditingActivityTimes"
+                    class="text-dark">
+                        <i class="bi bi-pencil-square fs-6"></i></span>
                 </span>
+                
             </div>
 
             <div *ngIf="currentActivity.ActivityType.toLowerCase() != ''">
 
-                <div class="row justify-content-center">
+                <div class="row justify-content-center rowWithStartBtn">
+                
+                    <div class="col-auto" *ngIf="isEditingActivityTimes">
+                        <div class="row">
+                            <span class="" *ngIf="currentActivity.IsActiveNow">Від</span>
+                        </div>
+                
+                        <div class="row">
+                            <input type="time" class="form-control" [(ngModel)]="nowDateStartActivityInputTime" />
+                        </div>
+                    </div>
+                
+                
                     <div class="col-auto">
-                        <button class="btn" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''"
+                        <button class="btn my-1" type="button" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''"
                             style="border: none;">
                             <img src="{{startStopImageLink}}" class="playImg" />
                         </button>
                     </div>
+                
+                    <div class="col-auto" *ngIf="isEditingActivityTimes">
+                        <div class="row">
+                            <span>До</span>
+                        </div>
+                        <div class="row">
+                            <input type="time" class="form-control" [(ngModel)]="nowDateEndActivityInputTime" />
+                        </div>
+                    </div>
                 </div>
                 <div class="row justify-content-center">
-
-                    <div *ngIf="currentActivity.IsActiveNow" class="col-auto">
-                        <input type="time" class="form-control" [(ngModel)]="nowDate" />
-                    </div>
                     <div class="row">
                         <span class="fw-bolder h1 p-0 m-0"> {{ timePassed | timerCounterPipe }}</span>
                         <span
@@ -40,7 +62,7 @@
 
         <div class="row">
             <div class="col card mx-2 border-3"
-                [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'sleeping'}"
+                [ngClass]="{'activeActivitySleep': currentActivity.ActivityType.toLowerCase() == 'sleeping'}"
                 style="min-height: 50px;" (click)="selectActivity('sleeping')">
                 <div class="my-auto">
                     <img src="../../../assets/img/sleep-60.png" class="activityTypeImg mb-2" />
@@ -48,7 +70,7 @@
                 </div>
             </div>
 
-            <div class="col card mx-2 border-3" [ngClass]="{'activeActivity': isEatingSelected}"
+            <div class="col card mx-2 border-3" [ngClass]="{'activeActivityEat': isEatingSelected}"
                 (click)="startSelectEatingType()">
                 <div class="my-auto">
                     <img src="../../../assets/img/baby-bottle-50.png" class="activityTypeImg mb-2" />
@@ -60,25 +82,25 @@
 
                 <div class="row pt-3 justify-content-center" [hidden]="!isEatingSelected">
 
-                    <div class="col-4 border mx-2"
-                        [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingleft'}"
+                    <div class="col-4 border rounded-1 mx-2"
+                        [ngClass]="{'activeActivityEat': currentActivity.ActivityType.toLowerCase() == 'eatingleft'}"
                         (click)="selectActivity('eatingLeft')">
                         <span class="fs-4">Ліва</span>
                     </div>
-                    <div class="col-4 border mx-2"
-                        [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingright'}"
+                    <div class="col-4 border rounded-1 mx-2"
+                        [ngClass]="{'activeActivityEat': currentActivity.ActivityType.toLowerCase() == 'eatingright'}"
                         (click)="selectActivity('eatingRight')">
                         <span class="fs-4">Права</span>
                     </div>
                 </div>
                 <div class="row pt-2 justify-content-center" [hidden]="!isEatingSelected">
-                    <div class="col-4 border mx-2"
-                        [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingboth'}"
+                    <div class="col-4 border rounded-1 mx-2"
+                        [ngClass]="{'activeActivityEat': currentActivity.ActivityType.toLowerCase() == 'eatingboth'}"
                         (click)="selectActivity('eatingBoth')">
                         <span class="fs-6">Обидві</span>
                     </div>
-                    <div class="col-4 border mx-2"
-                        [ngClass]="{'activeActivity': currentActivity.ActivityType.toLowerCase() == 'eatingbottle'}"
+                    <div class="col-4 border rounded-1 mx-2"
+                        [ngClass]="{'activeActivityEat': currentActivity.ActivityType.toLowerCase() == 'eatingbottle'}"
                         (click)="selectActivity('eatingBottle')">
                         <span class="fs-6">Пляшечка</span>
                     </div>
