@@ -6,7 +6,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 })
 export class ShortTimerCounterPipe implements PipeTransform {
 
-  transform(value: number, ...args: unknown[]): string {
+  transform(value: number, args?: string): string {
     
     let hours = 0;
     let minutes = 0;
@@ -29,8 +29,12 @@ export class ShortTimerCounterPipe implements PipeTransform {
   let minStr : string = minutes < 10 ? '0' + minutes.toString() : minutes.toString();
   let hourStr : string = hours < 10 ? '0' + hours.toString() : hours.toString();
 
+  if(args === 'HH:mm')
+  {
+    return `${hourStr} г : ${minStr} хв`; 
+  }
 
-  return `${hourStr} г : ${minStr} хв`;
+  return `${hourStr} : ${minStr}`;
   }
 
 }
