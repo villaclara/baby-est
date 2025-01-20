@@ -134,7 +134,12 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
 
       // Stop tracking. Set StartDate
       // The input value will be used, if not changed the input should display the this.currentActivity.StartDate
-      this.currentActivity.StartDate = this.dateConverter.toDate(this.nowDateStartActivityInputTime);
+      let origStartDate = new Date(this.currentActivity.StartDate!);
+      const [hours, minutes] = this.nowDateStartActivityInputTime.split(':').map(Number);
+
+      origStartDate.setHours(hours);
+      origStartDate.setMinutes(minutes);
+      this.currentActivity.StartDate = origStartDate;
 
       // Stop tracking current Activity. Set EndDate
       if (this.nowDateEndActivityInputTime != '') {
