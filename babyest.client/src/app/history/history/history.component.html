@@ -7,11 +7,11 @@
 
     <div class="container">
 
-        <p class="fw-bolder">Колись тут буде нормальна історія.</p>
+        <p class="fw-bolder">Колись тут буде нормальна історія. <br/>В прогресі, в прогресі.</p>
 
-        <div class="card mt-4 border-dark">
+        <div class="mt-4 border-secondary">
             <div class="card-body p-1">
-                <div *ngFor="let activity of activities; index as i" class="my-2 border-bottom border-dark">
+                <div *ngFor="let activity of activities; index as i" class="border rounded-2 mb-2">
                     <app-single-activity [activity]="activity" [isRichSingleActivity]="true"></app-single-activity>
                 </div>
             </div>

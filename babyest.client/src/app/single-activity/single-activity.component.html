@@ -1,42 +1,28 @@
 
-<!-- <div class="row">
-    <div class="col text-start">
-        <div class="">
+<div class="container" [ngClass]="isRichSingleActivity ? activity.ActivityType.toLowerCase() === 'sleeping' ? 'sleepActivity' : 'eatActivity' : '' ">
+
+    <div class="row">
+        <div class="col-auto">
             <div class="row">
-                <span>{{activity.EndDate | date:'dd/MM/yyyy'}} - 
-                    <span>{{activityNameUA}}</span>
-                    
-                </span>
+                <span class="my-auto">{{activity.StartDate | date:'HH:mm'}} -</span>
             </div>
             <div class="row">
-                <span> {{activity.StartDate | date:'HH:mm' }} - {{activity.EndDate | date:'HH:mm' }}
-                    -- {{activityTime | shortTimerCounter}}</span>
+                <span class="my-auto">{{activity.EndDate | date:'HH:mm'}}&nbsp;&nbsp;</span>
             </div>
         </div>
-    </div>
-</div> -->
-
-<div class="row">
-    <div class="col">
-        <div class="row">
-            <span class="my-auto">{{activity.StartDate | date:'HH:mm'}} -</span>
+        
+        <div class="col d-flex justify-content-center">
+            <div class="row">
+                <span class="my-auto">{{activityTime | shortTimerCounter:"HH:mm"}}</span>
+            </div>
         </div>
-        <div class="row">
-            <span class="my-auto">{{activity.EndDate | date:'HH:mm'}}</span>
+        <div class="col d-flex justify-content-center">
+            <span class="my-auto">{{activityNameUA}}</span>
         </div>
-    </div>
-
-    <div class="col d-flex justify-content-center">
-        <div class="row">
-            <span class="my-auto">{{activityTime | shortTimerCounter:"HH:mm"}}</span>
+        
+        
+        <div *ngIf="isRichSingleActivity" class="col-auto d-flex justify-content-center border border-dark">
+            <i class="bi bi-pencil my-auto"></i>
         </div>
-    </div>
-    <div class="col-5 d-flex justify-content-center">
-        <span class="my-auto">{{activityNameUA}}</span>
-    </div>
-
-
-    <div *ngIf="isRichSingleActivity" class="col d-flex justify-content-center">
-        <i class="bi bi-pencil"></i>
     </div>
 </div>

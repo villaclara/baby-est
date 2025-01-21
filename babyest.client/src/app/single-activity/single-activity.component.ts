@@ -3,12 +3,12 @@ import { KidActivity } from '../models/kid-activity';
 import { DatePipe } from '@angular/common';
 import { ActivityNameTranslator } from '../utils/activity-name-translator';
 import { ShortTimerCounterPipe } from '../pipes/short-timer-counter.pipe';
-import { NgIf } from '@angular/common';
+import { NgIf, NgClass } from '@angular/common';
 
 @Component({
   selector: 'app-single-activity',
   standalone: true,
-  imports: [DatePipe, ShortTimerCounterPipe, NgIf],
+  imports: [DatePipe, ShortTimerCounterPipe, NgIf, NgClass],
   templateUrl: './single-activity.component.html',
   styleUrl: './single-activity.component.css'
 })

@@ -2,3 +2,13 @@
     background-color: inherit;
     font-family: inherit;
 }
+
+.sleepActivity {
+    background-color: #e8eeff;
+    filter: brightness(103%);
+}
+
+.eatActivity {
+    background-color: #ffe5eb;
+    filter: brightness(103%);
+}
