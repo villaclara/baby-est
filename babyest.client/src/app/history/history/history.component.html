@@ -5,6 +5,8 @@
 
 <div *ngIf="!isLoading">
 
+
+    
     <div class="container">
 
         <p class="fw-bolder">Колись тут буде нормальна історія. <br/>В прогресі, в прогресі.</p>
@@ -12,10 +14,78 @@
         <div class="mt-4 border-secondary">
             <div class="card-body p-1">
                 <div *ngFor="let activity of activities; index as i" class="border rounded-2 mb-2">
-                    <app-single-activity [activity]="activity" [isRichSingleActivity]="true"></app-single-activity>
+                    <app-single-activity [activity]="activity" [isRichSingleActivity]="true" (selectedEditActivity)="editActivity($event)"></app-single-activity>
+
+
+                    <div *ngIf="isEditingKid && activity.Id == selectedEditingAct.Id" class="container">
+
+                        <div class="row border border-danger border-1 rounded-1 m-0">
+                        
+                            <div class="col">
+                                <div class="row my-1">
+                                        <div class="col-3 pe-0">
+                                            <label>Тип</label>
+                                        </div>
+                                        <div class="col-auto ps-0">
+                                            <select class="form-select">
+                                                <option value={{selectedEditingAct.ActivityType}}>{{activityTypeLocalUA}}</option>
+                                                <option value="sleeping">Сон</option>
+                                                <option value="eatingLeft">Годування.Ліва</option>
+                                                <option value="eatingRight">Годування.Права</option>
+                                                <option value="eatingBoth">Годування.Обидві</option>
+                                                <option value="eatingBottle">Годування.Пляшка</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row my-1">
+                                        <div class="col-3 pe-0">
+                                            <label for="inputDateStart">Початок</label>
+                                        </div>
+                                        <div class="col-auto ps-0">
+                                            <input id="inputDateStart" type="datetime-local" class="form-control" [(ngModel)]="startDateString" />
+                                        </div>
+                                    </div>
+                                    
+                                    
+                                    <div class="row my-1">
+                                        <div class="col-3 pe-0">
+                                            <label for="inputDateEnd">Кінець</label>
+                                        </div>
+                                        <div class="col-auto ps-0">
+                                            <input id="inputDateEnd" type="datetime-local" class="form-control" [(ngModel)]="endDateString"/>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+                        
+                                <div class="row">
+                                    <div class="col">
+                                        <button type="button" class="btn btn-outline-success border-0">
+                                            <i class="bi bi-floppy-fill fs-5"></i>
+                                        </button>
+                        
+                                    </div>
+                                    <div class="col">
+                                        <button type="button" class="btn btn-outline-danger border-0">
+                                            <i class="bi bi-trash3-fill fs-5"></i>
+                                        </button>
+                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                </div>
+                                
+                            </div>
+                            
+                        </div>
+
                 </div>
             </div>
         </div>
     </div>
+
+
+    
 
 </div>
