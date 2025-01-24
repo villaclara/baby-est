@@ -65,6 +65,10 @@ export class KidService {
     return this.http.delete(url);
   }
 
+
+  //
+  // Activities region 
+
   getKidActivitiesById(kidId: number): Observable<KidActivity[]> {
     let url = `api/kid/${kidId}/activity`;
     return this.http.get<KidActivity[]>(url).pipe(
@@ -122,5 +126,12 @@ export class KidService {
       { headers: this.headers1 }).pipe(
         catchError(err => this.errorHandler.handle(err))
       );
+  }
+
+  deleteActivity(kidId: number, activityId: number) : Observable<any> {
+    let url = `api/kid/${kidId}/activity/${activityId}`;
+    return this.http.delete(url).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
   }
 }

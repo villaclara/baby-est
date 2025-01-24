@@ -98,7 +98,18 @@ export class HistoryComponent implements OnInit {
   }
 
   deleteActivity(): void {
-
+    this.kidService.deleteActivity(this.kidId, this.selectedEditingAct.Id)
+  .subscribe({
+    next: () => {
+      const index = this.activities.indexOf(this.selectedEditingAct);
+      if(index == -1)
+      {
+        return;
+      }
+      this.activities.splice(index, 1);
+    },
+    error: (err) => console.log(err)
+  });
   }
 
 
