@@ -15,11 +15,17 @@ import { NgIf, NgClass } from '@angular/common';
 export class SingleActivityComponent implements OnInit {
   
   @Input() activity: KidActivity = { Id: 0, ActivityType: '', StartDate: new Date(), EndDate: new Date(), IsActiveNow: false, KidName: '' };
+  
+  // Displays edit button
   @Input() isRichSingleActivity : boolean = false;
   
+  // emit the activityId to edit to the parent History
   @Output() selectedEditActivityEmit: EventEmitter<number> = new EventEmitter<number>();
 
-
+  // Decides whether to display chevron-up or chevron-down
+  // -1 -- not set
+  // 0 -- chevron down
+  // value - if value == activity.Id -- chevron up 
   @Input() editingKidId : number = -1;
 
   activityTime: number = 0;
@@ -27,9 +33,6 @@ export class SingleActivityComponent implements OnInit {
   private translator: ActivityNameTranslator = new ActivityNameTranslator();
   
   isEditingPressed: boolean = false;
-  currentSelectedId: number = 0;
-  otherActsClosed: boolean = true;
-  chevronSrc: string = this.isEditingPressed ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
 
   get actTime() : number {
     if(this.activity.Id != 0)
@@ -39,7 +42,6 @@ export class SingleActivityComponent implements OnInit {
     return 0;
   }
 
-
   get actNameUA() : string {
     if (this.activity.Id != 0)
     {
@@ -48,25 +50,14 @@ export class SingleActivityComponent implements OnInit {
     return '';
   }
 
-
   ngOnInit(): void {
     this.activityNameUA = this.translator.changeCurrentActivityFullNameUA(this.activity.ActivityType);
     this.activityTime = Math.ceil(new Date(this.activity.EndDate!).getTime() - new Date(this.activity.StartDate!).getTime()) / 1000;
-    console.log("init starteim - " + this.activity.StartDate);
   }
 
   editActivity() : void {
-    
-    // this.otherActsClosed = false;
-
-    // if(this.currentSelectedId != actId) {
-    //   this.otherActsClosed = true;
-    // }
-
     this.isEditingPressed = !this.isEditingPressed;
-    this.chevronSrc = this.isEditingPressed ? 'bi bi-chevron-up' : 'bi bi-chevron-down';
     this.selectedEditActivityEmit.emit(this.activity.Id);
-    // this.currentSelectedId = actId;
   }
 
 }

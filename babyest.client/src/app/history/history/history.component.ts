@@ -25,25 +25,20 @@ export class HistoryComponent implements OnInit {
     this.kidId = this.currentKidService.getCurrentKid();
   }
 
-  kidId: number = 0;
+  isLoading: boolean = true;
 
+  kidId: number = 0;
   translator: ActivityNameTranslator = new ActivityNameTranslator();
   activities: KidActivity[] = [];
 
-  isLoading: boolean = true;
+  isEditingKid: boolean = false;
+  activeEditingKidId: number = 0;
 
   selectedEditingAct: KidActivity = { Id: 0, ActivityType: '', EndDate: new Date(), StartDate: new Date(), IsActiveNow: false, KidName: '' };
-
-  isEditingKid: boolean = false;
-
-
-
   startDateString: string = '';
   endDateString: string = '';
   selectedActivityType: string = '';
   activityTypeLocalUA: string = '';
-
-  activeEditingKidId : number = 0;
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -82,7 +77,16 @@ export class HistoryComponent implements OnInit {
 
   saveChangesActivity(): void {
 
-    this.kidService.updateActivity(this.kidId, this.selectedEditingAct)
+    this.kidService.updateActivity(this.kidId, 
+      {
+        Id : this.selectedEditingAct.Id,
+        ActivityType : this.selectedActivityType,
+        StartDate : new Date(this.startDateString),
+        EndDate : new Date(this.endDateString),
+        IsActiveNow : this.selectedEditingAct.IsActiveNow,
+        KidName : this.selectedEditingAct.KidName
+      }
+    )
       .subscribe({
         next: () => {
           // After the input fields were changed we set them to the selected activity
@@ -90,30 +94,27 @@ export class HistoryComponent implements OnInit {
           this.selectedEditingAct.ActivityType = this.selectedActivityType;
           this.selectedEditingAct.StartDate = new Date(this.startDateString);
           this.selectedEditingAct.EndDate = new Date(this.endDateString);
-          
+
           this.isEditingKid = false;
+          this.activeEditingKidId = 0;
         },
         error: (err) => console.log(err)
       });
   }
 
   deleteActivity(): void {
+
     this.kidService.deleteActivity(this.kidId, this.selectedEditingAct.Id)
-  .subscribe({
-    next: () => {
-      const index = this.activities.indexOf(this.selectedEditingAct);
-      if(index == -1)
-      {
-        return;
-      }
-      this.activities.splice(index, 1);
-    },
-    error: (err) => console.log(err)
-  });
+      .subscribe({
+        next: () => {
+          const index = this.activities.indexOf(this.selectedEditingAct);
+          if (index == -1) {
+            return;
+          }
+          this.activities.splice(index, 1);
+        },
+        error: (err) => console.log(err)
+      });
   }
 
-
-  sendClose() : boolean {
-    return this.isEditingKid;
-  }
 }
