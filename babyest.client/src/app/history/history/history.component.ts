@@ -36,13 +36,14 @@ export class HistoryComponent implements OnInit {
 
   isEditingKid: boolean = false;
 
-  testDate: Date = new Date();
 
 
   startDateString: string = '';
   endDateString: string = '';
   selectedActivityType: string = '';
   activityTypeLocalUA: string = '';
+
+  activeEditingKidId : number = 0;
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -63,6 +64,7 @@ export class HistoryComponent implements OnInit {
     // Close the editing mini-window on the 2nd click to the same activity.
     if (this.selectedEditingAct.Id == actId && this.isEditingKid == true) {
       this.isEditingKid = false;
+      this.activeEditingKidId = 0;
     }
     else {
       this.selectedEditingAct = this.activities.find((el) => el.Id == actId)!;
@@ -74,6 +76,7 @@ export class HistoryComponent implements OnInit {
       this.activityTypeLocalUA = this.translator.changeCurrentActivityFullNameUA(this.selectedEditingAct.ActivityType);
       this.selectedActivityType = this.selectedEditingAct.ActivityType;
 
+      this.activeEditingKidId = actId;
     }
   }
 
@@ -99,4 +102,7 @@ export class HistoryComponent implements OnInit {
   }
 
 
+  sendClose() : boolean {
+    return this.isEditingKid;
+  }
 }

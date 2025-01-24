@@ -29,9 +29,9 @@
         </div>
         
         
-        <div *ngIf="isRichSingleActivity" class="col-auto d-flex justify-content-center border border-dark"
-        (click)="editActivity(activity.Id)">
-            <i class="bi bi-pencil my-auto"></i>
+        <div *ngIf="isRichSingleActivity" class="col-auto d-flex justify-content-center"
+        (click)="editActivity()">
+            <i class="my-auto" [ngClass]="isEditingPressed && editingKidId == activity.Id ? 'bi bi-chevron-up' : 'bi bi-chevron-down'" ></i>
         </div>
     </div>
 </div>
