@@ -14,7 +14,7 @@
         <div class="mt-4 border-secondary">
             <div class="card-body p-1">
                 <div *ngFor="let activity of activities; index as i" class="border rounded-2 mb-2">
-                    <app-single-activity [activity]="activity" [isRichSingleActivity]="true" (selectedEditActivity)="editActivity($event)"></app-single-activity>
+                    <app-single-activity [activity]="activity" [isRichSingleActivity]="true" (selectedEditActivityEmit)="editActivity($event)"></app-single-activity>
 
 
                     <div *ngIf="isEditingKid && activity.Id == selectedEditingAct.Id" class="container">
@@ -27,13 +27,13 @@
                                             <label>Тип</label>
                                         </div>
                                         <div class="col-auto ps-0">
-                                            <select class="form-select">
-                                                <option value={{selectedEditingAct.ActivityType}}>{{activityTypeLocalUA}}</option>
+                                            <select class="form-select" [(ngModel)]="selectedActivityType">
+                                                <option value="{{selectedEditingAct.ActivityType}}">{{activityTypeLocalUA}}</option>
                                                 <option value="sleeping">Сон</option>
-                                                <option value="eatingLeft">Годування.Ліва</option>
-                                                <option value="eatingRight">Годування.Права</option>
-                                                <option value="eatingBoth">Годування.Обидві</option>
-                                                <option value="eatingBottle">Годування.Пляшка</option>
+                                                <option value="eatingleft">Годування.Ліва</option>
+                                                <option value="eatingright">Годування.Права</option>
+                                                <option value="eatingboth">Годування.Обидві</option>
+                                                <option value="eatingbottle">Годування.Пляшка</option>
                                             </select>
                                         </div>
                                     </div>
@@ -61,13 +61,13 @@
                         
                                 <div class="row">
                                     <div class="col">
-                                        <button type="button" class="btn btn-outline-success border-0">
+                                        <button type="button" class="btn btn-outline-success border-0" (click)="saveChangesActivity()">
                                             <i class="bi bi-floppy-fill fs-5"></i>
                                         </button>
                         
                                     </div>
                                     <div class="col">
-                                        <button type="button" class="btn btn-outline-danger border-0">
+                                        <button type="button" class="btn btn-outline-danger border-0" (click)="deleteActivity()">
                                             <i class="bi bi-trash3-fill fs-5"></i>
                                         </button>
                         

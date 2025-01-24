@@ -19,11 +19,13 @@
                 <span>-- : --</span>
             </div>
             <div class="row" *ngIf="!activity.IsActiveNow">
-                <span class="my-auto">{{activityTime | shortTimerCounter:"HH:mm"}}</span>
+                <!-- <span class="my-auto">{{activityTime | shortTimerCounter:"HH:mm"}}</span> -->
+                <span class="my-auto">{{ actTime | shortTimerCounter:"HH:mm" }}</span>
             </div>
         </div>
         <div class="col d-flex justify-content-center">
-            <span class="my-auto">{{activityNameUA}}</span>
+            <!-- <span class="my-auto">{{activityNameUA}}</span> -->
+            <span class="my-auto">{{actNameUA}}</span>
         </div>
         
         
