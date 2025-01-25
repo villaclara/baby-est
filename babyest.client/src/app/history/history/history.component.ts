@@ -40,11 +40,19 @@ export class HistoryComponent implements OnInit {
   selectedActivityType: string = '';
   activityTypeLocalUA: string = '';
 
+  dates: string[] = [];
+  shitActivityDates: Date[] = [];
+
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
     this.kidService.getKidActivitiesById(currentKidId).subscribe({
       next: (data: KidActivity[]) => {
         this.activities = data;
+
+        (this.activities).forEach(element => {
+          this.shitActivityDates.push(new Date(element.StartDate!));
+          this.dates.push(new Date(element.StartDate!).toDateString())
+        });
         this.isLoading = false;
       },
       error: (err) => {
@@ -72,19 +80,20 @@ export class HistoryComponent implements OnInit {
       this.selectedActivityType = this.selectedEditingAct.ActivityType;
 
       this.activeEditingKidId = actId;
+
     }
   }
 
   saveChangesActivity(): void {
 
-    this.kidService.updateActivity(this.kidId, 
+    this.kidService.updateActivity(this.kidId,
       {
-        Id : this.selectedEditingAct.Id,
-        ActivityType : this.selectedActivityType,
-        StartDate : new Date(this.startDateString),
-        EndDate : new Date(this.endDateString),
-        IsActiveNow : this.selectedEditingAct.IsActiveNow,
-        KidName : this.selectedEditingAct.KidName
+        Id: this.selectedEditingAct.Id,
+        ActivityType: this.selectedActivityType,
+        StartDate: new Date(this.startDateString),
+        EndDate: new Date(this.endDateString),
+        IsActiveNow: this.selectedEditingAct.IsActiveNow,
+        KidName: this.selectedEditingAct.KidName
       }
     )
       .subscribe({
@@ -97,6 +106,13 @@ export class HistoryComponent implements OnInit {
 
           this.isEditingKid = false;
           this.activeEditingKidId = 0;
+
+          // change dates array
+          const index = this.activities.indexOf(this.selectedEditingAct);
+          if (index != -1) {
+            this.dates[index] = new Date(this.selectedEditingAct.StartDate).toDateString();
+            this.shitActivityDates[index] = new Date(this.selectedEditingAct.StartDate);
+          }
         },
         error: (err) => console.log(err)
       });
@@ -112,6 +128,10 @@ export class HistoryComponent implements OnInit {
             return;
           }
           this.activities.splice(index, 1);
+
+          // update dates arrays
+          this.dates.splice(index, 1);
+          this.shitActivityDates.splice(index, 1);
         },
         error: (err) => console.log(err)
       });
