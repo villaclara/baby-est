@@ -31,12 +31,12 @@ builder.Configuration.AddEnvironmentVariables();
 if (builder.Environment.IsDevelopment())
 {
 	builder.Services.AddDbContext<ApplicationDbContext>(options =>
-		options.UseSqlite("Data Source = /home/site/wwwroot/db/data.db"));
+		options.UseSqlite("Data Source = data.db"));
 }
 else // production
 {
 	builder.Services.AddDbContext<ApplicationDbContext>(options =>
-		options.UseSqlite("Data Source = data.db"));
+		options.UseSqlite("Data Source = /home/site/wwwroot/db/data.db"));
 }
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -109,3 +109,6 @@ app.MapGet("/api/unauthorized", () => "403")
 
 
 app.Run();
+
+
+public partial class Program { }

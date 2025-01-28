@@ -363,3 +363,7 @@ MigrationBackup/
 FodyWeavers.xsd
 /BabyEST.Server/log.txt
 /BabyEST.Server/data.db
+
+# Ignore the Sqlite db files
+*.db*
+

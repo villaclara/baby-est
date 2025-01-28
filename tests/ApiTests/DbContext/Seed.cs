@@ -75,4 +75,69 @@ public class Seed
 
 		return dbContext;
 	}
+
+
+	public static List<Parent> GetDataAsParentsList() => SeedAllDataAsParentsList();
+
+	private static List<Parent> SeedAllDataAsParentsList()
+	{
+		List<Parent> parents = [
+			new Parent()
+			{
+				Id = 1,
+				Email = "test1@test.com",
+				PasswordHash = BCrypt.Net.BCrypt.HashPassword("password"),
+				Kids = [
+					new Kid()
+					{
+						Id = 1,
+						Name = "kid1",
+						BirthDate = new DateOnly(2020, 1, 1),
+						Activities = [
+							new KidActivity()
+							{
+								Id = 1,
+								ActivityType = KidActivityType.Sleeping,
+								IsActiveNow = false,
+								StartDate = new DateTime(2025, 1, 1, 10, 10, 10),
+								EndDate = new DateTime(2025, 1, 1, 11, 11, 11),
+								KidId = 1
+							},
+							new KidActivity()
+							{
+								Id = 2,
+								ActivityType = KidActivityType.EatingRight,
+								IsActiveNow = false,
+								StartDate = new DateTime(2025, 2, 2, 2, 2, 2),
+								EndDate = new DateTime(2025, 2, 2, 22, 22, 22),
+								KidId = 1
+							}
+						]
+					},
+					new Kid()
+					{
+						Id = 2,
+						Name = "kid2",
+						BirthDate = new DateOnly(2020, 1, 1)
+					},
+				]
+			},
+			new Parent()
+			{
+				Id = 2,
+				Email = "test2@test.com",
+				PasswordHash = "test2Pwd",
+				Kids = []
+			},
+			new Parent()
+			{
+				Id = 3,
+				Email = "test3@test.com",
+				PasswordHash = "test3Pwd",
+				Kids = []
+			}
+		];
+
+		return parents;
+	}
 }
