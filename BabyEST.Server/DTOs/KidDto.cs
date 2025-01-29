@@ -2,7 +2,7 @@
 
 namespace BabyEST.Server.DTOs;
 
-internal record class KidDto
+public record class KidDto
 {
 	public string Name { get; set; } = null!;
 	public string BirthDate { get; set; } = null!;
