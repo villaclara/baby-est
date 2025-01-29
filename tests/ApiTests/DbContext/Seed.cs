@@ -126,14 +126,14 @@ public class Seed
 			{
 				Id = 2,
 				Email = "test2@test.com",
-				PasswordHash = "test2Pwd",
+				PasswordHash = BCrypt.Net.BCrypt.HashPassword("password"),
 				Kids = []
 			},
 			new Parent()
 			{
 				Id = 3,
 				Email = "test3@test.com",
-				PasswordHash = "test3Pwd",
+				PasswordHash = BCrypt.Net.BCrypt.HashPassword("password"),
 				Kids = []
 			}
 		];

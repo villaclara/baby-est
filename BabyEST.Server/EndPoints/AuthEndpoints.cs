@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using System.Text.RegularExpressions;
 using BabyEST.Server.Database;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -26,6 +27,15 @@ public static class AuthEndpoints
 		try
 		{
 			Log.Information("{@Method} - Try register new user ({@user}).", nameof(RegisterAsync), userForm);
+
+			// Validate that email is correct
+			// Regular expression for validating email
+			string emailPattern = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
+			var result = Regex.IsMatch(userForm.Email, emailPattern);
+			if (!result)
+			{
+				return TypedResults.BadRequest("Email provided was in incorrect format.");
+			}
 
 			// check if the user is not already created
 			var user = appcontext.Parents.Where(u => u.Email == userForm.Email).FirstOrDefault();
