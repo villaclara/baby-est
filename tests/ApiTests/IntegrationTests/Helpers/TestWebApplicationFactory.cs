@@ -7,8 +7,9 @@ using Microsoft.Extensions.Hosting;
 
 namespace ApiTests.IntegrationTests.Helpers;
 
-public class TestWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : class
+public class TestWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram>, IDisposable where TProgram : class
 {
+	private string _dbFilePath;
 	protected override IHost CreateHost(IHostBuilder builder)
 	{
 
@@ -26,8 +27,14 @@ public class TestWebApplicationFactory<TProgram> : WebApplicationFactory<TProgra
 			//services.AddDbContext<ApplicationDbContext>(options =>
 			//	options.UseInMemoryDatabase(Guid.NewGuid().ToString()));
 
+			//services.AddDbContext<ApplicationDbContext>(options =>
+			//	options.UseSqlite("Data Source = 1.db"));
+
+			// get another instance of Database for each of the object created of this class
+			_dbFilePath = Path.Combine(Path.GetTempPath(), $"test_db_{Guid.NewGuid()}.db");
 			services.AddDbContext<ApplicationDbContext>(options =>
-				options.UseSqlite("Data Source = 1.db"));
+				options.UseSqlite($"Data Source = {_dbFilePath}"));
+
 
 
 			var sp = services.BuildServiceProvider();

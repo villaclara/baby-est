@@ -41,9 +41,28 @@ public class KidEndpointTests : IClassFixture<TestWebApplicationFactory<Program>
 	}
 
 	[Theory]
-	[InlineData("test1@test.com", "password", 1)]
-	[InlineData("test2@test.com", "password", 0)]
+	[InlineData("test1@test.com", "password", 10)]
+	[InlineData("test2@test.com", "password", 100)]
 	public async Task GetKidById_WrongId_Return400(string email, string password, int kidId)
+	{
+		// Arrange 
+		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
+		login.EnsureSuccessStatusCode();
+
+		// Act 
+		var response = await _client.GetAsync(_url + "/" + kidId);
+
+		// Assert
+		Assert.NotNull(response);
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+	}
+
+
+
+	[Theory]
+	[InlineData("test1@test.com", "password", 1, "kid1Parent1", "2021-01-01")]
+	[InlineData("test3@test.com", "password", 4, "kid4Parent3", "2024-04-04")]
+	public async Task GetKidById_CorrectId_Return200(string email, string password, int kidId, string expectedKidName, string expectedBirthDate)
 	{
 		// Arrange 
 		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
@@ -55,41 +74,13 @@ public class KidEndpointTests : IClassFixture<TestWebApplicationFactory<Program>
 		// Assert
 		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-		var content = await response.Content.ReadFromJsonAsync<List<KidDto>>();
+		var content = await response.Content.ReadFromJsonAsync<KidDto>();
 
 		Assert.NotNull(content);
-		Assert.Equal(expectedAmount, content.Count);
+		Assert.Equal(expectedKidName, content.Name);
+		Assert.Equal(expectedBirthDate, content.BirthDate);
 
 	}
 
 
-	public static IEnumerable<KidDto> GetKidDtos(int number)
-	{
-
-		List<KidDto> list = [
-			new KidDto()
-			{
-				Name = "kid1",
-				Activities = [],
-				BirthDate = new DateOnly(2020, 1, 1).ToString(),
-				Parents = [
-					"test1@test.com"
-					]
-			},
-			new KidDto()
-			{
-				Name = "kid2",
-				Activities = [],
-				BirthDate = new DateOnly(2020, 1, 1).ToString(),
-				Parents = [
-					"test1@test.com"
-					]
-			}
-
-		];
-
-
-		return list.Take(number);
-
-	}
 }
