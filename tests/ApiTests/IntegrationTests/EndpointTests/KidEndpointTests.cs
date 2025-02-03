@@ -121,22 +121,34 @@ public class KidEndpointTests : IClassFixture<TestWebApplicationFactory<Program>
 		Assert.Equal(kidName, content.Name);
 		Assert.Equal(birthDate, content.BirthDate);
 
-		// Assert
 	}
 
 
-	public async Task AddKid_WrongParentId_Return400()
+	[Theory]
+	[InlineData("test1@test.com", "password", "birthdate")]
+	[InlineData("test1@test.com", "password", "20-10-10")]
+	public async Task AddKid_WrongBirthdate_Return400(string email, string password, string wrongBd)
 	{
 		// Arrange 
 		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
 		login.EnsureSuccessStatusCode();
-
-		var request = new HttpRequestMessage(HttpMethod.Post, _url);
-		request.Headers.
-
+		var kidDto = new KidDto()
+		{
+			Name = "testkidWrongBd",
+			BirthDate = wrongBd
+		};
+		var errMessage = "Error when adding kid to parent.";
 		// Act 
+		var response = await _client.PostAsJsonAsync(_url, kidDto);
 
 		// Assert
+		Assert.NotNull(response);
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+		var content = await response.Content.ReadFromJsonAsync<string>();
+
+		Assert.Equal(errMessage, content);
+
 	}
 
 
@@ -144,9 +156,109 @@ public class KidEndpointTests : IClassFixture<TestWebApplicationFactory<Program>
 
 	#region PUT method
 
+	[Theory]
+	[InlineData("test1@test.com", "password", 1, "updatedKid1", null)]
+	[InlineData("test1@test.com", "password", 1, null, "2025-02-02")]
+	public async Task UpdateKid_ValidValues_Return201(string email, string password, int kidId, string? newName = null, string? newBirth = null)
+	{
+		// Arrange 
+		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
+		login.EnsureSuccessStatusCode();
+		var kid = await _client.GetFromJsonAsync<KidDto>($"api/kid/{kidId}");
+
+
+		// Act + Assert
+		Assert.NotNull(kid);
+		kid.Name = newName ?? kid.Name;
+		kid.BirthDate = newBirth ?? kid.BirthDate;
+
+		var response = await _client.PutAsJsonAsync<KidDto>(_url + $"/{kidId}", kid);
+		Assert.NotNull(response);
+		Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+		Assert.NotNull(response.Headers.Location);
+
+		var kidUrl = response.Headers.Location.ToString();
+		var kidFromApi = await _client.GetAsync(kidUrl);
+
+		Assert.Equal(HttpStatusCode.OK, kidFromApi.StatusCode);
+
+		var content = await kidFromApi.Content.ReadFromJsonAsync<KidDto>();
+
+		Assert.NotNull(content);
+		Assert.Equal(newName is not null ? newName : kid.Name, content.Name);
+		Assert.Equal(newBirth is not null ? newBirth : kid.BirthDate, content.BirthDate);
+
+	}
+
+	[Theory]
+	[InlineData("test1@test.com", "password", 1, null, "20-02-02")]
+	public async Task UpdateKid_WrongValues_Return400(string email, string password, int kidId, string? newName = null, string? newBirth = null)
+	{
+		// Arrange 
+		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
+		login.EnsureSuccessStatusCode();
+		var kid = await _client.GetFromJsonAsync<KidDto>($"api/kid/{kidId}");
+
+		// Act + Assert
+		Assert.NotNull(kid);
+		var oldBirthDate = kid.BirthDate;
+		var oldName = kid.Name;
+		kid.Name = newName ?? kid.Name;
+		kid.BirthDate = newBirth ?? kid.BirthDate;
+
+		var response = await _client.PutAsJsonAsync<KidDto>(_url + $"/{kidId}", kid);
+		Assert.NotNull(response);
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+		var kidFromApi = await _client.GetAsync($"api/kid/{kidId}");
+
+		Assert.Equal(HttpStatusCode.OK, kidFromApi.StatusCode);
+
+		var content = await kidFromApi.Content.ReadFromJsonAsync<KidDto>();
+
+		Assert.NotNull(content);
+		Assert.Equal(oldName, content.Name);           // name was not changed
+		Assert.Equal(oldBirthDate, content.BirthDate); // birthdate was not changed
+
+	}
+
 	#endregion PUT method
 
 	#region DEL method
+
+	[Theory]
+	[InlineData("test1@test.com", "password", 2)]
+	public async Task RemoveKid_ValidId_Return204(string email, string password, int kidId)
+	{
+		// Arrange 
+		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
+		login.EnsureSuccessStatusCode();
+
+		// Act + Assert
+		var response = await _client.DeleteAsync(_url + $"/{kidId}");
+		Assert.NotNull(response);
+		Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+
+	}
+
+	[Theory]
+	[InlineData("test1@test.com", "password", 200)]
+	public async Task RemoveKid_WrongId_Return400(string email, string password, int kidId)
+	{
+		// Arrange 
+		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
+		login.EnsureSuccessStatusCode();
+		var errMessage = "Kid not found, maybe already removed.";
+
+		// Act + Assert
+		var response = await _client.DeleteAsync(_url + $"/{kidId}");
+		Assert.NotNull(response);
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+
+		var content = await response.Content.ReadFromJsonAsync<string>();
+		Assert.Equal(errMessage, content);
+
+	}
 
 	#endregion DEL method
 }
