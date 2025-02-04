@@ -22,8 +22,22 @@ builder.Configuration.AddEnvironmentVariables();
 //builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseInMemoryDatabase("db"));
 //builder.Services.AddDbContext<ApplicationDbContext>(options =>
 //	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+//builder.Services.AddDbContext<ApplicationDbContext>(options =>
+//options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+
+if (builder.Environment.IsDevelopment())
+{
+	builder.Services.AddDbContext<ApplicationDbContext>(options =>
+		options.UseSqlite("Data Source = data.db"));
+}
+else // production
+{
+	builder.Services.AddDbContext<ApplicationDbContext>(options =>
+		options.UseSqlite("Data Source = /home/site/wwwroot/db/data.db"));
+}
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
 	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
@@ -50,11 +64,11 @@ builder.Services.Configure<JsonOptions>(options =>
 
 var app = builder.Build();
 
-//// Apply migrations at startup
+// Apply migrations at startup
 //using (var scope = app.Services.CreateScope())
 //{
 //	var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//	dbContext.Database.Migrate(); // Applies any pending migrations to the database
+//	dbContext?.Database.Migrate(); // Applies any pending migrations to the database
 //}
 
 
@@ -95,3 +109,6 @@ app.MapGet("/api/unauthorized", () => "403")
 
 
 app.Run();
+
+
+public partial class Program { }

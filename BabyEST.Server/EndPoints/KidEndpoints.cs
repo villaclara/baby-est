@@ -34,11 +34,6 @@ public static class KidEndpoints
 
 		var kids = dbctx.Kids.Where(k => k.Parents.Any(p => p.Id == parentId)).Include(k => k.Parents);
 
-		if (kids is null)
-		{
-			return TypedResults.BadRequest("Kids not found.");
-		}
-
 		var kidDtos = new List<KidDto>();
 		foreach (var kid in kids)
 		{
