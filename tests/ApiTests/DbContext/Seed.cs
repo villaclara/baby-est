@@ -148,7 +148,7 @@ public class Seed
 								IsActiveNow = false,
 								StartDate = new DateTime(2025, 1, 1, 10, 10, 10),
 								EndDate = new DateTime(2025, 1, 1, 11, 11, 11),
-								KidId = 1
+								KidId = 3
 							},
 							new KidActivity()
 							{
@@ -157,7 +157,7 @@ public class Seed
 								IsActiveNow = false,
 								StartDate = new DateTime(2025, 2, 2, 2, 2, 2),
 								EndDate = new DateTime(2025, 2, 2, 22, 22, 22),
-								KidId = 1
+								KidId = 3
 							}
 						]
 					},
@@ -174,7 +174,7 @@ public class Seed
 								IsActiveNow = false,
 								StartDate = new DateTime(2025, 1, 1, 10, 10, 10),
 								EndDate = new DateTime(2025, 1, 1, 11, 11, 11),
-								KidId = 1
+								KidId = 4
 							},
 							new KidActivity()
 							{
@@ -183,7 +183,7 @@ public class Seed
 								IsActiveNow = false,
 								StartDate = new DateTime(2025, 2, 2, 2, 2, 2),
 								EndDate = new DateTime(2025, 2, 2, 22, 22, 22),
-								KidId = 1
+								KidId = 4
 							}
 						]
 					}
