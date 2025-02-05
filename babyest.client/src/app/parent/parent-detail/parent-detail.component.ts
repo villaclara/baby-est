@@ -9,12 +9,13 @@ import { FormsModule } from '@angular/forms';
 import { KidService } from '../../services/KidService/kid.service';
 import { Kid } from '../../models/kid';
 import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
+import { ErrorPageComponent } from "../../errorpage/error-page/error-page.component";
 
 
 @Component({
   selector: 'app-parent-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingSpinnerComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, ErrorPageComponent],
   templateUrl: './parent-detail.component.html',
   styleUrl: './parent-detail.component.css'
 })
