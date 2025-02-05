@@ -2,6 +2,9 @@
     <app-loading-spinner></app-loading-spinner>
 </div>
 
+<div *ngIf="!isLoading && errorMessageForErrorComponent != ''">
+    <app-error-page [errorMessage]='errorMessageForErrorComponent' pageLinkToReload="/history"></app-error-page>
+</div>
 
 <div *ngIf="!isLoading">
 

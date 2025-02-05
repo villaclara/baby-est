@@ -8,11 +8,13 @@ import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.c
 import { ActivityNameTranslator } from '../../utils/activity-name-translator';
 import { FormsModule } from '@angular/forms';
 import { DateConverter } from '../../utils/date-converter';
+import { ErrorPageComponent } from '../../errorpage/error-page/error-page.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule],
+  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent],
   providers: [DateConverter],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css'
@@ -43,6 +45,8 @@ export class HistoryComponent implements OnInit {
   dates: string[] = [];
   shitActivityDates: Date[] = [];
 
+  errorMessageForErrorComponent: string = '';
+
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
     this.kidService.getKidActivitiesById(currentKidId).subscribe({
@@ -55,9 +59,10 @@ export class HistoryComponent implements OnInit {
         });
         this.isLoading = false;
       },
-      error: (err) => {
+      error: (err: any) => {
         console.log(err.message);
         this.isLoading = false;
+        this.errorMessageForErrorComponent = err;
       }
     })
   }
