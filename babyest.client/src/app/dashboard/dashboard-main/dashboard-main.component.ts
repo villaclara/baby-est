@@ -84,13 +84,15 @@ export class DashboardMainComponent implements OnInit {
             }
           },
           error: (err: Error) => {
-            if (err.message === '404') {
-              this.timeSinceLastEat = -1;
 
-            }
-            else {
-              this.errorMessageDisplayed = err.message;
-            }
+            this.timeSinceLastEat = -1;
+            // if (err.message === '404') {
+            //   this.timeSinceLastEat = -1;
+
+            // }
+            // else {
+            //   this.errorMessageDisplayed = err.message;
+            // }
           }
         });
 
@@ -113,13 +115,14 @@ export class DashboardMainComponent implements OnInit {
             }
           },
           error: (err: Error) => {
-            if (err.message === '404') {
-              this.timeSinceLastSleep = -1;
+            this.timeSinceLastSleep = -1;
+            // if (err.message === '404') {
+            //   this.timeSinceLastSleep = -1;
 
-            }
-            else {
-              this.errorMessageDisplayed = err.message;
-            }
+            // }
+            // else {
+            //   this.errorMessageDisplayed = err.message;
+            // }
           }
         });
 
