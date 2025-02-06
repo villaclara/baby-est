@@ -5,6 +5,7 @@ import { catchError, map, ObservableInput, tap, throwError } from 'rxjs';
 import { AuthService } from '../services/AuthService/auth.service';
 import { UserFormData } from '../models/user-form-data';
 import { Router } from '@angular/router';
+import { NgIf } from '@angular/common';
 
 
 @Component({
@@ -12,7 +13,7 @@ import { Router } from '@angular/router';
   templateUrl: './signingpage.component.html',
   styleUrl: './signingpage.component.css',
   standalone: true,
-  imports: [FormsModule]
+  imports: [FormsModule, NgIf]
 })
 export class SigningpageComponent {
 
@@ -24,18 +25,24 @@ export class SigningpageComponent {
   user = new UserFormData('', '');
   confirmPassword: string = "";
 
+  isActionLoading: boolean = false;
+
   login() {
+
+    this.isActionLoading = true;
     // The result is StatusCode with Text "Logged in" or "Incorrect credentials". We display the result text based on statuscode.
     this.authService.tryLogin(new UserFormData(this.user.email, this.user.password))
       .subscribe({
         // success
         next: async (data: any) => {
           this.errorMessage = data;
+          this.isActionLoading = false;
           await new Promise(f => setTimeout(f, 1000));
           this.router.navigateByUrl('');
         },
         // error
         error: (err: any) => {
+          this.isActionLoading = false;
           this.errorMessage = err.error;
         }
       });
@@ -52,16 +59,19 @@ export class SigningpageComponent {
   }
 
   register() {
+    this.isActionLoading = true;
     // The result is StatusCode with Text "Logged in" or "Incorrect credentials". We display the result text based on statuscode.
     this.authService.tryRegister(this.user)
       .subscribe({
         // success
         next: (data: any) => {
+          this.isActionLoading = false;
           this.errorMessage = data + "Please login.";
           this.isRegistering = false;
         },
         // error
         error: (err: any) => {
+          this.isActionLoading = false;
           this.errorMessage = err.error;
         }
       });
