@@ -1,0 +1,28 @@
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    
+    <div class="container">
+    
+        <div class="fs-5">
+                Помилка при завантаженні 
+        </div>
+        <div>
+            <span class="fw-lihter text-secondary">
+                ({{errorMessage}}). 
+            </span>
+        </div>
+
+        <br />
+        <div class="fs-5">
+            Будь ласка, перезавантаж сторінку.
+            <span class="fw-lighter text-secondary" *ngIf="timerStarted">
+                (атоматично перезавантажиться через {{timeToReload}} сек).
+            </span> 
+        </div>
+        <div class="">
+            <button class="btn rounded-5" (click)="reloadPage()">
+                <i class="bi bi-arrow-clockwise" style="font-size: 2rem;"></i>
+            </button>
+        </div>
+    
+    </div>
+</div>

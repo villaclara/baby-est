@@ -29,7 +29,7 @@
         </div>
         
         
-        <div *ngIf="isRichSingleActivity && !activity.IsActiveNow" class="col-auto d-flex justify-content-center"
+        <div *ngIf="isRichSingleActivity" class="col-auto d-flex justify-content-center"
         (click)="editActivity()">
             <i class="my-auto" [ngClass]="isEditingPressed && editingKidId == activity.Id ? 'bi bi-chevron-up' : 'bi bi-chevron-down'" ></i>
         </div>

@@ -10,11 +10,12 @@ import { KidActivity } from '../../models/kid-activity';
 import { NgClass } from '@angular/common';
 import { NgIf } from '@angular/common';
 import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
+import { ErrorPageComponent } from "../../errorpage/error-page/error-page.component";
 
 @Component({
   selector: 'app-dashboard-main',
   standalone: true,
-  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass, NgIf, LoadingSpinnerComponent],
+  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass, NgIf, LoadingSpinnerComponent, ErrorPageComponent],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })
@@ -35,6 +36,7 @@ export class DashboardMainComponent implements OnInit {
 
   errorMessageDisplayed: string = '';
   isLoading: boolean = true;
+  
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private router: Router
@@ -82,13 +84,15 @@ export class DashboardMainComponent implements OnInit {
             }
           },
           error: (err: Error) => {
-            if (err.message === '404') {
-              this.timeSinceLastEat = -1;
 
-            }
-            else {
-              this.errorMessageDisplayed = err.message;
-            }
+            this.timeSinceLastEat = -1;
+            // if (err.message === '404') {
+            //   this.timeSinceLastEat = -1;
+
+            // }
+            // else {
+            //   this.errorMessageDisplayed = err.message;
+            // }
           }
         });
 
@@ -111,13 +115,14 @@ export class DashboardMainComponent implements OnInit {
             }
           },
           error: (err: Error) => {
-            if (err.message === '404') {
-              this.timeSinceLastSleep = -1;
+            this.timeSinceLastSleep = -1;
+            // if (err.message === '404') {
+            //   this.timeSinceLastSleep = -1;
 
-            }
-            else {
-              this.errorMessageDisplayed = err.message;
-            }
+            // }
+            // else {
+            //   this.errorMessageDisplayed = err.message;
+            // }
           }
         });
 

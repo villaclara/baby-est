@@ -2,12 +2,19 @@
     <app-loading-spinner></app-loading-spinner>
 </div>
 
+<div *ngIf="!isLoading && errorMessageForErrorComponent != ''">
+    <app-error-page [errorMessage]='errorMessageForErrorComponent' pageLinkToReload="/history"></app-error-page>
+</div>
 
 <div *ngIf="!isLoading">
 
 
     
     <div class="container">
+
+        <div class="mt-4 fs-5" *ngIf="activities.length == 0">
+            Поки що активностей не було.
+        </div>
 
         <div class="mt-4 ">
             <div class=" p-1">

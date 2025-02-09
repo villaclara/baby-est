@@ -4,7 +4,9 @@
 
 <div *ngIf="!isLoading">
 
-    <div *ngIf="errorMessageDisplayed != ''">{{errorMessageDisplayed}}</div>
+    <div *ngIf="errorMessageDisplayed != ''">
+        <app-error-page [errorMessage]="errorMessageDisplayed" [pageLinkToReload]="'/main/'+kidId"></app-error-page>
+    </div>
     <div *ngIf="errorMessageDisplayed === ''">
 
         <div [ngClass]="{
