@@ -1,0 +1,85 @@
+name: newrelease
+
+on:
+  push:
+    branches:
+      - master  # Trigger on push to the master branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Run the action on the latest Ubuntu runner
+
+    steps:
+    # Step 1: Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # Step 2: Set up .NET SDK
+    - name: Set up .NET SDK
+      uses: actions/setup-dotnet@v2
+      with:
+        dotnet-version: '8.0'  # Specify your .NET version here (e.g., '6.0', '7.0', etc.)
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: dotnet restore .tests/ApiTests/ApiTests.csproj  # Specify the project file path
+
+    # Step 4: Build the project
+    - name: Build project
+      run: dotnet build .tests/ApiTests/ApiTests.csproj --configuration Release
+
+    # Step 5: Run tests
+    - name: Run tests
+      run: dotnet test .tests/ApiTests/ApiTests.csproj --no-build --verbosity normal  # Specify the project file path
+
+  release:
+    runs-on: ubuntu-latest  # Run the release on a separate runner
+    if: github.ref == 'refs/heads/master'  # Only trigger on the master branch push
+
+    steps:
+    # Step 1: Checkout the code from the repository
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Get all tags for the repo. If not set this the next step will fail.
+
+    # Step 2: Get the latest tag from git and increment it
+    - name: Get current version tag and increment
+      id: tag_version
+      run: |
+        latest_tag=$(git tag --sort=-v:refname | head -n 1)
+        echo "latest_tag=$latest_tag"
+        if [[ -z "$latest_tag" ]]; then
+          new_tag="v1.0.0"
+        else
+          new_tag=$(echo $latest_tag | awk -F. -v OFS=. '{$NF++;print}')
+        fi
+        echo "new_tag=$new_tag" >> $GITHUB_ENV
+
+    # Step 3: Configure git to use GitHub token for authentication
+    - name: Configure git
+      run: |
+        git config --global user.name "github-actions"
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        
+    # Step 4: Create the new tag
+    - name: Create new Git tag
+      run: |
+        git tag ${{ env.new_tag }}
+
+    # Step 5: Push the tag to the repository using GITHUB_TOKEN for authentication
+    - name: Push new tag
+      run: |
+        git push https://github.com/${{ github.repository }} ${{ env.new_tag }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # Step 6: Create a GitHub release
+    - name: Create GitHub release
+      uses: ncipollo/release-action@v1
+      with:
+        tag: ${{ env.new_tag }}
+        release_name: Release ${{ env.new_tag }}
+        body: |
+          New release for version ${{ env.new_tag }}.
+
