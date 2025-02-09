@@ -24,16 +24,13 @@ jobs:
     - name: Install dependencies
       run: dotnet restore .tests/ApiTests/ApiTests.csproj  # Specify the project file path
 
-    # Step 4: Build the project
-    - name: Build project
-      run: dotnet build .tests/ApiTests/ApiTests.csproj --configuration Release
-
-    # Step 5: Run tests
+    # Step 4: Run tests
     - name: Run tests
-      run: dotnet test .tests/ApiTests/ApiTests.csproj --no-build --verbosity normal  # Specify the project file path
+      run: dotnet test .tests/ApiTests/ApiTests.csproj --verbosity normal  # Specify the project file path
 
   release:
     runs-on: ubuntu-latest  # Run the release on a separate runner
+    needs: build # Wait for build and then run the next job
     if: github.ref == 'refs/heads/master'  # Only trigger on the master branch push
 
     steps:
