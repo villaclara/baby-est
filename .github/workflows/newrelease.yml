@@ -22,11 +22,11 @@ jobs:
 
     # Step 3: Install dependencies
     - name: Install dependencies
-      run: dotnet restore .tests/ApiTests/ApiTests.csproj  # Specify the project file path
+      run: dotnet restore tests/ApiTests/ApiTests.csproj  # Specify the project file path
 
     # Step 4: Run tests
     - name: Run tests
-      run: dotnet test .tests/ApiTests/ApiTests.csproj --verbosity normal  # Specify the project file path
+      run: dotnet test tests/ApiTests/ApiTests.csproj --verbosity normal  # Specify the project file path
 
   release:
     runs-on: ubuntu-latest  # Run the release on a separate runner
