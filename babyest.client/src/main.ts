@@ -7,7 +7,6 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { enableProdMode, importProvidersFrom, isDevMode } from '@angular/core';
 import { AppRoutingModule } from './app/app-routing.module';
-import {ServiceWorkerModule} from '@angular/service-worker'
 
 
 // platformBrowserDynamic().bootstrapModule(AppModule, {
@@ -23,7 +22,7 @@ import {ServiceWorkerModule} from '@angular/service-worker'
 //});
 
 
-if ('serviceWorker' in navigator && !isDevMode) {
+if ('serviceWorker') {
   navigator.serviceWorker
     .register('/ngsw-worker.js')
     .then((registration) => {
