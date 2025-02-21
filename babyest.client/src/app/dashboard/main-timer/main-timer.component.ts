@@ -1,6 +1,6 @@
 import { CommonModule, DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
-import { interval, map, Observable, Subject, takeUntil, timer } from 'rxjs';
+import { interval, map, Observable, Subject, Subscription, takeUntil, timer } from 'rxjs';
 import { TimerCounterPipe } from '../../pipes/timer-counter.pipe';
 import { KidActivity } from '../../models/kid-activity';
 import { ActivityNameTranslator } from '../../utils/activity-name-translator';
@@ -46,25 +46,51 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
   
 
   @Input() showPlaceholder: boolean = true;
+  timerSub: Subscription = new Subscription();
 
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
 
-    console.log("onchanges - main-timer comp - :", changes);
-    if (this.currentActivity.IsActiveNow == true) {
-      let timeDiff = new Date().getTime() - new Date(this.currentActivity.StartDate!).getTime();
-      this.timePassed = Math.floor(timeDiff / 1000);
-      this.isRunningTimer = true;
-      timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
-      this.startStopImageLink = '../../../assets/img/stop_icon.png';
-      this.currentActivityNameUA = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
 
-      this.nowDateStartActivityInputTime = this.dateConverter.toHHmmString(this.currentActivity.StartDate!);
-      // if ANY eating we set the IsEatingSelected to True
-      this.isEatingSelected = this.currentActivity.ActivityType.toLowerCase() != 'sleeping'
+
+    // TODO
+    // HERE the code is not called when the in 1st window I end the activity and focus the 2nd window -
+    // The activity is still runnig in 2nd window, however from API we get 'isActive - false'
+
+
+    console.log("onchanges - main-timer comp - :", changes);
+
+    if(changes['currentActivity'])
+    {
+
+
+      if(this.timerSub)
+      {
+        this.timerSub.unsubscribe();
+      }
+
+      console.log("onchanges - main-timer CurrentActivity");
+      if (this.currentActivity.IsActiveNow == true) {
+        let timeDiff = new Date().getTime() - new Date(this.currentActivity.StartDate!).getTime();
+        this.timePassed = Math.floor(timeDiff / 1000);
+        this.isRunningTimer = true;
+        this.timerSub = timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
+        this.startStopImageLink = '../../../assets/img/stop_icon.png';
+        this.currentActivityNameUA = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
+        
+        this.nowDateStartActivityInputTime = this.dateConverter.toHHmmString(this.currentActivity.StartDate!);
+        // if ANY eating we set the IsEatingSelected to True
+        this.isEatingSelected = this.currentActivity.ActivityType.toLowerCase() != 'sleeping'
         && this.currentActivity.ActivityType != ''
         ? true
         : false;
+      }
+
+      else
+      {
+        this.startStopImageLink = '../../../assets/img/play_icon.png';
+
+      }
     }
 
   }
@@ -127,7 +153,7 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
     // When we want to start activity and send the currentActivity to api.
     if (!this.isRunningTimer) {
       // Start the timer
-      interval(1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
+      this.timerSub = interval(1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
       this.timePassed = 0;
       this.startStopImageLink = '../../../assets/img/stop_icon.png';
       this.isRunningTimer = true;

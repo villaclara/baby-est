@@ -224,6 +224,9 @@ export class DashboardMainComponent implements OnInit {
   // Send the new activity to the api
   sendNewKidActivity(activity: KidActivity): void {
 
+
+    this.currentActivity = activity;
+
     // Add new Activity to api. 
     // Also update required  Input() props in child components.
     if (activity.EndDate == undefined) {
@@ -250,6 +253,9 @@ export class DashboardMainComponent implements OnInit {
     // Also update required Input() props in child components.
     // Also update the last activities local list.
     else {
+
+
+
       this.kidService.updateActivity(this.kidId, activity)
         .subscribe({
           next: (data: any) => {
