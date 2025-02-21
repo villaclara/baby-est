@@ -26,14 +26,13 @@ export class AppComponent implements OnInit {
 
 }
   ngOnInit(): void {
-    window.addEventListener("visibilitychange", function () {
-      console.log("Visibility changed");
-      if (document.visibilityState === "visible") {
-        console.log("APP resumed");
-        window.location.reload();
-      }
-    });
-    console.log("added event listener");
+    // window.addEventListener("visibilitychange", function () {
+    //   console.log("Visibility changed");
+    //   if (document.visibilityState === "visible") {
+    //     console.log("APP resumed");
+    //     window.location.reload();
+    //   }
+    // });
   }
 
   title = 'babyest.client';

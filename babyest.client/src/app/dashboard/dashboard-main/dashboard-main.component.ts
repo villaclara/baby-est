@@ -28,14 +28,18 @@ export class DashboardMainComponent implements OnInit {
   currentActivity: KidActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   activities: KidActivity[] = [];
 
-  timeSinceLastSleep: number = 0;
-  timeSinceLastEat: number = 0;
+  timeSinceLastSleep: number = -1;
+  timeSinceLastEat: number = -1;
 
   kidAge: number = 0;
   kidId: number = 0;
 
   errorMessageDisplayed: string = '';
   isLoading: boolean = true;
+
+  isHeaderInfoDisplay: boolean = false;
+  isTimerDisplay: boolean = false;
+  isLastActsDisplay: boolean = false;
   
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
@@ -47,6 +51,31 @@ export class DashboardMainComponent implements OnInit {
 
   ngOnInit(): void {
 
+    this.isLoading = false;
+    this.loadData();
+
+
+    window.addEventListener("visibilitychange",  () => {
+      console.log("Visibility changed to " + document.visibilityState + " date - " + new Date().getTime());
+      if (document.visibilityState === "visible") {
+        console.log("APP resumed");
+        //window.location.reload();
+
+        // set the false to trigger re-display the sections
+        this.isHeaderInfoDisplay = false;
+        this.isTimerDisplay = false;
+        this.isLastActsDisplay = false;
+        this.loadData();
+      }
+    });
+
+
+    
+
+  }
+
+
+  loadData(): void {
     // Get general info about Kid. Used in KidHeaderInfo Component
     this.kidService.getKidById(this.currentKidService.getCurrentKid())
       .subscribe(
@@ -72,20 +101,28 @@ export class DashboardMainComponent implements OnInit {
         {
           next: (data: KidActivity) => {
             this.lastEatActivity = data;
-
+            console.log("dashboard - get last eat");
             // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
             // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
             if (this.lastEatActivity.IsActiveNow == true) {
               this.currentActivity = this.lastEatActivity;
               this.timeSinceLastEat = -1;
+
+              
             }
             else {
               this.timeSinceLastEat = Math.floor((new Date().getTime() - new Date(this.lastEatActivity.EndDate!).getTime()) / 1000);
             }
+
+            // // for refresh section on window focus
+            // this.isTimerDisplay = true;
+            // this.isHeaderInfoDisplay = true;
           },
           error: (err: Error) => {
 
             this.timeSinceLastEat = -1;
+            this.isHeaderInfoDisplay = true;
+            this.isTimerDisplay = true;
             // if (err.message === '404') {
             //   this.timeSinceLastEat = -1;
 
@@ -109,13 +146,26 @@ export class DashboardMainComponent implements OnInit {
             if (this.lastSleepActivity.IsActiveNow == true) {
               this.currentActivity = this.lastSleepActivity;
               this.timeSinceLastSleep = -1;
+
+              
             }
             else {
               this.timeSinceLastSleep = Math.floor((new Date().getTime() - new Date(this.lastSleepActivity.EndDate!).getTime()) / 1000);
             }
+
+           
+
+            
+            setTimeout(() => {
+               // for refresh section on window focus
+            this.isTimerDisplay = true;
+            this.isHeaderInfoDisplay = true;
+            }, 2000);
           },
           error: (err: Error) => {
             this.timeSinceLastSleep = -1;
+            this.isHeaderInfoDisplay = true;
+            this.isTimerDisplay = true;
             // if (err.message === '404') {
             //   this.timeSinceLastSleep = -1;
 
@@ -136,7 +186,8 @@ export class DashboardMainComponent implements OnInit {
             });
             // Fill the array depending on data length.
             if (data.length <= 0) {
-              this.isLoading = false;
+              // this.isLoading = false;
+              this.isLastActsDisplay = true;
               return;
             }
             // if we have only one Active activity we do nothing, else we push into the array.
@@ -158,18 +209,17 @@ export class DashboardMainComponent implements OnInit {
                 }
               });
             }
-           
-            this.isLoading = false;
+
+            this.isLastActsDisplay = true;
+            // this.isLoading = false;
 
           },
           error: (err: Error) => {
             this.errorMessageDisplayed = err.message;
-            this.isLoading = false;
+            // this.isLoading = false;
           }
         });
-
   }
-
 
   // Send the new activity to the api
   sendNewKidActivity(activity: KidActivity): void {

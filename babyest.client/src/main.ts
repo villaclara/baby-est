@@ -22,7 +22,7 @@ import { AppRoutingModule } from './app/app-routing.module';
 //});
 
 
-if ('serviceWorker') {
+if ('serviceWorker' in navigator && !isDevMode) {
   navigator.serviceWorker
     .register('/ngsw-worker.js')
     .then((registration) => {

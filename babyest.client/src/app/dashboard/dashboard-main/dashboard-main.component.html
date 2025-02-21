@@ -17,12 +17,13 @@
             <div class="container">
 
                 <app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat"
-                    [timeSinceLastSleep]="timeSinceLastSleep"></app-kid-header-info>
+                    [timeSinceLastSleep]="timeSinceLastSleep" [showPlaceholder]="!isHeaderInfoDisplay"></app-kid-header-info>
 
                 <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
-                    [currentActivity]="currentActivity"></app-main-timer>
+                    [currentActivity]="currentActivity" [showPlaceholder]="!isTimerDisplay"></app-main-timer>
 
-                <app-last-activities [activities]="activities"></app-last-activities>
+                <app-last-activities *ngIf="isLastActsDisplay == true; else placeholderActivities" [activities]="activities" [showPlaceholder]="false"></app-last-activities>
+                <ng-template #placeholderActivities><app-last-activities [showPlaceholder]="true"></app-last-activities></ng-template>
             </div>
         </div>
     </div>

@@ -1,13 +1,13 @@
 <div class="container p-2 border-0">
 
     <div class="row">
-        
+
         <!-- Icon, Name and Age on left -->
         <div class="col-5">
             <div class="row justify-content-center">
-                <img src="../../../assets/img/baby-80.png" class="kidImg"/>
+                <img src="../../../assets/img/baby-80.png" class="kidImg" />
             </div>
-            
+
             <div class="row">
                 <span class="fw-semibold">
                     {{kid.Name}}
@@ -17,24 +17,53 @@
                 <span class="">
                     {{kidAge }} день
                 </span>
-            </div> 
+            </div>
         </div>
-        
-        
+
+
+
+
+
         <!-- Time since last Activities -->
         <div class="col-7 border rounded-2 lastTimes">
             <div class="row">
                 <span>Від сну: </span>
-                <span *ngIf="timeSinceLastSleep >= 0; else nowSleeping" class="fw-semibold"> {{ timeSinceLastSleep | shortTimerCounter }} </span>
+
+                <!-- Placeholder -->
+                <div *ngIf="showPlaceholder">
+                    <div class="placeholder-glow">
+                        <span class="placeholder placeholder-sm col-4 bg-secondary bg-opacity-50"></span>
+                    </div>
+                </div>
+
+
+                <div *ngIf="!showPlaceholder">
+
+                    <span *ngIf="timeSinceLastSleep >= 0; else nowSleeping" class="fw-semibold"> {{ timeSinceLastSleep |
+                    shortTimerCounter }} </span>
                 <ng-template #nowSleeping><span>---</span></ng-template>
             </div>
-            
+            </div>
+
             <div class="row">
                 <span>Від годування:</span>
-                <span *ngIf="timeSinceLastEat >= 0; else newEating" class="fw-semibold"> {{ timeSinceLastEat | shortTimerCounter }}</span>
+
+
+                <!-- Placeholder -->
+                <div *ngIf="showPlaceholder">
+                    <div class="placeholder-glow">
+                        <span class="placeholder placeholder-sm col-4 bg-secondary bg-opacity-50"></span>
+                    </div>
+                </div>
+
+                <div *ngIf="!showPlaceholder">
+
+                    <span *ngIf="timeSinceLastEat >= 0; else newEating" class="fw-semibold"> {{ timeSinceLastEat |
+                    shortTimerCounter }}</span>
                 <ng-template #newEating><span>---</span></ng-template>
+            </div>
             </div>
         </div>
     </div>
-    
+
 </div>

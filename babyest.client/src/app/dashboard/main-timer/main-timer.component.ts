@@ -25,7 +25,9 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
   private translator: ActivityNameTranslator = new ActivityNameTranslator();
 
   @Output() newKidActivity: EventEmitter<KidActivity> = new EventEmitter<KidActivity>();
-  @Input() currentActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+  // @Input() currentActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+  @Input() currentActivity!: KidActivity;
+
 
   isRunningTimer: boolean = false;
   startStopImageLink: string = this.isRunningTimer ? '../../../assets/img/stop_icon.png' : '../../../assets/img/play_icon.png';
@@ -43,9 +45,12 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
   nowDateEndActivityInputTime: string = '';
   
 
+  @Input() showPlaceholder: boolean = true;
+
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
 
+    console.log("onchanges - main-timer comp - :", changes);
     if (this.currentActivity.IsActiveNow == true) {
       let timeDiff = new Date().getTime() - new Date(this.currentActivity.StartDate!).getTime();
       this.timePassed = Math.floor(timeDiff / 1000);
@@ -61,12 +66,31 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
         ? true
         : false;
     }
+
   }
 
   ngOnInit(): void {
+    console.log("oninit - main-timer comp");
+
+    // if (this.currentActivity.IsActiveNow == true) {
+    //   let timeDiff = new Date().getTime() - new Date(this.currentActivity.StartDate!).getTime();
+    //   this.timePassed = Math.floor(timeDiff / 1000);
+    //   this.isRunningTimer = true;
+    //   timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
+    //   this.startStopImageLink = '../../../assets/img/stop_icon.png';
+    //   this.currentActivityNameUA = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
+
+    //   this.nowDateStartActivityInputTime = this.dateConverter.toHHmmString(this.currentActivity.StartDate!);
+    //   // if ANY eating we set the IsEatingSelected to True
+    //   this.isEatingSelected = this.currentActivity.ActivityType.toLowerCase() != 'sleeping'
+    //     && this.currentActivity.ActivityType != ''
+    //     ? true
+    //     : false;
+    // }
   }
 
   ngOnDestroy(): void {
+    console.log("ondestroy - main-timer comp");
     this.timerDone$.unsubscribe();
   }
 
