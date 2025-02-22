@@ -1,9 +1,9 @@
 .bg-sleeping {
     background-color: #e8eeff;
-    min-height: 100vh;
+    min-height: 85vh;
 }
 
 .bg-eating {
     background-color: #ffe5eb;
-    min-height: 100vh;
+    min-height: 85vh;
 }
