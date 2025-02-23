@@ -1,4 +1,4 @@
-<div class="container p-2 border-0">
+<div class="container p-2 border-bottom pb-3">
 
     <div class="row">
 
@@ -29,41 +29,39 @@
             <div class="row">
                 <span>Від сну: </span>
 
-                <!-- Placeholder -->
                 <div *ngIf="showPlaceholder">
                     <div class="placeholder-glow">
-                        <span class="placeholder placeholder-sm col-4 bg-secondary bg-opacity-50"></span>
+                        <!-- <span class="placeholder placeholder-sm col-4 bg-secondary bg-opacity-50"></span> -->
+                        <span>...</span>
                     </div>
                 </div>
-
 
                 <div *ngIf="!showPlaceholder">
 
                     <span *ngIf="timeSinceLastSleep >= 0; else nowSleeping" class="fw-semibold"> {{ timeSinceLastSleep |
-                    shortTimerCounter }} </span>
-                <ng-template #nowSleeping><span>---</span></ng-template>
-            </div>
+                        shortTimerCounter }} </span>
+                    <ng-template #nowSleeping><span>---</span></ng-template>
+                </div>
             </div>
 
             <div class="row">
                 <span>Від годування:</span>
 
 
-                <!-- Placeholder -->
                 <div *ngIf="showPlaceholder">
                     <div class="placeholder-glow">
-                        <span class="placeholder placeholder-sm col-4 bg-secondary bg-opacity-50"></span>
+                        <!-- <span class="placeholder placeholder-sm col-4 bg-secondary bg-opacity-50"></span> -->
+                        <span>...</span>
                     </div>
                 </div>
 
                 <div *ngIf="!showPlaceholder">
 
                     <span *ngIf="timeSinceLastEat >= 0; else newEating" class="fw-semibold"> {{ timeSinceLastEat |
-                    shortTimerCounter }}</span>
-                <ng-template #newEating><span>---</span></ng-template>
-            </div>
+                        shortTimerCounter }}</span>
+                    <ng-template #newEating><span>---</span></ng-template>
+                </div>
             </div>
         </div>
-    </div>
 
-</div>
+    </div>

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 interface WeatherForecast {
@@ -20,20 +20,10 @@ class LoginUser {
   standalone: true,
   imports: [RouterOutlet]
 })
-export class AppComponent implements OnInit {
+export class AppComponent {
   constructor() {
-    console.log("app component init");
 
 }
-  ngOnInit(): void {
-    // window.addEventListener("visibilitychange", function () {
-    //   console.log("Visibility changed");
-    //   if (document.visibilityState === "visible") {
-    //     console.log("APP resumed");
-    //     window.location.reload();
-    //   }
-    // });
-  }
 
   title = 'babyest.client';
 }

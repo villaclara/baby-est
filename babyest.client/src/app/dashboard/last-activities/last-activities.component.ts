@@ -12,7 +12,6 @@ import { NgFor, NgIf, NgClass } from '@angular/common';
 })
 export class LastActivitiesComponent{
   @Input() activities : KidActivity[] = [];
-  @Input() showPlaceholder: boolean = true;
 
   constructor() { }
   

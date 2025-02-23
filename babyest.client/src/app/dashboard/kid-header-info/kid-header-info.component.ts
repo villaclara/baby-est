@@ -26,7 +26,6 @@ export class KidHeaderInfoComponent implements OnInit, OnDestroy{
 
   ngOnInit(): void {
 
-
     this.timerSubscription = timer(1, 1000).subscribe(() => { 
 
       if (this.timeSinceLastEat >= 0) {
@@ -37,7 +36,6 @@ export class KidHeaderInfoComponent implements OnInit, OnDestroy{
       } 
     );
         
-    console.log("oninit kid-header-info-comp called.");
   }
 
 
@@ -45,7 +43,6 @@ export class KidHeaderInfoComponent implements OnInit, OnDestroy{
     this.timerSubscription.unsubscribe();
     this.timeSinceLastEat = -1;
     this.timeSinceLastSleep = -1;
-    console.log("ondestroy kid-header-info-component called.");
   }
   
 }

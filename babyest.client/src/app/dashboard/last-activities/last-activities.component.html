@@ -2,22 +2,7 @@
     <div class="">
         <span>Останні активності: </span>
     </div>
-
-
-    <div *ngIf="showPlaceholder">
-        <div class="p-1">
-                <p class="placeholder-glow">
-                    <span class="placeholder placeholder-lg col-12 bg-secondary"></span>
-                </p>
-                <p class="placeholder-glow">
-                    <span class="placeholder placeholder-lg col-12 bg-secondary"></span>
-                </p>
-                <p class="placeholder-glow">
-                    <span class="placeholder placeholder-lg col-12 bg-secondary"></span>
-                </p>
-        </div>    
-    </div>
-
+    
     <div class="card-body p-1">
         <div *ngFor="let activity of activities; index as i" class="my-1 border-bottom">
             <app-single-activity [activity]="activity" [ngClass]="{'fw-bolder' : i == 0}"></app-single-activity>

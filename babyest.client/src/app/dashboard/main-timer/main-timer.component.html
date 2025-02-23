@@ -1,24 +1,15 @@
-<div class="mt-1 border-top">
+<div class="mt-1 ">
 
     <!-- Stopwatch -->
     <div class="row">
         <div class="col">
             <div class="row">
                 <span class="fs-5">Зараз:
-
-                    <span *ngIf="showPlaceholder">
-                        <span class="fs-2">&nbsp;
-                        </span>
-                    </span>
-
-                    <span *ngIf="!showPlaceholder">
-
                         <span class="fs-2">{{currentActivityNameUA}} </span>
                         <span *ngIf="currentActivity.IsActiveNow" 
                         (click)="isEditingActivityTimes = !isEditingActivityTimes"
                         class="text-dark">
                         <i class="bi bi-pencil-square fs-6"></i></span>
-                    </span>
                 </span>
                 
             </div>
@@ -37,21 +28,12 @@
                         </div>
                     </div>
                 
-                
-                    <div *ngIf="showPlaceholder">
-                        <div class="col-auto mt-3">
-                            <button class="spinner-grow" style="border: none;"></button>
-                        </div>
-                    </div>
-
-                    <div *ngIf="!showPlaceholder">
 
                             <div class="col-auto">
                                 <button class="btn my-1" type="button" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''"
                                     style="border: none;">
                                 <img src="{{startStopImageLink}}" class="playImg" />
                             </button>
-                        </div>
                     </div>
                 
                     <div class="col-auto" *ngIf="isEditingActivityTimes">
@@ -64,7 +46,6 @@
                     </div>
                 </div>
 
-                <div *ngIf="!showPlaceholder">
 
                     <div class="row justify-content-center mt-1">
                         <div class="row">
@@ -73,7 +54,6 @@
                             class="text-secondary small">год&nbsp;&nbsp;&nbsp;&nbsp;хв&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;с&nbsp;&nbsp;</span>
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     </div>

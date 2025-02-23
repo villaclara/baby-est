@@ -11,19 +11,28 @@
 
         <div [ngClass]="{
             'bg-sleeping' : currentActivity.ActivityType.toLowerCase() === 'sleeping',
-            'bg-eating' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping'
-        }" class="">
+            'bg-eating' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping'}" class="">
 
             <div class="container">
 
                 <app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat"
                     [timeSinceLastSleep]="timeSinceLastSleep" [showPlaceholder]="!isHeaderInfoDisplay"></app-kid-header-info>
 
-                <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
-                    [currentActivity]="currentActivity" [showPlaceholder]="!isTimerDisplay"></app-main-timer>
+                <div *ngIf="!mainSectionTimerLastActs">
+                    <div class="container d-flex align-items-center justify-content-center" style="min-height: 50vh;">
+                        <div class="spinner-grow" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                    </div>
+                </div>
 
-                <app-last-activities *ngIf="isLastActsDisplay == true; else placeholderActivities" [activities]="activities" [showPlaceholder]="false"></app-last-activities>
-                <ng-template #placeholderActivities><app-last-activities [showPlaceholder]="true"></app-last-activities></ng-template>
+                <div *ngIf="mainSectionTimerLastActs">
+
+                    <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
+                    [currentActivity]="currentActivity"></app-main-timer>
+                    
+                    <app-last-activities [activities]="activities"></app-last-activities>
+                </div>
             </div>
         </div>
     </div>

@@ -38,8 +38,7 @@ export class DashboardMainComponent implements OnInit {
   isLoading: boolean = true;
 
   isHeaderInfoDisplay: boolean = false;
-  isTimerDisplay: boolean = false;
-  isLastActsDisplay: boolean = false;
+  mainSectionTimerLastActs: boolean = false;
   
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
@@ -51,29 +50,41 @@ export class DashboardMainComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.isLoading = false;
-    this.loadData();
-
-
+    
+    // Adds the listener for event window focus. To trigger refresh timer each time app gets focus.
     window.addEventListener("visibilitychange",  () => {
-      console.log("Visibility changed to " + document.visibilityState + " date - " + new Date().getTime());
       if (document.visibilityState === "visible") {
-        console.log("APP resumed");
-        //window.location.reload();
 
-        // set the false to trigger re-display the sections
-        this.isHeaderInfoDisplay = false;
-        this.isTimerDisplay = false;
-        this.isLastActsDisplay = false;
-        this.loadData();
+        // this check prevents to LoadData() every time the App gets focus. 
+        // Load data only if we are inside /main/kidId link.
+        if(this.router.url === "/main/" + this.kidId )
+        {
+        
+          // set the false to trigger re-display the sections
+          this.isHeaderInfoDisplay = false;
+          this.mainSectionTimerLastActs = false;
+  
+          // set the activities which is passed to components as default values
+          this.unloadData();
+  
+          // load actual data for activities
+          this.loadData();
+        }
+       
       }
     });
 
+    this.loadData();
 
-    
+  
 
   }
 
+  unloadData() : void {
+    this.currentActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+    this.lastEatActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+    this.lastSleepActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+  }
 
   loadData(): void {
     // Get general info about Kid. Used in KidHeaderInfo Component
@@ -101,7 +112,6 @@ export class DashboardMainComponent implements OnInit {
         {
           next: (data: KidActivity) => {
             this.lastEatActivity = data;
-            console.log("dashboard - get last eat");
             // Check if we have any ACTIVE activity and set the time since that activity to -1, so no timer will run in Kid-Header Component.
             // Also set the CurrentActivity property which is send to MainTimer Component to display ongoing timer.
             if (this.lastEatActivity.IsActiveNow == true) {
@@ -113,16 +123,12 @@ export class DashboardMainComponent implements OnInit {
             else {
               this.timeSinceLastEat = Math.floor((new Date().getTime() - new Date(this.lastEatActivity.EndDate!).getTime()) / 1000);
             }
-
-            // // for refresh section on window focus
-            // this.isTimerDisplay = true;
-            // this.isHeaderInfoDisplay = true;
           },
           error: (err: Error) => {
 
             this.timeSinceLastEat = -1;
             this.isHeaderInfoDisplay = true;
-            this.isTimerDisplay = true;
+            this.errorMessageDisplayed = err.message;
             // if (err.message === '404') {
             //   this.timeSinceLastEat = -1;
 
@@ -146,26 +152,16 @@ export class DashboardMainComponent implements OnInit {
             if (this.lastSleepActivity.IsActiveNow == true) {
               this.currentActivity = this.lastSleepActivity;
               this.timeSinceLastSleep = -1;
-
-              
             }
             else {
               this.timeSinceLastSleep = Math.floor((new Date().getTime() - new Date(this.lastSleepActivity.EndDate!).getTime()) / 1000);
             }
-
-           
-
             
-            setTimeout(() => {
-               // for refresh section on window focus
-            this.isTimerDisplay = true;
             this.isHeaderInfoDisplay = true;
-            }, 2000);
           },
           error: (err: Error) => {
             this.timeSinceLastSleep = -1;
-            this.isHeaderInfoDisplay = true;
-            this.isTimerDisplay = true;
+            this.errorMessageDisplayed = err.message;
             // if (err.message === '404') {
             //   this.timeSinceLastSleep = -1;
 
@@ -182,41 +178,29 @@ export class DashboardMainComponent implements OnInit {
       .subscribe(
         {
           next: (data: KidActivity[]) => {
-            data.forEach(element => {
-            });
+            
             // Fill the array depending on data length.
-            if (data.length <= 0) {
-              // this.isLoading = false;
-              this.isLastActsDisplay = true;
-              return;
-            }
-            // if we have only one Active activity we do nothing, else we push into the array.
-            else if (data.length == 1) {
-              if (data[0].IsActiveNow != true) {
-                this.activities.push(data[0]);
-              }
-            }
-
-            // if the length more than 1
-            else if (data.length > 1) {
-
-              // add element to lastActivities list only if it is not active and length less than 3
-              data.forEach(element => {
-                if (element.IsActiveNow == false) {
-                  if (this.activities.length < 3) {
-                    this.activities.push(element);
-                  }
+             // add element to lastActivities list only if it is not active and length less than 3
+             data.forEach(element => {
+              if (element.IsActiveNow == false) {
+                if (this.activities.length < 3) {
+                  this.activities.push(element);
                 }
-              });
-            }
+              }
+            });
 
-            this.isLastActsDisplay = true;
-            // this.isLoading = false;
 
+            // isLoading - component Initial load.
+            // mainSectionTimerLastActs - when gaining focus.
+            setTimeout(() => {
+              this.mainSectionTimerLastActs = true;
+              this.isLoading = false;
+            }, 300);  // timeout is set to make smoother display as if the instant load the main section is like flickering
           },
           error: (err: Error) => {
             this.errorMessageDisplayed = err.message;
-            // this.isLoading = false;
+            this.mainSectionTimerLastActs = true;
+            this.isLoading = false;
           }
         });
   }
