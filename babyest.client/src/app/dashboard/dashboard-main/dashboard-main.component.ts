@@ -84,6 +84,7 @@ export class DashboardMainComponent implements OnInit {
     this.currentActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
     this.lastEatActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
     this.lastSleepActivity = { ActivityType: "", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
+    this.activities = [];
   }
 
   loadData(): void {
