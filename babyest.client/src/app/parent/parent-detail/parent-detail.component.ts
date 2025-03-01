@@ -36,7 +36,7 @@ export class ParentDetailComponent implements OnInit {
   selectedEditingKidId: number = 0;
   newParentEmail : string = '';
 
-  version: string = "v1.0.2";
+  version: string = "v1.0.3";
   constructor(private authService: AuthService,
     private router: Router,
     private parentService: ParentService,
