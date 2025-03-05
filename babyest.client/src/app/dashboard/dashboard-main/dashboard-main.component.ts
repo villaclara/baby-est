@@ -129,7 +129,7 @@ export class DashboardMainComponent implements OnInit {
 
             this.timeSinceLastEat = -1;
             this.isHeaderInfoDisplay = true;
-            this.errorMessageDisplayed = err.message;
+            // this.errorMessageDisplayed = err.message;
             // if (err.message === '404') {
             //   this.timeSinceLastEat = -1;
 
@@ -162,7 +162,7 @@ export class DashboardMainComponent implements OnInit {
           },
           error: (err: Error) => {
             this.timeSinceLastSleep = -1;
-            this.errorMessageDisplayed = err.message;
+            // this.errorMessageDisplayed = err.message;
             // if (err.message === '404') {
             //   this.timeSinceLastSleep = -1;
 

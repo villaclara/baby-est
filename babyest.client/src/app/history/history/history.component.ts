@@ -10,6 +10,7 @@ import { FormsModule } from '@angular/forms';
 import { DateConverter } from '../../utils/date-converter';
 import { ErrorPageComponent } from '../../errorpage/error-page/error-page.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-history',
@@ -23,7 +24,8 @@ export class HistoryComponent implements OnInit {
 
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
-    private dateConverter: DateConverter) {
+    private dateConverter: DateConverter,
+  private router: Router) {
     this.kidId = this.currentKidService.getCurrentKid();
   }
 
@@ -46,6 +48,8 @@ export class HistoryComponent implements OnInit {
   shitActivityDates: Date[] = [];
 
   errorMessageForErrorComponent: string = '';
+
+  isAddingNewActivity: boolean = false;
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -89,6 +93,55 @@ export class HistoryComponent implements OnInit {
     }
   }
 
+
+  toggleAddActivity() : void {
+    this.isAddingNewActivity = !this.isAddingNewActivity;
+  }
+
+  addActivity() : void {
+
+    let addingAct: KidActivity = {
+      Id: this.selectedEditingAct.Id,
+      ActivityType: this.selectedActivityType,
+      StartDate: new Date(this.startDateString),
+      EndDate: new Date(this.endDateString),
+      IsActiveNow: this.selectedEditingAct.IsActiveNow,
+      KidName: this.selectedEditingAct.KidName
+    };
+
+    this.kidService.addActivityToKid(this.kidId, addingAct)
+    .subscribe({
+      next: () => {
+
+        // let index = 0;
+        // while(index < this.activities.length && new Date(this.activities[index].StartDate!).getTime() > new Date(this.startDateString).getTime())
+        // {
+        //   index++;
+        // }
+
+        // this.isAddingNewActivity = false;
+        // this.selectedActivityType = '';
+        // this.startDateString = '';
+        // this.endDateString = '';
+        
+        // this.activities.splice(index, 0, addingAct);
+        // this.shitActivityDates.push(new Date(addingAct.StartDate!));
+        // this.dates.push(new Date(addingAct.StartDate!).toDateString())
+
+        // this.isLoading = true;
+
+        // setTimeout(() => {
+        //   this.isLoading = false;
+        // }, 1);
+
+
+        this.router.navigateByUrl("/", {skipLocationChange : true}).then(
+          () => this.router.navigateByUrl('/history'));
+      },
+      error: (err) => this.errorMessageForErrorComponent = err
+    });
+  }
+
   saveChangesActivity(): void {
 
     this.kidService.updateActivity(this.kidId,
@@ -119,7 +172,7 @@ export class HistoryComponent implements OnInit {
             this.shitActivityDates[index] = new Date(this.selectedEditingAct.StartDate);
           }
         },
-        error: (err) => console.log(err)
+        error: (err) => this.errorMessageForErrorComponent = err
       });
   }
 
@@ -138,7 +191,7 @@ export class HistoryComponent implements OnInit {
           this.dates.splice(index, 1);
           this.shitActivityDates.splice(index, 1);
         },
-        error: (err) => console.log(err)
+        error: (err) => this.errorMessageForErrorComponent = err
       });
   }
 

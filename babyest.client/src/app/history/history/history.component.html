@@ -9,14 +9,67 @@
 <div *ngIf="!isLoading">
 
 
+    <div class="mt-2 text-end me-2">
+        <button type="button" class="btn btn-secondary" (click)="toggleAddActivity()">Додати нову активність    </button>
+    </div>
+
+    <div class="row m-0 border-bottom" *ngIf="isAddingNewActivity">
+                        
+        <div class="col">
+            <div class="row my-1">
+                    <div class="col-3 pe-0">
+                        <label>Тип</label>
+                    </div>
+                    <div class="col-auto ps-0">
+                        <select class="form-select" [(ngModel)]="selectedActivityType">
+                            <option value="sleeping">Сон</option>
+                            <option value="eatingleft">Годування.Ліва</option>
+                            <option value="eatingright">Годування.Права</option>
+                            <option value="eatingboth">Годування.Обидві</option>
+                            <option value="eatingbottle">Годування.Пляшка</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="row my-1">
+                    <div class="col-3 pe-0">
+                        <label for="inputDateStart">Початок</label>
+                    </div>
+                    <div class="col-auto ps-0">
+                        <input id="inputDateStart" type="datetime-local" class="form-control" [(ngModel)]="startDateString" />
+                    </div>
+                </div>
+                
+                
+                <div class="row my-1">
+                    <div class="col-3 pe-0">
+                        <label for="inputDateEnd">Кінець</label>
+                    </div>
+                    <div class="col-auto ps-0">
+                        <input id="inputDateEnd" type="datetime-local" class="form-control" [(ngModel)]="endDateString"/>
+                    </div>
+                </div>
+                
+            </div>
+    
+            <div class="row">
+                <div class="col">
+                    <button type="button" class="btn btn-outline-success border-0 btn-lg" (click)="addActivity()">
+                        <i class="bi bi-floppy-fill fs-5"></i>
+                    </button>
+    
+                </div>
+                
+            </div>            
+        </div>
     
     <div class="container">
 
-        <div class="mt-4 fs-5" *ngIf="activities.length == 0">
+        <div class="mt-2 fs-5" *ngIf="activities.length == 0">
             Поки що активностей не було.
         </div>
 
-        <div class="mt-4 ">
+        <div class="mt-2 ">
             <div class=" p-1">
                 <div *ngFor="let activity of activities; index as i" class="mb-2">
 
