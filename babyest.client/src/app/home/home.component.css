@@ -21,9 +21,7 @@ a {
 }
 
 .bg-light-custom {
-    /* background-color: #38424d;  */
-    background-color: rgba(0, 0, 0, 0.81); /* ?????? */
-
+    background-color: #38424d; 
 }
 
 .bg-dark-custom {
