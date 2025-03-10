@@ -3,6 +3,7 @@ import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/rou
 import { CurrentKidService } from '../services/CurrentKid/current-kid.service';
 import { Subject } from 'rxjs';
 import { NgStyle } from '@angular/common';
+import { Meta } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +21,8 @@ export class HomeComponent implements OnInit {
 
   constructor(
     private currentKidService: CurrentKidService, 
-    private router : Router) {
+    private router : Router,
+  private meta: Meta) {
 
     this.mainLink = "/main/" + currentKidService.getCurrentKid();
     currentKidService.kidChanged$.subscribe(data => this.mainLink = ("/main/" + data));
@@ -47,10 +49,14 @@ export class HomeComponent implements OnInit {
     this.currentKidService.kidChanged$.subscribe((newNumber) => { this.activeKidNumber = newNumber; });
     this.currentKidService.themeChanged$.subscribe((newTheme) => { 
       this.themeClassStr = newTheme;
-      this.themeClassStr1 = newTheme == 'darkTheme' ? 'darkTheme1' : 'lightTheme'; });
+      this.themeClassStr1 = newTheme == 'darkTheme' ? 'darkTheme1' : 'lightTheme'; 
+      this.meta.updateTag({name: 'theme-color', content: newTheme == 'darkTheme' ? '#38424d' : '#ffffff'})});
 
     this.themeClassStr = this.currentKidService.getTheme();
     this.themeClassStr1 = this.currentKidService.getTheme() == 'darkTheme' ? 'darkTheme1' : 'lightTheme';
+    this.meta.updateTag({name: 'theme-color', content: this.themeClassStr == 'darkTheme' ? '#38424d' : '#ffffff'});
+
+
   }
 
 
