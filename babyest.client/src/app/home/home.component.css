@@ -20,14 +20,18 @@ a {
     outline: none;
 }
 
-.bg-light-custom {
-    background-color: #38424d; 
+.lightTheme {
+    background-color: #ffffff; 
 }
 
-.bg-dark-custom {
+.darkTheme {
     
+    /* some good */
+    background-color: #38424d; 
+
+
     /* dark state blue */
-    background-color: #2f4f6f; 
+    /* background-color: #2f4f6f;  */
     
     /* forest green  */
     /* background-color: #2c3e50;  */

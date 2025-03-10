@@ -10,6 +10,9 @@ export class CurrentKidService {
 
   kidChanged$ : Subject<number> = new Subject<number>();
 
+  themeChanged$ : Subject<string> = new Subject<string>();
+
+
   constructor() {
     this.currentKid = 0;
    }
@@ -23,5 +26,19 @@ export class CurrentKidService {
   getCurrentKid() : number {
     this.currentKid = +localStorage.getItem('activekid')!;
     return this.currentKid;
+  }
+
+  getTheme() : string {
+    let t = localStorage.getItem('theme');
+    if(t == null)
+    {
+      return 'lightTheme';
+    }
+    return t;
+  }
+
+  setTheme(newTheme: string) : void {
+    localStorage.setItem('theme', newTheme);
+    this.themeChanged$.next(newTheme);
   }
 }

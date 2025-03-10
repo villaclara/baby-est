@@ -15,6 +15,8 @@ export class HomeComponent implements OnInit {
   mainLink : string;
   activeKidNumber : number = 0;
 
+  themeClassStr: string = 'lightTheme';
+
   constructor(
     private currentKidService: CurrentKidService, 
     private router : Router) {
@@ -39,8 +41,12 @@ export class HomeComponent implements OnInit {
   }
 
 
+
   ngOnInit(): void {
     this.currentKidService.kidChanged$.subscribe((newNumber) => { this.activeKidNumber = newNumber; });
+    this.currentKidService.themeChanged$.subscribe((newTheme) => { this.themeClassStr = newTheme });
+
+    this.themeClassStr = this.currentKidService.getTheme();
   }
 
 

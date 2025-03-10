@@ -36,6 +36,8 @@ export class ParentDetailComponent implements OnInit {
   selectedEditingKidId: number = 0;
   newParentEmail : string = '';
 
+  selectedTheme: string = '';
+
   version: string = "v1.0.4";
   constructor(private authService: AuthService,
     private router: Router,
@@ -55,6 +57,7 @@ export class ParentDetailComponent implements OnInit {
   ngOnInit(): void {
     this.initializeParentInfo();
     this.activeKidId = this.currentKidService.getCurrentKid();
+    this.selectedTheme = this.currentKidService.getTheme();
   }
 
   plusKidBtnClick(kidNumber: number): void {
@@ -208,5 +211,9 @@ export class ParentDetailComponent implements OnInit {
   }
 
 
+  onThemeChange(): void {
+    console.log("new theme - " + this.selectedTheme);
+    this.currentKidService.setTheme(this.selectedTheme);
+  }
 
 }
