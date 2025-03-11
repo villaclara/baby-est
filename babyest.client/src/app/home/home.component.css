@@ -38,6 +38,14 @@ a {
 }
 
 .darkTheme1 {
-    background-color: #cbcfd3;
-    border-color: yellow !important;
+    /* background-color: #cbcfd3; */
+    border-color: yellow;
+
+    /* color: red; */
+}
+
+.darkTheme1 div * {
+    /* border-color: yellow !important; */
+    background-color: black;
+    border: 3px solid blue;
 }

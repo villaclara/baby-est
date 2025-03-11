@@ -49,7 +49,9 @@ export class HomeComponent implements OnInit {
     this.currentKidService.kidChanged$.subscribe((newNumber) => { this.activeKidNumber = newNumber; });
     this.currentKidService.themeChanged$.subscribe((newTheme) => { 
       this.themeClassStr = newTheme;
-      this.themeClassStr1 = newTheme == 'darkTheme' ? 'darkTheme1' : 'lightTheme'; 
+      document.body.classList.remove(this.themeClassStr1);
+      this.themeClassStr1 = newTheme == 'darkTheme' ? 'darkTheme1' : 'lightTheme';
+      document.body.classList.add(this.themeClassStr1); 
       this.meta.updateTag({name: 'theme-color', content: newTheme == 'darkTheme' ? '#38424d' : '#ffffff'})});
 
     this.themeClassStr = this.currentKidService.getTheme();
