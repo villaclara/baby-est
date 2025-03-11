@@ -41,4 +41,13 @@ export class CurrentKidService {
     localStorage.setItem('theme', newTheme);
     this.themeChanged$.next(newTheme);
   }
+
+  getAutoTheme(): boolean {
+    let a = localStorage.getItem('autoTheme');
+    return a === '1' ? true : false;
+  }
+
+  setAutoTheme(isTrue: boolean): void {
+    localStorage.setItem('autoTheme', isTrue ? '1' : '0');
+  }
 }

@@ -275,27 +275,27 @@
 
       <!-- Theme section -->
       <div class="m-1 p-1" style="border: 1px solid; border-radius: 3px;">
+        
         <div class="row">
-          <div class="col">
-             Тема 
+          <div class="col col my-auto text-center">
+            Тема
           </div>
-          <div class="col">
-
+          <div class="col-auto">
+      
             <select class="form-select" [(ngModel)]="selectedTheme" (ngModelChange)="onThemeChange()">
               <option value="lightTheme">Світла</option>
               <option value="darkTheme">Темна</option>
             </select>
           </div>
         </div>
-
-        <div class="row">
+      
+        <div class="row mt-1">
           <div class="col-auto">
             <div class="form-check form-switch form-check-reverse">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Автоматично перемикати між 21.00 - 07.00</label>
-              <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
-          </div>
-          <div class="col-auto">
-          </div>
+              <label class="form-check-label" for="flexSwitchCheckDefault">Автоматична тема між 21.00 - 07.00</label>
+              <input class="form-check-input " type="checkbox" role="switch" id="flexSwitchCheckDefault" 
+              [(ngModel)]="isAutoThemeChecked" (ngModelChange)="onAutoThemeChanged()"/>
+            </div>
           </div>
         </div>
 

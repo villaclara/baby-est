@@ -37,6 +37,7 @@ export class ParentDetailComponent implements OnInit {
   newParentEmail : string = '';
 
   selectedTheme: string = '';
+  isAutoThemeChecked: boolean = false;
 
   version: string = "v1.0.4";
   constructor(private authService: AuthService,
@@ -53,11 +54,14 @@ export class ParentDetailComponent implements OnInit {
   kidModelName: string = '';
   kidModelBirth: Date = new Date();
 
-  isLoading: boolean = true;
+  isLoading: boolean = true;  
   ngOnInit(): void {
     this.initializeParentInfo();
     this.activeKidId = this.currentKidService.getCurrentKid();
     this.selectedTheme = this.currentKidService.getTheme();
+    this.isAutoThemeChecked = this.currentKidService.getAutoTheme();
+
+    this.currentKidService.themeChanged$.subscribe((newTheme) => this.selectedTheme = newTheme);
   }
 
   plusKidBtnClick(kidNumber: number): void {
@@ -214,6 +218,10 @@ export class ParentDetailComponent implements OnInit {
   onThemeChange(): void {
     console.log("new theme - " + this.selectedTheme);
     this.currentKidService.setTheme(this.selectedTheme);
+  }
+
+  onAutoThemeChanged() : void {
+    this.currentKidService.setAutoTheme(this.isAutoThemeChecked);
   }
 
 }

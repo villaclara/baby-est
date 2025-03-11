@@ -4,6 +4,7 @@ import { CurrentKidService } from '../services/CurrentKid/current-kid.service';
 import { Subject } from 'rxjs';
 import { NgStyle } from '@angular/common';
 import { Meta } from '@angular/platform-browser';
+import { ThemeCheckerService } from '../services/ThemeChecker/theme-checker.service';
 
 @Component({
   selector: 'app-home',
@@ -22,7 +23,8 @@ export class HomeComponent implements OnInit {
   constructor(
     private currentKidService: CurrentKidService, 
     private router : Router,
-  private meta: Meta) {
+  private meta: Meta,
+  private themeChecker : ThemeCheckerService) {
 
     this.mainLink = "/main/" + currentKidService.getCurrentKid();
     currentKidService.kidChanged$.subscribe(data => this.mainLink = ("/main/" + data));
@@ -57,6 +59,8 @@ export class HomeComponent implements OnInit {
     this.themeClassStr = this.currentKidService.getTheme();
     this.themeClassStr1 = this.currentKidService.getTheme() == 'darkTheme' ? 'darkTheme1' : 'lightTheme';
     this.meta.updateTag({name: 'theme-color', content: this.themeClassStr == 'darkTheme' ? '#38424d' : '#ffffff'});
+
+    this.themeChecker.startDoingAction();
 
 
   }
