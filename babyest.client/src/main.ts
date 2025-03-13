@@ -7,6 +7,8 @@ import { bootstrapApplication } from '@angular/platform-browser';
 import { provideHttpClient } from '@angular/common/http';
 import { enableProdMode, importProvidersFrom, isDevMode } from '@angular/core';
 import { AppRoutingModule } from './app/app-routing.module';
+import { provideAnimations} from '@angular/platform-browser/animations';
+
 
 
 // platformBrowserDynamic().bootstrapModule(AppModule, {
@@ -48,6 +50,7 @@ if ('serviceWorker' in navigator && !isDevMode) {
     {
       providers: [
         importProvidersFrom(AppRoutingModule),
+        provideAnimations(),
         provideHttpClient()
       ]
     }

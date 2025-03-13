@@ -14,7 +14,8 @@
                 
             </div>
 
-            <div *ngIf="currentActivity.ActivityType.toLowerCase() != ''">
+            <div [@moveDown]="moveActTypeAnimation" style="overflow: hidden;">
+            <!-- *ngIf="currentActivity.ActivityType.toLowerCase() != ''"  [@slideIn]-->
 
                 <div class="row justify-content-center rowWithStartBtn">
                 
@@ -82,7 +83,7 @@
 
             <div class="col-12">
 
-                <div class="row pt-3 justify-content-center" [hidden]="!isEatingSelected">
+                <div class="row pt-3 justify-content-center" [hidden]="!isEatingSelected" [@moveDown]="isEatingSelected ? 'moved' : 'initial'">
 
                     <div class="col-4 border rounded-1 mx-2"
                         [ngClass]="{'activeActivityEat': currentActivity.ActivityType.toLowerCase() == 'eatingleft'}"

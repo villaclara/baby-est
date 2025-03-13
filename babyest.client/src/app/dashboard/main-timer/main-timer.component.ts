@@ -7,6 +7,7 @@ import { ActivityNameTranslator } from '../../utils/activity-name-translator';
 import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DateConverter } from '../../utils/date-converter';
+import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-main-timer',
@@ -14,7 +15,93 @@ import { DateConverter } from '../../utils/date-converter';
   imports: [CommonModule, TimerCounterPipe, NgIf, FormsModule],
   templateUrl: './main-timer.component.html',
   styleUrl: './main-timer.component.css',
-  providers: [DateConverter]
+  providers: [DateConverter],
+  animations: [
+    trigger('slideIn', [                // name of animation and trigger
+      transition(':enter', [            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+        style({                         // the style what is BEFORE
+          // transform: 'translateY(-20px)', // Starting position (off-screen)
+          opacity: 0
+        }),
+        animate('300ms ease-in', style({ opacity: 1, 
+          // transform: 'translateY(0)' 
+        }))   // animation: has time and the style what is AFTER
+      ]),
+      transition(':leave', [         // ':leave' - when *ngIf = false. 
+        animate('200ms ease-out', style({ opacity: 0, 
+          // transform: 'translateY(-20px)'
+         }))  // animation - return to default state
+      ])
+      // ,
+      // transition('false <=> true', [
+      //   animate('0.5s ease-in-out') // Duration and easing
+      // ])
+    ]),
+
+    trigger('moveDown', [
+      // state('initial',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+      //   style({                         // the style what is BEFORE
+      //     transform: 'translateY(-500px)', // Starting position (off-screen)
+      //   })),
+      // state('moved',
+      //   style({                         // the style what is BEFORE
+      //     transform: 'translateY(0)',
+      //   })),
+      //   transition('initial <=> moved', [
+      //     animate('0.2s ease-in-out')
+      //   ])
+      state('initial',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+        style({                         // the style what is BEFORE
+          'margin-top': '-30%',
+          opacity: 0 // Starting position (off-screen)
+        })),
+      state('moved',
+        style({                         // the style what is BEFORE
+          'margin-top': '0',
+          opacity: 1
+        })),
+        transition('initial => moved', [
+          animate('0.3s',
+            keyframes([
+              style({'margin-top' : '-30%', opacity: 0, }),
+              style({'margin-top' : '-20%', opacity: 0, }),
+              style({'margin-top' : '-10%', opacity: 0, }),
+              style({'margin-top' : '0', opacity: 1, })
+
+            ]))]),
+        transition('moved => initial', [
+              animate('0.3s',
+                keyframes([
+                  style({'margin-top' : '0', opacity: 1, }),
+                  style({'margin-top' : '-10%', opacity: 0, }),
+                  style({'margin-top' : '-20%', opacity: 0, }),
+                  style({'margin-top' : '-30%', opacity: 0, })
+                ]))
+      ])
+      // transition(':enter', [
+      //   style({ transform: 'translateY(0)' }), // Starting position
+      //   animate('300ms ease-in', style({ transform: 'translateY(50px)' })) // Move items down when new element appears
+      // ]),
+      // transition(':leave', [
+      //   animate('300ms ease-out', style({ transform: 'translateY(0)' })) // Reset position when leaving
+      // ]),
+    ]),
+
+    trigger('showAnim', [
+      state('hidden',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+        style({                         // the style what is BEFORE
+          opacity: 0, // Starting position (off-screen)
+        })),
+      state('shown',
+        style({                         // the style what is BEFORE
+          opacity: 1
+        })),
+        transition('hidden <=> shown', [
+          animate('0.3s ease-in-out')
+        ])
+      ])
+
+  ]
 })
 
 export class MainTimerComponent implements OnChanges, OnDestroy {
@@ -47,6 +134,9 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
 
   timerSub: Subscription = new Subscription();
 
+  moveActTypeAnimation: string = 'initial';   // animation for Play/Stop icons to Move down-up
+
+
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
     
@@ -72,6 +162,8 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
         && this.currentActivity.ActivityType != ''
         ? true
         : false;
+
+        this.moveActTypeAnimation = this.currentActivity.ActivityType.toLowerCase() != '' ? 'moved' : 'initial'
       }
 
       else
@@ -94,6 +186,7 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
     // Because we want to remove highlight from Sleeping (if it was selected before) as soon as we press 'Eating'.
     // Also we disable the 'Play' button if only pressed 'Eating' without specifying exact type.
     this.currentActivity.ActivityType = '';
+    this.moveActTypeAnimation = 'initial';  //idk why, but it should be present here to hide the Play icon on second click on eating
   }
 
   selectActivity(actType: string): void {
@@ -112,7 +205,10 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
       && this.currentActivity.ActivityType != ''
       ? true
       : false;
+    
 
+
+      this.moveActTypeAnimation = this.currentActivity.ActivityType.toLowerCase() != '' ? 'moved' : 'initial';
   }
 
   startActivity(): void {
@@ -149,7 +245,7 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
       this.isEatingSelected = false;
       this.isEditingActivityTimes = false;
 
-
+      
       // Stop tracking. Set StartDate
       // The input value will be used, if not changed the input should display the this.currentActivity.StartDate
       let origStartDate = new Date(this.currentActivity.StartDate!);
@@ -177,6 +273,7 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
       this.currentActivityNameUA = 'Чіл';
       this.timePassed = 0;
 
+      this.moveActTypeAnimation = 'initial';
       // Send the info to the parent to send to Api.
       // Parent decides wheter to add or update activity.
       this.newKidActivity.emit(this.currentActivity);
