@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Optional } from '@angular/core';
 import { SingleActivityComponent } from '../../single-activity/single-activity.component';
 import { KidService } from '../../services/KidService/kid.service';
 import { KidActivity } from '../../models/kid-activity';
@@ -11,6 +11,7 @@ import { DateConverter } from '../../utils/date-converter';
 import { ErrorPageComponent } from '../../errorpage/error-page/error-page.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
+import { animate, state, style, transition, trigger } from '@angular/animations';
 
 @Component({
   selector: 'app-history',
@@ -18,7 +19,42 @@ import { Router } from '@angular/router';
   imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent],
   providers: [DateConverter],
   templateUrl: './history.component.html',
-  styleUrl: './history.component.css'
+  styleUrl: './history.component.css',
+  animations: [
+      trigger('moveDown', [
+        state('initial',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+          style({                         // the style what is BEFORE
+            'margin-top': '-5%',
+            'display' : 'none',
+            opacity: 0 // Starting position (off-screen)
+          })),
+        state('moved',
+          style({                         // the style what is AFTER
+            'margin-top': '0',
+            'display' : 'block',
+            opacity: 1
+          })),
+          transition('initial <=> moved', [
+            animate('0.3s ease-in-out')
+        ])
+      ]),
+      trigger('moveDownNgIf', [
+        transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+          style({                         // the style what is BEFORE
+            'margin-top': '-10%',
+            // 'display' : 'none',
+            opacity: 0 // Starting position (off-screen)
+          }),
+          animate('200ms ease-in', style({  opacity : 1, 'margin-top' : '0' }))]),
+        transition(':leave', [
+          style({                         // the style what is AFTER
+            // 'margin-top': '0',
+            // 'display' : 'block',
+            opacity: 1
+          }),
+          animate('200ms ease-in', style({ 'opacity' : '0' }))]),
+      ])
+    ]
 })
 export class HistoryComponent implements OnInit {
 
@@ -50,6 +86,9 @@ export class HistoryComponent implements OnInit {
   errorMessageForErrorComponent: string = '';
 
   isAddingNewActivity: boolean = false;
+
+  moveDownAnim: string = 'initial';
+  moveDownEditingActAnim: string = 'initial';
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -91,11 +130,15 @@ export class HistoryComponent implements OnInit {
       this.activeEditingKidId = actId;
 
     }
+
+     this.moveDownEditingActAnim = this.isEditingKid ? 'moved' : 'initial';
   }
 
 
   toggleAddActivity() : void {
     this.isAddingNewActivity = !this.isAddingNewActivity;
+
+    this.moveDownAnim = this.isAddingNewActivity ? 'moved' : 'initial';  
   }
 
   addActivity() : void {

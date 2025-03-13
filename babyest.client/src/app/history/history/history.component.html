@@ -10,59 +10,61 @@
 
 
     <div class="pt-2 text-end me-2">
-        <button type="button" class="btn btn-outline-secondary" (click)="toggleAddActivity()">Додати нову активність    </button>
+        <button type="button" class="btn btn-outline-secondary" (click)="toggleAddActivity()">Додати нову активність
+        </button>
     </div>
 
-    <div class="row m-0 border-bottom" *ngIf="isAddingNewActivity">
-                        
+    <div class="row border-bottom" [@moveDown]="moveDownAnim" style="overflow: hidden;">
+        <!-- *ngIf="isAddingNewActivity" -->
         <div class="col">
             <div class="row my-1">
-                    <div class="col-3 pe-0">
-                        <label>Тип</label>
-                    </div>
-                    <div class="col-auto ps-0">
-                        <select class="form-select" [(ngModel)]="selectedActivityType">
-                            <option value="sleeping">Сон</option>
-                            <option value="eatingleft">Годування.Ліва</option>
-                            <option value="eatingright">Годування.Права</option>
-                            <option value="eatingboth">Годування.Обидві</option>
-                            <option value="eatingbottle">Годування.Пляшка</option>
-                        </select>
-                    </div>
+                <div class="col-3 pe-0">
+                    <label>Тип</label>
                 </div>
-                
-                <div class="row my-1">
-                    <div class="col-3 pe-0">
-                        <label for="inputDateStart">Початок</label>
-                    </div>
-                    <div class="col-auto ps-0">
-                        <input id="inputDateStart" type="datetime-local" class="form-control" [(ngModel)]="startDateString" />
-                    </div>
+                <div class="col-auto ps-0">
+                    <select class="form-select" [(ngModel)]="selectedActivityType">
+                        <option value="sleeping">Сон</option>
+                        <option value="eatingleft">Годування.Ліва</option>
+                        <option value="eatingright">Годування.Права</option>
+                        <option value="eatingboth">Годування.Обидві</option>
+                        <option value="eatingbottle">Годування.Пляшка</option>
+                    </select>
                 </div>
-                
-                
-                <div class="row my-1">
-                    <div class="col-3 pe-0">
-                        <label for="inputDateEnd">Кінець</label>
-                    </div>
-                    <div class="col-auto ps-0">
-                        <input id="inputDateEnd" type="datetime-local" class="form-control" [(ngModel)]="endDateString"/>
-                    </div>
-                </div>
-                
             </div>
-    
-            <div class="row">
-                <div class="col">
-                    <button type="button" class="btn btn-outline-success border-0 btn-lg" (click)="addActivity()">
-                        <i class="bi bi-floppy-fill fs-5"></i>
-                    </button>
-    
+
+            <div class="row my-1">
+                <div class="col-3 pe-0">
+                    <label for="inputDateStart">Початок</label>
                 </div>
-                
-            </div>            
+                <div class="col-auto ps-0">
+                    <input id="inputDateStart" type="datetime-local" class="form-control"
+                        [(ngModel)]="startDateString" />
+                </div>
+            </div>
+
+
+            <div class="row my-1">
+                <div class="col-3 pe-0">
+                    <label for="inputDateEnd">Кінець</label>
+                </div>
+                <div class="col-auto ps-0">
+                    <input id="inputDateEnd" type="datetime-local" class="form-control" [(ngModel)]="endDateString" />
+                </div>
+            </div>
+
         </div>
-    
+
+        <div class="row">
+            <div class="col">
+                <button type="button" class="btn btn-outline-success border-0 btn-lg" (click)="addActivity()">
+                    <i class="bi bi-floppy-fill fs-5"></i>
+                </button>
+
+            </div>
+
+        </div>
+    </div>
+
     <div class="container">
 
         <div class="mt-2 fs-5" *ngIf="activities.length == 0">
@@ -77,26 +79,30 @@
                         {{dates[i]}}
                     </div>
 
-                    <div class="text-start fs-5 mt-3" *ngIf="i > 0 && shitActivityDates[i].toDateString() != dates[i-1]">
+                    <div class="text-start fs-5 mt-3"
+                        *ngIf="i > 0 && shitActivityDates[i].toDateString() != dates[i-1]">
                         {{dates[i]}}
                     </div>
                     <div class="ps-2">
 
-                    <app-single-activity [activity]="activity" [isRichSingleActivity]="true" [editingKidId]="activeEditingKidId" (selectedEditActivityEmit)="editActivity($event)"></app-single-activity>
+                        <app-single-activity [activity]="activity" [isRichSingleActivity]="true"
+                            [editingKidId]="activeEditingKidId"
+                            (selectedEditActivityEmit)="editActivity($event)"></app-single-activity>
 
 
-                    <div *ngIf="isEditingKid && activity.Id == selectedEditingAct.Id" class="container">
+                        <div *ngIf="isEditingKid && activity.Id == selectedEditingAct.Id" @moveDownNgIf>
 
-                        <div class="row m-0">
-                        
-                            <div class="col">
-                                <div class="row my-1">
+                            <div class="row m-0">
+
+                                <div class="col">
+                                    <div class="row my-1">
                                         <div class="col-3 pe-0">
                                             <label>Тип</label>
                                         </div>
                                         <div class="col-auto ps-0">
                                             <select class="form-select" [(ngModel)]="selectedActivityType">
-                                                <option value="{{selectedEditingAct.ActivityType}}">{{activityTypeLocalUA}}</option>
+                                                <option value="{{selectedEditingAct.ActivityType}}">
+                                                    {{activityTypeLocalUA}}</option>
                                                 <option value="sleeping">Сон</option>
                                                 <option value="eatingleft">Годування.Ліва</option>
                                                 <option value="eatingright">Годування.Права</option>
@@ -105,50 +111,54 @@
                                             </select>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="row my-1">
                                         <div class="col-3 pe-0">
                                             <label for="inputDateStart">Початок</label>
                                         </div>
                                         <div class="col-auto ps-0">
-                                            <input id="inputDateStart" type="datetime-local" class="form-control" [(ngModel)]="startDateString" />
+                                            <input id="inputDateStart" type="datetime-local" class="form-control"
+                                                [(ngModel)]="startDateString" />
                                         </div>
                                     </div>
-                                    
-                                    
+
+
                                     <div class="row my-1">
                                         <div class="col-3 pe-0">
                                             <label for="inputDateEnd">Кінець</label>
                                         </div>
                                         <div class="col-auto ps-0">
-                                            <input id="inputDateEnd" type="datetime-local" class="form-control" [(ngModel)]="endDateString"/>
+                                            <input id="inputDateEnd" type="datetime-local" class="form-control"
+                                                [(ngModel)]="endDateString" />
                                         </div>
                                     </div>
-                                    
+
                                 </div>
-                        
+
                                 <div class="row">
                                     <div class="col border rounded-5 border-success-subtle">
-                                        <button type="button" class="btn btn-outline-success border-0" (click)="saveChangesActivity()">
+                                        <button type="button" class="btn btn-outline-success border-0"
+                                            (click)="saveChangesActivity()">
                                             <i class="bi bi-floppy-fill fs-5"></i>
                                         </button>
-                        
+
                                     </div>
                                     <div class="col-auto">
 
                                     </div>
                                     <div class="col border rounded-5 border-danger-subtle">
-                                        <button type="button" class="btn btn-outline-danger border-0" (click)="deleteActivity()">
+                                        <button type="button" class="btn btn-outline-danger border-0"
+                                            (click)="deleteActivity()">
                                             <i class="bi bi-trash3-fill fs-5"></i>
                                         </button>
-                        
+
                                     </div>
                                 </div>
                                 <div class="row">
                                 </div>
-                                
+
                             </div>
-                            
+
                         </div>
                     </div>
 
@@ -158,6 +168,6 @@
     </div>
 
 
-    
+
 
 </div>
