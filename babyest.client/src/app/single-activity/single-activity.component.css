@@ -6,9 +6,13 @@
 .sleepActivity {
     background-color: #e8eeff;
     filter: brightness(103%);
+    border: 1px solid #9db4f5 !important;
+    border-radius: 0.5rem;
 }
 
 .eatActivity {
     background-color: #ffe5eb;
     filter: brightness(103%);
+    border-radius: 0.5rem;
+    border: 1px solid #eba0b2;
 }

@@ -80,7 +80,7 @@
                     <div class="text-start fs-5 mt-3" *ngIf="i > 0 && shitActivityDates[i].toDateString() != dates[i-1]">
                         {{dates[i]}}
                     </div>
-                    <div class="border rounded-2">
+                    <div class="ps-2">
 
                     <app-single-activity [activity]="activity" [isRichSingleActivity]="true" [editingKidId]="activeEditingKidId" (selectedEditActivityEmit)="editActivity($event)"></app-single-activity>
 
