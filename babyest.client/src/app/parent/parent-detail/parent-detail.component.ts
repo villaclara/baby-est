@@ -37,7 +37,7 @@ export class ParentDetailComponent implements OnInit {
   newParentEmail : string = '';
 
   selectedTheme: string = '';
-  isAutoThemeChecked: boolean = false;
+  isAutoThemeChecked: boolean = true;
 
   version: string = "v1.0.4";
   constructor(private authService: AuthService,

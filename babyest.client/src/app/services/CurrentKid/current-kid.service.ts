@@ -32,6 +32,7 @@ export class CurrentKidService {
     let t = localStorage.getItem('theme');
     if(t == null)
     {
+      this.setTheme('lightTheme');
       return 'lightTheme';
     }
     return t;
@@ -44,6 +45,11 @@ export class CurrentKidService {
 
   getAutoTheme(): boolean {
     let a = localStorage.getItem('autoTheme');
+    if(a == null) // no value in local storage - means first load and we auto on this.
+    {
+      this.setAutoTheme(true);
+      return true;
+    }
     return a === '1' ? true : false;
   }
 
