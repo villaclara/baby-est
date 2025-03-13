@@ -9,13 +9,13 @@
     <app-error-page [errorMessage]="errorMessageDisplayed" pageLinkToReload="/parent"></app-error-page>
   </div> -->
   <div *ngIf="errorMessageDisplayed === ''">
-    
+
     <!-- My ACCOUNT -->
     <p class="display-5 text-center"> Аккаунт </p>
     <div class="brighterIfNeeded">
 
       <div class="row">
-        <div class="col-auto my-auto">
+        <div class="col-auto my-auto ms-2">
           <div>
             <img src="../../../assets/img/user.png" height="30" width="30" style="max-width: 100%;" />
           </div>
@@ -28,8 +28,7 @@
 
         <div class="col-auto my-auto">
           <div class="btn-group">
-            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown"
-              aria-expanded="false">
+            <button type="button" class="btn dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
             </button>
 
             <ul class="dropdown-menu">
@@ -83,7 +82,8 @@
 
           <!-- List of all Kids of Parent -->
           <div *ngFor="let kid1 of currentParent.Kids; index as i">
-            <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100 borderIfNeeded" *ngIf="!isEditingKid">
+            <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100 borderIfNeeded"
+              *ngIf="!isEditingKid">
               <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
               <div class="row">
                 <div class="col-9">
@@ -188,7 +188,7 @@
 
         <!-- EDIT/ADD Kid section -->
         <div class="col align-content-center" *ngIf="!isEditingKid">
-          <button class="btn btn-primary w-50 m-2 p-2" (click)="plusKidBtnClick(-1)">
+          <button class="btn bg-secondary-subtle w-50 m-2 p-2" (click)="plusKidBtnClick(-1)">
             <span class="fs-5 fw-bold">+</span>
           </button>
         </div>
@@ -275,32 +275,32 @@
 
       <!-- Theme section -->
       <div class="m-1 p-1 brighterIfNeeded border">
-        
+
         <div class="row">
           <div class="col col my-auto text-center">
             Тема
           </div>
           <div class="col-auto">
-      
+
             <select class="form-select" [(ngModel)]="selectedTheme" (ngModelChange)="onThemeChange()">
               <option value="lightTheme">Світла</option>
               <option value="darkTheme">Темна</option>
             </select>
           </div>
         </div>
-      
+
         <div class="row mt-1">
           <div class="col-auto">
             <div class="form-check form-switch form-check-reverse">
               <label class="form-check-label" for="flexSwitchCheckDefault">Авто тема (07-21 світла, 21-07 темна)</label>
-              <input class="form-check-input " type="checkbox" role="switch" id="flexSwitchCheckDefault" 
-              [(ngModel)]="isAutoThemeChecked" (ngModelChange)="onAutoThemeChanged()"/>
+              <input class="form-check-input " type="checkbox" role="switch" id="flexSwitchCheckDefault"
+                [(ngModel)]="isAutoThemeChecked" (ngModelChange)="onAutoThemeChanged()" />
             </div>
           </div>
         </div>
 
-        
-       </div>
+
+      </div>
 
 
     </div>
