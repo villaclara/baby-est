@@ -12,7 +12,7 @@
     
     <!-- My ACCOUNT -->
     <p class="display-5 text-center"> Аккаунт </p>
-    <div class="border">
+    <div class="brighterIfNeeded">
 
       <div class="row">
         <div class="col-auto my-auto">
@@ -50,7 +50,7 @@
         <p class="display-6">Діти</p>
       </div>
 
-      <div class="row row-cols-1 border rounded-1 my-1">
+      <div class="row row-cols-1 my-1 brighterIfNeeded">
 
         <!-- <div class="text-wrap" *ngFor="let kid1 of currentParent.Kids; index as i">
         
@@ -83,7 +83,7 @@
 
           <!-- List of all Kids of Parent -->
           <div *ngFor="let kid1 of currentParent.Kids; index as i">
-            <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100" *ngIf="!isEditingKid">
+            <div class="container text-start border rounded-4 my-2 py-2 text-wrap w-100 borderIfNeeded" *ngIf="!isEditingKid">
               <!-- [ngClass]="kid1.KidId == activeKidId ? 'border-success border-3' : 'border-light'"> -->
               <div class="row">
                 <div class="col-9">
@@ -274,7 +274,7 @@
       </div>
 
       <!-- Theme section -->
-      <div class="m-1 p-1" style="border: 1px solid; border-radius: 3px;">
+      <div class="m-1 p-1 brighterIfNeeded border">
         
         <div class="row">
           <div class="col col my-auto text-center">
@@ -292,7 +292,7 @@
         <div class="row mt-1">
           <div class="col-auto">
             <div class="form-check form-switch form-check-reverse">
-              <label class="form-check-label" for="flexSwitchCheckDefault">Автоматична тема між 21.00 - 07.00</label>
+              <label class="form-check-label" for="flexSwitchCheckDefault">Авто тема (07-21 світла, 21-07 темна)</label>
               <input class="form-check-input " type="checkbox" role="switch" id="flexSwitchCheckDefault" 
               [(ngModel)]="isAutoThemeChecked" (ngModelChange)="onAutoThemeChanged()"/>
             </div>

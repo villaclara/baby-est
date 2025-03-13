@@ -1,10 +1,10 @@
-<div class="card mt-4 border-dark">
-    <div class="">
+<div class="mt-4 brighterIfNeeded">
+    <div class="rounded-2">
         <span>Останні активності: </span>
     </div>
     
-    <div class="card-body p-1">
-        <div *ngFor="let activity of activities; index as i" class="my-1 border-bottom">
+    <div class="p-1 rounded-2">
+        <div *ngFor="let activity of activities; index as i" class="my-1 border-bottom rounded-2">
             <app-single-activity [activity]="activity" [ngClass]="{'fw-bolder' : i == 0}"></app-single-activity>
         </div>
     </div>

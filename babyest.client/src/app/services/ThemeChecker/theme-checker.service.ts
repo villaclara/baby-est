@@ -33,6 +33,11 @@ export class ThemeCheckerService {
 
         }
 
+        /* check if the day and light theme is on then we do nothing. if not check this the dark theme will be set */
+        else if((new Date().getHours() >= 7 && new Date().getHours() < 21) && this.currentKidService.getTheme() === 'lightTheme'){
+          return;
+        }
+
         else if (this.currentKidService.getTheme() != 'darkTheme') {
           this.currentKidService.setTheme('darkTheme');
           console.log('2000');

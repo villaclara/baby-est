@@ -52,12 +52,12 @@ export class HomeComponent implements OnInit {
     this.currentKidService.themeChanged$.subscribe((newTheme) => { 
       this.themeClassStr = newTheme;
       document.body.classList.remove(this.themeClassStr1);
-      this.themeClassStr1 = newTheme == 'darkTheme' ? 'darkTheme1' : 'lightTheme';
+      this.themeClassStr1 = newTheme == 'darkTheme' ? 'darkTheme1' : 'lightTheme1';
       document.body.classList.add(this.themeClassStr1); 
       this.meta.updateTag({name: 'theme-color', content: newTheme == 'darkTheme' ? '#38424d' : '#ffffff'})});
 
     this.themeClassStr = this.currentKidService.getTheme();
-    this.themeClassStr1 = this.currentKidService.getTheme() == 'darkTheme' ? 'darkTheme1' : 'lightTheme';
+    this.themeClassStr1 = this.currentKidService.getTheme() == 'darkTheme' ? 'darkTheme1' : 'lightTheme1';
     this.meta.updateTag({name: 'theme-color', content: this.themeClassStr == 'darkTheme' ? '#38424d' : '#ffffff'});
 
     this.themeChecker.startDoingAction();

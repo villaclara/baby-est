@@ -8,6 +8,7 @@
 
 
 
+/* theme for header and footer */
 .lightTheme {
     background-color: #ffffff; 
 }
@@ -15,7 +16,7 @@
 .darkTheme {
     
     /* some good */
-    background-color: #38424d; 
+    background-color: #38424d !important; 
 
 
     /* dark state blue */
@@ -25,9 +26,41 @@
     /* background-color: #2c3e50;  */
 }
 
+
+/* theme for main background */
+.lightTheme1 {
+    background-color: #ebeaf0;
+}
+
+/* background color for main section (home component) */
 .darkTheme1 {
-    background-color: #cbcfd3;
-    border-color: red !important;
-    color: red;
-    /* color: red; */
+    /* background-color: #cbcfd3; */
+    /* background-color: #cbcfd3; */
+    background-color: #ebeaf0        ;
+}
+
+
+/* This is used when the dark theme is active and to overwrite the border color for different divs etc */
+/* colors for sections like in iOs settings etc */
+.lightTheme1 .brighterIfNeeded {
+    background-color: #ffffff;
+    /* background-color: #e3e6e9; */
+    border: 1px solid #fcfcfd !important;
+    border-radius: 0.5rem;
+}
+
+.darkTheme1 .brighterIfNeeded {
+    background-color: #636d78      ;
+    border: 1px solid #636d78     !important;
+    border-radius: 0.5rem;
+    color: #cbcfd3;
+}
+
+
+.darkTheme1 .borderIfNeeded {
+    border: 1px solid #38424d !important;
+    
+    /* background-color: #e3e6e9; */
+    border-radius: 0.25rem;
+
 }
