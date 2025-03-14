@@ -27,13 +27,13 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
             'margin-top': '-10%',
             opacity: 0 // Starting position (off-screen)
           }),
-        animate('200ms ease-in', style({ opacity : 1, 'margin-top' : '0' }))]),
+        animate('100ms ease-in', style({ opacity : 1, 'margin-top' : '0' }))]),
         transition(':leave', [
           style({                         // the style what is AFTER
             'margin-top': '0',
             opacity: 1
           }),
-          animate('200ms ease-in', style({ opacity : 0, 'margin-top' : '-10%' }))]),
+          animate('100ms ease-in', style({ opacity : 0, 'margin-top' : '-10%' }))]),
         
       ]),
       trigger('moveDownNgIf', [
@@ -43,14 +43,14 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
             // 'display' : 'none',
             opacity: 0 // Starting position (off-screen)
           }),
-          animate('200ms ease-in', style({  opacity : 1, 'margin-top' : '0' }))]),
+          animate('100ms ease-in', style({  opacity : 1, 'margin-top' : '0' }))]),
         transition(':leave', [
           style({                         // the style what is AFTER
             // 'margin-top': '0',
             // 'display' : 'block',
             opacity: 1
           }),
-          animate('200ms ease-in', style({ 'opacity' : '0' }))]),
+          animate('100ms ease-in', style({ 'opacity' : '0' }))]),
       ])
     ]
 })

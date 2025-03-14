@@ -61,7 +61,7 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
           opacity: 1
         })),
         transition('initial => moved', [
-          animate('0.3s',
+          animate('150ms',
             keyframes([
               style({'margin-top' : '-30%', opacity: 0, }),
               style({'margin-top' : '-20%', opacity: 0, }),
@@ -70,7 +70,7 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
 
             ]))]),
         transition('moved => initial', [
-              animate('0.3s',
+              animate('0.1s',
                 keyframes([
                   style({'margin-top' : '0', opacity: 1, }),
                   style({'margin-top' : '-10%', opacity: 0, }),
