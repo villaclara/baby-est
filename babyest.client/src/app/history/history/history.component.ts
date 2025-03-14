@@ -22,21 +22,19 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   styleUrl: './history.component.css',
   animations: [
       trigger('moveDown', [
-        state('initial',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+        transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
           style({                         // the style what is BEFORE
-            'margin-top': '-5%',
-            'display' : 'none',
+            'margin-top': '-10%',
             opacity: 0 // Starting position (off-screen)
-          })),
-        state('moved',
+          }),
+        animate('200ms ease-in', style({ opacity : 1, 'margin-top' : '0' }))]),
+        transition(':leave', [
           style({                         // the style what is AFTER
             'margin-top': '0',
-            'display' : 'block',
             opacity: 1
-          })),
-          transition('initial <=> moved', [
-            animate('0.3s ease-in-out')
-        ])
+          }),
+          animate('200ms ease-in', style({ opacity : 0, 'margin-top' : '-10%' }))]),
+        
       ]),
       trigger('moveDownNgIf', [
         transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
@@ -87,8 +85,6 @@ export class HistoryComponent implements OnInit {
 
   isAddingNewActivity: boolean = false;
 
-  moveDownAnim: string = 'initial';
-  moveDownEditingActAnim: string = 'initial';
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -120,6 +116,7 @@ export class HistoryComponent implements OnInit {
     else {
       this.selectedEditingAct = this.activities.find((el) => el.Id == actId)!;
       this.isEditingKid = true;
+      this.isAddingNewActivity = false;
 
       // Set the values in input fields.
       this.startDateString = this.dateConverter.shitDateToISOString(this.selectedEditingAct.StartDate!);
@@ -131,14 +128,13 @@ export class HistoryComponent implements OnInit {
 
     }
 
-     this.moveDownEditingActAnim = this.isEditingKid ? 'moved' : 'initial';
   }
 
 
   toggleAddActivity() : void {
     this.isAddingNewActivity = !this.isAddingNewActivity;
+    this.isEditingKid = false;
 
-    this.moveDownAnim = this.isAddingNewActivity ? 'moved' : 'initial';  
   }
 
   addActivity() : void {

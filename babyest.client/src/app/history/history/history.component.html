@@ -14,7 +14,7 @@
         </button>
     </div>
 
-    <div class="row border-bottom" [@moveDown]="moveDownAnim" style="overflow: hidden;">
+    <div class="container border-bottom" *ngIf="isAddingNewActivity" @moveDown>
         <!-- *ngIf="isAddingNewActivity" -->
         <div class="col">
             <div class="row my-1">
