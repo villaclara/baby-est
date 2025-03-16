@@ -24,16 +24,41 @@ import { provideAnimations} from '@angular/platform-browser/animations';
 //});
 
 
-if ('serviceWorker' in navigator && !isDevMode) {
-  navigator.serviceWorker
-    .register('/ngsw-worker.js')
-    .then((registration) => {
-      console.log('Service Worker registered successfully:', registration);
-    })
-    .catch((error) => {
-      console.log('Service Worker registration failed:', error);
-    });
-}
+ if ('serviceWorker' in navigator && !isDevMode()) {
+   navigator.serviceWorker
+     .register('/ngsw-worker.js')
+     .then((registration) => {
+       console.log('Service Worker registered successfully:', registration);
+     })
+     .catch((error) => {
+       console.log('Service Worker registration failed:', error);
+     });
+ }
+
+//if ('serviceWorker' in navigator) {
+//  console.log("service worker in navigator IS ");
+//}
+//else {
+//  console.log("service worker in navigator NO");
+//}
+
+//if(isDevMode())
+//{
+//  console.log("devmode IS");
+//}
+//else 
+//{
+//  console.log("devMode NO");
+//}
+
+//if(isDevMode)
+//{
+//  console.log("Function !IS DEVMODE true");
+//}
+//else {
+//  console.log("FUNCTION !IS DEV MODE false");
+//}
+
 
 
  //if ('serviceWorker' in navigator && !isDevMode) {
