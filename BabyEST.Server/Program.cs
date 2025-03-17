@@ -40,7 +40,7 @@ else // production
 }
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-	.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+	.AddCookie(options =>
 	{
 		//options.LoginPath = "/api/unauthorized"; // to bypass default Cookie Redirect to Login page. It returns status code.
 		options.Events.OnRedirectToLogin = (ctx) =>
@@ -53,6 +53,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 			ctx.Response.StatusCode = StatusCodes.Status403Forbidden;
 			return Task.CompletedTask;
 		};
+
+		//options.SlidingExpiration = true;
+		//options.ExpireTimeSpan = TimeSpan.FromDays(14);
+
 	});
 builder.Services.AddAuthorization();
 
