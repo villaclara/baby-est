@@ -31,7 +31,7 @@ export class ShortTimerCounterPipe implements PipeTransform {
 
   if(args === 'HH:mm')
   {
-    return `${hourStr} г : ${minStr} хв`; 
+    return `${hourStr}г : ${minStr}хв`; 
   }
 
   return `${hourStr} : ${minStr}`;
