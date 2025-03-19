@@ -39,7 +39,7 @@ export class ParentDetailComponent implements OnInit {
   selectedTheme: string = '';
   isAutoThemeChecked: boolean = true;
 
-  version: string = "v1.0.6";
+  version: string = "v1.0.7";
   constructor(private authService: AuthService,
     private router: Router,
     private parentService: ParentService,
