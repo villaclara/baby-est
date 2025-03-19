@@ -31,7 +31,7 @@
                 
 
                             <div class="col-auto">
-                                <button class="btn my-1" type="button" (click)="startActivity()" [disabled]="currentActivity.ActivityType == ''"
+                                <button class="btn my-1" type="button" (click)="startActivity()" [@playIconAnim]="playIconAnimation" [disabled]="currentActivity.ActivityType == ''"
                                     style="border: none;">
                                 <img src="{{startStopImageLink}}" class="playImg" />
                             </button>

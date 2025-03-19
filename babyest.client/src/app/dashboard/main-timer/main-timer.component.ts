@@ -39,17 +39,6 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
     ]),
 
     trigger('moveDown', [
-      // state('initial',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
-      //   style({                         // the style what is BEFORE
-      //     transform: 'translateY(-500px)', // Starting position (off-screen)
-      //   })),
-      // state('moved',
-      //   style({                         // the style what is BEFORE
-      //     transform: 'translateY(0)',
-      //   })),
-      //   transition('initial <=> moved', [
-      //     animate('0.2s ease-in-out')
-      //   ])
       state('initial',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
         style({                         // the style what is BEFORE
           'margin-top': '-30%',
@@ -87,17 +76,23 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
       // ]),
     ]),
 
-    trigger('showAnim', [
-      state('hidden',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+    trigger('playIconAnim', [
+      state('defaultSize',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
         style({                         // the style what is BEFORE
-          opacity: 0, // Starting position (off-screen)
+          transform : 'scale(1)' // Starting position (off-screen)
         })),
-      state('shown',
+      state('smallerSize',
         style({                         // the style what is BEFORE
-          opacity: 1
+          transform : 'scale(1)'
         })),
-        transition('hidden <=> shown', [
-          animate('0.3s ease-in-out')
+        transition('defaultSize => smallerSize', [
+          animate('150ms',
+            keyframes([
+              style({transform : 'scale(0.9)' }),
+              style({transform : 'scale(0.8)' }),
+              style({transform : 'scale(0.9)' }),
+            ])
+          )
         ])
       ])
 
@@ -136,6 +131,7 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
 
   moveActTypeAnimation: string = 'initial';   // animation for Play/Stop icons to Move down-up
 
+  playIconAnimation: string = 'defaultSize';
 
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
@@ -213,13 +209,17 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
 
   startActivity(): void {
 
+
+    this.playIconAnimation = 'smallerSize';
+
+      
+
     // When timer is stopped.
     // When we want to start activity and send the currentActivity to api.
     if (!this.isRunningTimer) {
       // Start the timer
       this.timerSub = interval(1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
       this.timePassed = 0;
-      this.startStopImageLink = '../../../assets/img/stop_icon.png';
       this.isRunningTimer = true;
 
       // Set current Activity and Start tracking the activity
@@ -233,6 +233,11 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
       // Send the info to the parent to send to Api.
       // Parent decides wheter to add or update activity.
       this.newKidActivity.emit(this.currentActivity);
+
+      setTimeout(() => {
+      this.startStopImageLink = '../../../assets/img/stop_icon.png';
+        this.playIconAnimation = 'defaultSize';
+      }, 300);
     }
 
     // When timer is running.
@@ -288,8 +293,12 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
       //   IsActiveNow : false 
       // };
 
+        this.playIconAnimation = 'defaultSize';
     }
+
+   
   }
+
 
   
 }
