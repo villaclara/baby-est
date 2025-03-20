@@ -16,8 +16,8 @@ img.activityTypeImg {
 }
 
 .activeActivityEat {
-    border-color: #f39fb3;
-    background-color: #f9c4d0;
+    border-color: rgb(255, 221, 178);
+    background-color: rgb(255, 235, 215);
     filter: drop-shadow(1px 1px 1px);
 }
 

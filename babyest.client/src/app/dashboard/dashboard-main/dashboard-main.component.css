@@ -1,9 +1,11 @@
 .bg-sleeping {
-    background-color: #e8eeff;
+    /* background-color: #e8eeff; */
+    background-color: rgb(212, 222, 247);
     min-height: 85vh;
 }
 
 .bg-eating {
-    background-color: #ffe5eb;
+    /* background-color: #ffe5eb; */
+    background-color: rgb(255, 246, 233);
     min-height: 85vh;
 }
