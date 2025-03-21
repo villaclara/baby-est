@@ -4,8 +4,20 @@
     min-height: 85vh;
 }
 
+.bg-sleeping-dark {
+    background-color: rgb(168, 179, 211);
+    min-height: 85vh;
+}
+
+
+
 .bg-eating {
     /* background-color: #ffe5eb; */
-    background-color: rgb(255, 246, 233);
+    background-color: rgb(255, 246, 233);    
+    min-height: 85vh;
+}
+
+.bg-eating-dark {
+    background-color: rgb(220, 206, 188);
     min-height: 85vh;
 }

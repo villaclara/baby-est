@@ -39,6 +39,8 @@ export class DashboardMainComponent implements OnInit {
 
   isHeaderInfoDisplay: boolean = false;
   mainSectionTimerLastActs: boolean = false;
+
+  bgColorForActivityType: string = '';
   
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
