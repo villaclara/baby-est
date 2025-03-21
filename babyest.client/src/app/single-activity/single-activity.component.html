@@ -1,5 +1,8 @@
 
-<div class="container border-bottom border-dark-subtle"  [ngClass]="isRichSingleActivity ? activity.ActivityType.toLowerCase() === 'sleeping' ? 'sleepActivity' : 'eatActivity' : '' ">
+<div class="container border-bottom border-dark-subtle"  [ngClass]="isRichSingleActivity ? 
+activity.ActivityType.toLowerCase() === 'sleeping' ? 
+this.currentTheme === 'lightTheme' ? 'sleepActivity' : 'sleepActivity-dark' : 
+this.currentTheme === 'lightTheme' ? 'eatActivity' : 'eatActivity-dark' : '' ">
 
     <!-- OLD LAYOUT -->
     <!-- <div class="row">

@@ -28,6 +28,8 @@ export class SingleActivityComponent implements OnInit {
   // value - if value == activity.Id -- chevron up 
   @Input() editingKidId : number = -1;
 
+  @Input() currentTheme: string = 'lighTheme';
+
   activityTime: number = 0;
   activityNameUA: string = '';
   private translator: ActivityNameTranslator = new ActivityNameTranslator();

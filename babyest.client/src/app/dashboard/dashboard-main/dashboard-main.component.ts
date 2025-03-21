@@ -41,7 +41,8 @@ export class DashboardMainComponent implements OnInit {
   mainSectionTimerLastActs: boolean = false;
 
   bgColorForActivityType: string = '';
-  
+  currentTheme: string = 'lightTheme';
+
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private router: Router
@@ -78,6 +79,8 @@ export class DashboardMainComponent implements OnInit {
 
     this.loadData();
 
+    this.currentTheme = this.currentKidService.getTheme();
+    this.currentKidService.themeChanged$.subscribe((newTheme) => this.currentTheme = newTheme);
   
 
   }

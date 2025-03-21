@@ -85,6 +85,7 @@ export class HistoryComponent implements OnInit {
 
   isAddingNewActivity: boolean = false;
 
+  currentTheme: string = 'lightTheme';
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -103,7 +104,10 @@ export class HistoryComponent implements OnInit {
         this.isLoading = false;
         this.errorMessageForErrorComponent = err;
       }
-    })
+    });
+
+    this.currentTheme = this.currentKidService.getTheme();
+    this.currentKidService.themeChanged$.subscribe((newTheme) => this.currentTheme = newTheme);
   }
 
   editActivity(actId: number): void {

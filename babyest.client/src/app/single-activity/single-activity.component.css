@@ -20,3 +20,19 @@
     border-radius: 0.5rem;
     border: 1px solid #eba0b2;
 }
+
+.sleepActivity-dark {
+    background-color: rgb(168, 179, 211);
+
+    filter: brightness(103%);
+    border: 1px solid #9db4f5 !important;
+    border-radius: 0.5rem;
+}
+
+.eatActivity-dark {
+    background-color: rgb(220, 206, 188);
+
+    filter: brightness(103%);
+    border-radius: 0.5rem;
+    border: 1px solid #eba0b2;
+}

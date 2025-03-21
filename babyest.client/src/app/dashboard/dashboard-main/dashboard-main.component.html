@@ -10,8 +10,11 @@
     <div *ngIf="errorMessageDisplayed === ''">
 
         <div [ngClass]="{
-            'bg-sleeping' : currentActivity.ActivityType.toLowerCase() === 'sleeping',
-            'bg-eating' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping'}" class="">
+            'bg-sleeping' : currentActivity.ActivityType.toLowerCase() === 'sleeping' && currentTheme === 'lightTheme',
+            'bg-sleeping-dark' : currentActivity.ActivityType.toLowerCase() === 'sleeping' && currentTheme != 'lightTheme',
+            'bg-eating' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping' && currentTheme === 'lightTheme',
+            'bg-eating-dark' : currentActivity.ActivityType != '' && currentActivity.ActivityType.toLowerCase() != 'sleeping' && currentTheme != 'lightTheme' }"
+             class="">
 
             <div class="container">
 

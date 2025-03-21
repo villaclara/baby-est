@@ -19,33 +19,3 @@ a {
     background-color: #404756;
     outline: none;
 }
-
-.lightTheme {
-    background-color: #ffffff; 
-}
-
-.darkTheme {
-    
-    /* some good */
-    background-color: #38424d; 
-
-
-    /* dark state blue */
-    /* background-color: #2f4f6f;  */
-    
-    /* forest green  */
-    /* background-color: #2c3e50;  */
-}
-
-.darkTheme1 {
-    /* background-color: #cbcfd3; */
-    border-color: yellow;
-
-    /* color: red; */
-}
-
-.darkTheme1 div * {
-    /* border-color: yellow !important; */
-    background-color: black;
-    border: 3px solid blue;
-}
