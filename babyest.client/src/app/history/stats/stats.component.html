@@ -1,0 +1,17 @@
+<p>stats works!</p>
+
+
+<div class="container">
+        <div class="text-start">
+        <span>Час сну за ніч (20 - 08): {{sleepTimeNight | shortTimerCounter : "HH:mm" }}</span>
+        
+    </div>
+    <div class="text-start">
+        <span>Час сну за добу (00 - 24): {{sleepTimeToday | shortTimerCounter : "HH:mm" }}</span>
+    </div>
+
+    <div>
+        some date - {{ someDate | monthlocale : 'shortValues' }}
+    </div>
+    
+</div>

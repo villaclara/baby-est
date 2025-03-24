@@ -12,11 +12,12 @@ import { ErrorPageComponent } from '../../errorpage/error-page/error-page.compon
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
+import { StatsComponent } from '../stats/stats.component';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent],
+  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent],
   providers: [DateConverter],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
