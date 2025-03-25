@@ -78,14 +78,22 @@
             <div class=" p-1">
                 <div *ngFor="let activity of activities; index as i" class="mb-2">
 
-                    <div class="text-start fs-5" *ngIf="i == 0 && shitActivityDates[i].toDateString() == dates[i]">
+                    <!-- <div class="text-start fs-5" *ngIf="i == 0 && shitActivityDates[i].toDateString() == dates[i]">
                         {{dates[i]}}
+                    </div> -->
+
+                    <!-- first element of the array. Its actually the same as below,
+                     but here we do not check i-1 element -->
+                    <div class="text-start fs-5" *ngIf="i == 0">
+                        {{shitActivityDates[i] | monthlocale : 'shortValues'}}
                     </div>
 
+                    <!-- Check if the date for current activity is NOT the same as for previous. Then we display the Date string -->
                     <div class="text-start fs-5 mt-3"
-                        *ngIf="i > 0 && shitActivityDates[i].toDateString() != dates[i-1]">
-                        {{dates[i]}}
+                        *ngIf="i > 0 && shitActivityDates[i].getDate() != shitActivityDates[i-1].getDate()">
+                        {{shitActivityDates[i] | monthlocale : 'shortValues'}}
                     </div>
+
                     <div class="ps-2">
 
                         <app-single-activity [activity]="activity" [isRichSingleActivity]="true"

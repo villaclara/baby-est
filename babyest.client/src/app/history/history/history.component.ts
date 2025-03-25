@@ -13,11 +13,12 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { StatsComponent } from '../stats/stats.component';
+import { MonthlocalePipe } from '../../pipes/monthlocale.pipe';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent],
+  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe],
   providers: [DateConverter],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
