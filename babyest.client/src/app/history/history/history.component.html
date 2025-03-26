@@ -68,6 +68,27 @@
         </div>
     </div>
 
+
+    <div class="row g-0 pt-1" style="position: sticky; top: 0px; z-index: 1030; background-color: azure;">
+        <div class="col">
+            <input type="radio" class="btn-check btn-secondary" name="options" id="todayHistory" autocomplete="off" 
+            (change)="onHistoryTypeSelected('today')"/>
+            <label class="btn btn-outline-dark" for="todayHistory">Доба</label>
+        </div>
+
+        <div class="col">
+            <input type="radio" class="btn btn-check" name="options" id="weekHistory" autocomplete="off" 
+            (change)="onHistoryTypeSelected('week')" />
+            <label class="btn btn-outline-dark" for="weekHistory">Тиждень</label>
+        </div>
+
+        <div class="col">
+            <input type="radio" class="btn-check" name="options" id="alltimeHistory" autocomplete="off"
+            (change)="onHistoryTypeSelected('alltime')" checked/>
+            <label class="btn btn-outline-dark" for="alltimeHistory">Весь час</label>
+        </div>
+    </div>
+
     <div class="container">
 
         <div class="mt-2 fs-5" *ngIf="activities.length == 0">
@@ -85,6 +106,8 @@
                     <!-- first element of the array. Its actually the same as below,
                      but here we do not check i-1 element -->
                     <div class="text-start fs-5" *ngIf="i == 0">
+                        <span *ngIf="shitActivityDates[i].getDate() == todayDate.getDate()" class="fs-5 text-secondary">Сьогодні: </span>
+
                         {{shitActivityDates[i] | monthlocale : 'shortValues'}}
                     </div>
 

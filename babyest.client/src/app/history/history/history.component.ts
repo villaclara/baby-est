@@ -71,6 +71,8 @@ export class HistoryComponent implements OnInit {
   translator: ActivityNameTranslator = new ActivityNameTranslator();
   activities: KidActivity[] = [];
 
+  backupActivities: KidActivity[] = [];
+
   isEditingKid: boolean = false;
   activeEditingKidId: number = 0;
 
@@ -89,10 +91,16 @@ export class HistoryComponent implements OnInit {
 
   currentTheme: string = 'lightTheme';
 
+
+  todayDate: Date = new Date();
+
+  historyViewType: string = 'day'; // week or alltime
+
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
     this.kidService.getKidActivitiesById(currentKidId).subscribe({
       next: (data: KidActivity[]) => {
+        this.backupActivities = data;
         this.activities = data;
 
         (this.activities).forEach(element => {
@@ -240,4 +248,36 @@ export class HistoryComponent implements OnInit {
       });
   }
 
+
+  onHistoryTypeSelected(timespan: string) : void {
+    if(timespan === 'today')
+    {
+      const tod = new Date();
+      let yst = new Date(tod);
+      yst.setDate(yst.getDate() - 1);
+      console.log(tod.getHours());
+      this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).toDateString() == tod.toDateString() 
+      || (new Date(el.StartDate!).toDateString() == yst.toDateString() && new Date(el.StartDate!).getHours() >= tod.getHours()));
+      (this.activities).forEach(element => {
+        this.shitActivityDates.push(new Date(element.StartDate!))});
+        console.log("activities changed");
+    }
+
+    else if (timespan === 'week')
+    {
+      const tod = new Date();
+      let yst = new Date(tod);
+      yst.setDate(yst.getDate() - 7);
+
+      this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).getTime() > yst.getTime());
+      (this.activities).forEach(element => {
+        this.shitActivityDates.push(new Date(element.StartDate!))});
+        console.log("activities changed weekly");
+    }
+
+    else {
+      this.activities = this.backupActivities;
+      this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
+    }
+  }
 }
