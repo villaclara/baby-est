@@ -23,45 +23,45 @@ import { MonthlocalePipe } from '../../pipes/monthlocale.pipe';
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
   animations: [
-      trigger('moveDown', [
-        transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
-          style({                         // the style what is BEFORE
-            'margin-top': '-10%',
-            opacity: 0 // Starting position (off-screen)
-          }),
-        animate('100ms ease-in', style({ opacity : 1, 'margin-top' : '0' }))]),
-        transition(':leave', [
-          style({                         // the style what is AFTER
-            'margin-top': '0',
-            opacity: 1
-          }),
-          animate('100ms ease-in', style({ opacity : 0, 'margin-top' : '-10%' }))]),
-        
-      ]),
-      trigger('moveDownNgIf', [
-        transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
-          style({                         // the style what is BEFORE
-            'margin-top': '-10%',
-            // 'display' : 'none',
-            opacity: 0 // Starting position (off-screen)
-          }),
-          animate('100ms ease-in', style({  opacity : 1, 'margin-top' : '0' }))]),
-        transition(':leave', [
-          style({                         // the style what is AFTER
-            // 'margin-top': '0',
-            // 'display' : 'block',
-            opacity: 1
-          }),
-          animate('100ms ease-in', style({ 'opacity' : '0' }))]),
-      ])
-    ]
+    trigger('moveDown', [
+      transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+        style({                         // the style what is BEFORE
+          'margin-top': '-10%',
+          opacity: 0 // Starting position (off-screen)
+        }),
+        animate('100ms ease-in', style({ opacity: 1, 'margin-top': '0' }))]),
+      transition(':leave', [
+        style({                         // the style what is AFTER
+          'margin-top': '0',
+          opacity: 1
+        }),
+        animate('100ms ease-in', style({ opacity: 0, 'margin-top': '-10%' }))]),
+
+    ]),
+    trigger('moveDownNgIf', [
+      transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+        style({                         // the style what is BEFORE
+          'margin-top': '-10%',
+          // 'display' : 'none',
+          opacity: 0 // Starting position (off-screen)
+        }),
+        animate('100ms ease-in', style({ opacity: 1, 'margin-top': '0' }))]),
+      transition(':leave', [
+        style({                         // the style what is AFTER
+          // 'margin-top': '0',
+          // 'display' : 'block',
+          opacity: 1
+        }),
+        animate('100ms ease-in', style({ 'opacity': '0' }))]),
+    ])
+  ]
 })
 export class HistoryComponent implements OnInit {
 
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private dateConverter: DateConverter,
-  private router: Router) {
+    private router: Router) {
     this.kidId = this.currentKidService.getCurrentKid();
   }
 
@@ -82,18 +82,18 @@ export class HistoryComponent implements OnInit {
   selectedActivityType: string = '';
   activityTypeLocalUA: string = '';
 
-  dates: string[] = [];
   shitActivityDates: Date[] = [];
 
   errorMessageForErrorComponent: string = '';
 
   isAddingNewActivity: boolean = false;
 
-  currentTheme: string = 'lightTheme';
-
-
   todayDate: Date = new Date();
 
+  currentTheme: string = 'lightTheme';
+
+  totalSleepTimeNight: number = 0;
+  totalSleepTimeFullDay: number = 0;
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -102,13 +102,11 @@ export class HistoryComponent implements OnInit {
         this.backupActivities = data;
         this.activities = this.backupActivities;
 
-        (this.activities).forEach(element => {
-          this.shitActivityDates.push(new Date(element.StartDate!));
-          this.dates.push(new Date(element.StartDate!).toDateString())
-        });
-        this.isLoading = false;
+        this.calculateTimes();
 
         this.filterActsByHistoryType("today");
+
+        this.isLoading = false;
       },
       error: (err: any) => {
         console.log(err.message);
@@ -146,13 +144,13 @@ export class HistoryComponent implements OnInit {
   }
 
 
-  toggleAddActivity() : void {
+  toggleAddActivity(): void {
     this.isAddingNewActivity = !this.isAddingNewActivity;
     this.isEditingKid = false;
 
   }
 
-  addActivity() : void {
+  addActivity(): void {
 
     let addingAct: KidActivity = {
       Id: this.selectedEditingAct.Id,
@@ -164,36 +162,15 @@ export class HistoryComponent implements OnInit {
     };
 
     this.kidService.addActivityToKid(this.kidId, addingAct)
-    .subscribe({
-      next: () => {
+      .subscribe({
+        next: () => {
 
-        // let index = 0;
-        // while(index < this.activities.length && new Date(this.activities[index].StartDate!).getTime() > new Date(this.startDateString).getTime())
-        // {
-        //   index++;
-        // }
-
-        // this.isAddingNewActivity = false;
-        // this.selectedActivityType = '';
-        // this.startDateString = '';
-        // this.endDateString = '';
-        
-        // this.activities.splice(index, 0, addingAct);
-        // this.shitActivityDates.push(new Date(addingAct.StartDate!));
-        // this.dates.push(new Date(addingAct.StartDate!).toDateString())
-
-        // this.isLoading = true;
-
-        // setTimeout(() => {
-        //   this.isLoading = false;
-        // }, 1);
-
-
-        this.router.navigateByUrl("/", {skipLocationChange : true}).then(
-          () => this.router.navigateByUrl('/history'));
-      },
-      error: (err) => this.errorMessageForErrorComponent = err
-    });
+          // just refresh the page after the Add was successfull
+          this.router.navigateByUrl("/", { skipLocationChange: true }).then(
+            () => this.router.navigateByUrl('/history'));
+        },
+        error: (err) => this.errorMessageForErrorComponent = err
+      });
   }
 
   saveChangesActivity(): void {
@@ -222,7 +199,6 @@ export class HistoryComponent implements OnInit {
           // change dates array
           const index = this.activities.indexOf(this.selectedEditingAct);
           if (index != -1) {
-            this.dates[index] = new Date(this.selectedEditingAct.StartDate).toDateString();
             this.shitActivityDates[index] = new Date(this.selectedEditingAct.StartDate);
           }
         },
@@ -244,7 +220,6 @@ export class HistoryComponent implements OnInit {
           this.backupActivities.splice(indexSub, 1);  // remove from backup array as well
 
           // update dates arrays
-          this.dates.splice(index, 1);
           this.shitActivityDates.splice(index, 1);
         },
         error: (err) => this.errorMessageForErrorComponent = err
@@ -252,42 +227,77 @@ export class HistoryComponent implements OnInit {
   }
 
 
-  onHistoryTypeSelected(timespan: string) : void {
+  onHistoryTypeSelected(timespan: string): void {
     this.filterActsByHistoryType(timespan);
   }
 
-  filterActsByHistoryType(timespan: string) : void {
-    if(timespan === 'today')
-      {
-        const tod = new Date();
-        let yst = new Date(tod);
-        yst.setDate(yst.getDate() - 1);
-        this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).toDateString() == tod.toDateString() 
+  filterActsByHistoryType(timespan: string): void {
+    if (timespan === 'today') {
+      const tod = new Date();
+      let yst = new Date(tod);
+      yst.setDate(yst.getDate() - 1);
+      this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).toDateString() == tod.toDateString()
         || (new Date(el.StartDate!).toDateString() == yst.toDateString() && new Date(el.StartDate!).getHours() >= tod.getHours()));
 
-        this.shitActivityDates = [];
+      this.shitActivityDates = [];
 
-        (this.activities).forEach(element => {
-          this.shitActivityDates.push(new Date(element.StartDate!))});
-      }
-  
-      else if (timespan === 'week')
-      {
-        const tod = new Date();
-        let yst = new Date(tod);
-        yst.setDate(yst.getDate() - 7);
-  
-        this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).getTime() > yst.getTime());
+      (this.activities).forEach(element => {
+        this.shitActivityDates.push(new Date(element.StartDate!))
+      });
+    }
 
-        this.shitActivityDates = [];
-        (this.activities).forEach(element => {
-          this.shitActivityDates.push(new Date(element.StartDate!))});
+    else if (timespan === 'week') {
+      const tod = new Date();
+      let yst = new Date(tod);
+      yst.setDate(yst.getDate() - 7);
+
+      this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).getTime() > yst.getTime());
+
+      this.shitActivityDates = [];
+      (this.activities).forEach(element => {
+        this.shitActivityDates.push(new Date(element.StartDate!))
+      });
+    }
+
+    else {
+      this.activities = this.backupActivities;
+      this.shitActivityDates = [];
+      this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
+    }
+  }
+
+  calculateTimes(): void {
+    const tod = new Date();
+    let yst = new Date(tod);
+    yst.setDate(yst.getDate() - 1);
+
+    // filter the activities to get only for today and yesterday
+    let acts = this.backupActivities.filter(el => new Date(el.StartDate!).toDateString() == tod.toDateString()
+      || (new Date(el.StartDate!).toDateString() == yst.toDateString() && new Date(el.StartDate!).getHours() >= tod.getHours()));
+
+
+    acts.forEach(element => {
+
+      // Sleeping and not active
+      if (element.ActivityType.toLowerCase() === 'sleeping' && !element.IsActiveNow) {
+
+        // Sleep time Night -- yesterday > 20.00 && today <= 8 (startDate)
+        if ((new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() <= 8)
+          || (new Date(element.StartDate!).toDateString() == yst.toDateString() && new Date(element.StartDate!).getHours() >= 20)) {
+          this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
+        }
+
+        // Sleep time Total doba
+        this.totalSleepTimeFullDay += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
       }
-  
-      else {
-        this.activities = this.backupActivities;
-        this.shitActivityDates = [];
-        this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
+
+      // Separate case when activity is active
+      if (element.ActivityType.toLowerCase() === 'sleeping' && element.IsActiveNow) {
+        this.totalSleepTimeNight += Math.floor((new Date().getTime() - new Date(element.StartDate!).getTime()) / 1000);
+        this.totalSleepTimeFullDay += Math.floor((new Date().getTime() - new Date(element.StartDate!).getTime()) / 1000);
       }
+
+    });
+
   }
 }

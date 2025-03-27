@@ -8,7 +8,7 @@
 
 <div *ngIf="!isLoading && errorMessageForErrorComponent === ''">
 
-    <app-stats></app-stats>
+    <app-stats [sleepTimeToday]="totalSleepTimeFullDay" [sleepTimeNight]="totalSleepTimeNight"></app-stats>
 
     <hr />
 
