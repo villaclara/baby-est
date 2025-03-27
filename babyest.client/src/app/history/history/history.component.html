@@ -6,7 +6,7 @@
     <app-error-page [errorMessage]='errorMessageForErrorComponent' pageLinkToReload="/history"></app-error-page>
 </div>
 
-<div *ngIf="!isLoading">
+<div *ngIf="!isLoading && errorMessageForErrorComponent === ''">
 
     <app-stats></app-stats>
 
@@ -88,7 +88,7 @@
 
             <div class="col">
                 <input type="radio" class="btn-check btn-secondary" name="options" id="todayHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('today')" />
+                    (change)="onHistoryTypeSelected('today')" checked />
                 <label class="btn btn-outline-primary custombg-radiobuttons shadow" for="todayHistory"><span
                         class="fw-bolder">Доба</span></label>
             </div>
@@ -101,7 +101,7 @@
 
             <div class="col">
                 <input type="radio" class="btn-check" name="options" id="alltimeHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('alltime')" checked />
+                    (change)="onHistoryTypeSelected('alltime')" />
                 <label class="btn btn-outline-primary custombg-radiobuttons shadow" for="alltimeHistory">Весь
                     час</label>
             </div>
