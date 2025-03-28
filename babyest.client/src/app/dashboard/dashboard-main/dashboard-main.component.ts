@@ -180,7 +180,7 @@ export class DashboardMainComponent implements OnInit {
 
 
     // Get last 6 activities to form a list of LastActivities. 
-    this.kidService.getLastSomeValueKidActivitiesById(this.kidId, 6)
+    this.kidService.getLastSomeValueKidActivitiesById(this.kidId, 10)
       .subscribe(
         {
           next: (data: KidActivity[]) => {
