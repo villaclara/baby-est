@@ -7,7 +7,7 @@
 
         <div class="col">
             <div class="row">
-                <span class="fs-5 fw-lighter">Ніч <span style="font-size: 13px;" class="small text-secondary"> (20.00 - 08.00): </span></span>
+                <span class="fs-5">Ніч <span style="font-size: 13px;" class="small text-secondary"> (20.00 - 08.00): </span></span>
             </div>
 
             <!-- <div class="row">
@@ -15,7 +15,7 @@
             </div> -->
 
             <div class="row">
-                <span class="fw-bold fs-5"> {{sleepTimeNight | shortTimerCounter : "HH:mm" }} </span>
+                <span class=" fs-5"> {{sleepTimeNight | shortTimerCounter : "HH:mm" }} </span>
             </div>
         </div>
         <!-- <div class="col my-auto text-start">
@@ -32,11 +32,11 @@
             </div> -->
 
             <div class="row">
-                <span class="fs-5 fw-lighter">Доба<span style="font-size: 13px;" class="small text-secondary"> (20.00 - 08.00): </span></span>
+                <span class="fs-5">Доба<span style="font-size: 13px;" class="small text-secondary"> ({{someDate}}.00 - {{someDate - 1}}.00): </span></span>
             </div>
 
             <div class="row">
-                <span class="fw-bold fs-5"> {{sleepTimeToday | shortTimerCounter : "HH:mm" }} </span>
+                <span class=" fs-5"> {{sleepTimeToday | shortTimerCounter : "HH:mm" }} </span>
             </div>
         </div>
         <!-- <div class="col my-auto text-start">

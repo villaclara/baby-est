@@ -271,7 +271,7 @@ export class HistoryComponent implements OnInit {
     let yst = new Date(tod);
     yst.setDate(yst.getDate() - 1);
 
-    // filter the activities to get only for today and yesterday
+    // filter the activities to get only for today and yesterday (yesterday hours more than current)
     let acts = this.backupActivities.filter(el => new Date(el.StartDate!).toDateString() == tod.toDateString()
       || (new Date(el.StartDate!).toDateString() == yst.toDateString() && new Date(el.StartDate!).getHours() >= tod.getHours()));
 

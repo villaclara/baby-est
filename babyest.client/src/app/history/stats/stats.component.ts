@@ -15,7 +15,7 @@ export class StatsComponent {
 
   @Input() sleepTimeNight: number = 0;
 
-  someDate: Date = new Date();
+  someDate: number = new Date().getHours();
 
 
 }
