@@ -8,14 +8,15 @@ import { CurrentKidService } from '../../services/CurrentKid/current-kid.service
 import { FormsModule } from '@angular/forms';
 import { KidService } from '../../services/KidService/kid.service';
 import { Kid } from '../../models/kid';
-import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
+import { LoadingSpinnerComponent } from "../../compHelpers/loading-spinner/loading-spinner.component";
 import { ErrorPageComponent } from "../../errorpage/error-page/error-page.component";
+import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loading-overlay.component";
 
 
 @Component({
   selector: 'app-parent-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, ErrorPageComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, ErrorPageComponent, LoadingOverlayComponent],
   templateUrl: './parent-detail.component.html',
   styleUrl: './parent-detail.component.css'
 })

@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 import { KidActivity } from '../../models/kid-activity';
 import { NgClass } from '@angular/common';
 import { NgIf } from '@angular/common';
-import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
+import { LoadingSpinnerComponent } from "../../compHelpers/loading-spinner/loading-spinner.component";
 import { ErrorPageComponent } from "../../errorpage/error-page/error-page.component";
 
 @Component({

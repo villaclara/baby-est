@@ -4,7 +4,7 @@ import { KidService } from '../../services/KidService/kid.service';
 import { KidActivity } from '../../models/kid-activity';
 import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
 import { NgFor, NgIf } from '@angular/common';
-import { LoadingSpinnerComponent } from "../../loading-spinner/loading-spinner.component";
+import { LoadingSpinnerComponent } from "../../compHelpers/loading-spinner/loading-spinner.component";
 import { ActivityNameTranslator } from '../../utils/activity-name-translator';
 import { FormsModule } from '@angular/forms';
 import { DateConverter } from '../../utils/date-converter';
@@ -290,15 +290,18 @@ export class HistoryComponent implements OnInit {
       if (element.ActivityType.toLowerCase() === 'sleeping' && !element.IsActiveNow) {
 
         // if today is >19 hours, we want to get only todays sleep time starting more than 19
-        if(new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date().getHours() >= 19)
-        {
-            this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
+        if (new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() >= 19) {
+          this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
+          console.log("date before more 19 today,");
         }
 
-        // Sleep time Night -- yesterday > 20.00 && today <= 8 (startDate)
-        else if ((new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() <= 8)
-          || (new Date(element.StartDate!).toDateString() == yst.toDateString() && new Date(element.StartDate!).getHours() >= 19)) {
-          this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
+        // Sleep time Night -- yesterday > 19.00 && today <= 8 (startDate)
+        else if(new Date().getHours() < 19) {
+          if ((new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() <= 8)
+            || (new Date(element.StartDate!).toDateString() == yst.toDateString() && new Date(element.StartDate!).getHours() >= 19)) {
+            this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
+         console.log('else');
+          }
         }
 
         // Sleep time Total doba
