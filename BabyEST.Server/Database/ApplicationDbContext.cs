@@ -9,6 +9,8 @@ public class ApplicationDbContext : DbContext
 	public DbSet<KidActivity> KidActivities { get; set; }
 	public DbSet<Parent> Parents { get; set; }
 
+	public DbSet<SessionToken> SessionTokens { get; set; }
+
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
 	{
 
@@ -40,6 +42,11 @@ public class ApplicationDbContext : DbContext
 			b.HasOne(k => k.Kid)
 			.WithMany(k => k.Activities)
 			.HasForeignKey(k => k.KidId);
+		});
+
+		modelBuilder.Entity<SessionToken>(s =>
+		{
+			s.HasKey(s => s.UserId);
 		});
 	}
 }
