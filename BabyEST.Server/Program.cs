@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
-	.WriteTo.File("log.txt", shared: true, fileSizeLimitBytes: 1_000_000_000)
+	.WriteTo.File("log.txt", shared: true, fileSizeLimitBytes: 10_000_000)
 	.CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
