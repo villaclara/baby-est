@@ -118,7 +118,7 @@ public static class AuthEndpoints
 				IsPersistent = true,
 			};
 
-			await httpcontext.SignInAsync(claimsPrincipal);
+			await httpcontext.SignInAsync(claimsPrincipal, authProperties);
 
 			return TypedResults.Ok("Logged in.");
 		}

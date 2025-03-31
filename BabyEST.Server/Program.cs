@@ -54,8 +54,8 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 			return Task.CompletedTask;
 		};
 
-		//options.SlidingExpiration = true;
-		//options.ExpireTimeSpan = TimeSpan.FromDays(14);
+		options.SlidingExpiration = true;
+		options.ExpireTimeSpan = TimeSpan.FromDays(14);
 
 	});
 builder.Services.AddAuthorization();
