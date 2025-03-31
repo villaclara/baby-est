@@ -268,11 +268,11 @@ export class HistoryComponent implements OnInit {
 
   calculateTimes(): void {
 
+    let toChangeSleepNight = true;
     // reset the value in time between 15.00 - 19.00
-    if(new Date().getHours() <= 19 && new Date().getHours() >= 15)
-    {
+    if (new Date().getHours() < 19 && new Date().getHours() >= 15) {
       this.totalSleepTimeNight = 0;
-      return;
+      toChangeSleepNight = false;
     }
 
     const tod = new Date();
@@ -289,18 +289,21 @@ export class HistoryComponent implements OnInit {
       // Sleeping and not active
       if (element.ActivityType.toLowerCase() === 'sleeping' && !element.IsActiveNow) {
 
-        // if today is >19 hours, we want to get only todays sleep time starting more than 19
-        if (new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() >= 19) {
-          this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
-          console.log("date before more 19 today,");
-        }
+        if (toChangeSleepNight) {
 
-        // Sleep time Night -- yesterday > 19.00 && today <= 8 (startDate)
-        else if(new Date().getHours() < 19) {
-          if ((new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() <= 8)
-            || (new Date(element.StartDate!).toDateString() == yst.toDateString() && new Date(element.StartDate!).getHours() >= 19)) {
+          // if today is >19 hours, we want to get only todays sleep time starting more than 19
+          if (new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() >= 19) {
             this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
-         console.log('else');
+            console.log("date before more 19 today,");
+          }
+
+          // Sleep time Night -- yesterday > 19.00 && today <= 8 (startDate)
+          else if (new Date().getHours() < 19) {
+            if ((new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() <= 8)
+              || (new Date(element.StartDate!).toDateString() == yst.toDateString() && new Date(element.StartDate!).getHours() >= 19)) {
+              this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
+              console.log('else');
+            }
           }
         }
 
@@ -310,7 +313,9 @@ export class HistoryComponent implements OnInit {
 
       // Separate case when activity is active
       if (element.ActivityType.toLowerCase() === 'sleeping' && element.IsActiveNow) {
-        this.totalSleepTimeNight += Math.floor((new Date().getTime() - new Date(element.StartDate!).getTime()) / 1000);
+        if (toChangeSleepNight) {
+          this.totalSleepTimeNight += Math.floor((new Date().getTime() - new Date(element.StartDate!).getTime()) / 1000);
+        }
         this.totalSleepTimeFullDay += Math.floor((new Date().getTime() - new Date(element.StartDate!).getTime()) / 1000);
       }
 
