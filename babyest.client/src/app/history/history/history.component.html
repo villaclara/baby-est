@@ -2,12 +2,17 @@
     <app-loading-spinner></app-loading-spinner>
 </div>
 
+
 <div *ngIf="!isLoading && errorMessageForErrorComponent != ''">
     <app-error-page [errorMessage]='errorMessageForErrorComponent' pageLinkToReload="/history"></app-error-page>
 </div>
 
 <div *ngIf="!isLoading && errorMessageForErrorComponent === ''">
+    <div *ngIf="isRequestSentLoading && !isLoading">
+        <app-loading-overlay [errMsg]="errorMessageForAction"></app-loading-overlay>
+    </div>
 
+    
     <app-stats [sleepTimeToday]="totalSleepTimeFullDay" [sleepTimeNight]="totalSleepTimeNight"></app-stats>
 
     <hr />
@@ -69,7 +74,7 @@
     </div>
 
 
-    <div class="container pt-2" style="position: sticky; top: 0px; z-index: 1030; background-color: #ebeaf0;">
+    <div class="container pt-2" style="position: sticky; top: 0px; z-index: 1010; background-color: #ebeaf0;">
         <div class="row">
 
             <div class="col">

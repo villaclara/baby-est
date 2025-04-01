@@ -14,11 +14,12 @@ import { Router } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
 import { StatsComponent } from '../stats/stats.component';
 import { MonthlocalePipe } from '../../pipes/monthlocale.pipe';
+import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loading-overlay.component";
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe],
+  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe, LoadingOverlayComponent],
   providers: [DateConverter],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
@@ -66,6 +67,7 @@ export class HistoryComponent implements OnInit {
   }
 
   isLoading: boolean = true;
+  isRequestSentLoading: boolean = false;
 
   kidId: number = 0;
   translator: ActivityNameTranslator = new ActivityNameTranslator();
@@ -85,6 +87,8 @@ export class HistoryComponent implements OnInit {
   shitActivityDates: Date[] = [];
 
   errorMessageForErrorComponent: string = '';
+
+  errorMessageForAction: string = '';
 
   isAddingNewActivity: boolean = false;
 
@@ -161,20 +165,27 @@ export class HistoryComponent implements OnInit {
       KidName: this.selectedEditingAct.KidName
     };
 
+    this.isRequestSentLoading = true;
     this.kidService.addActivityToKid(this.kidId, addingAct)
       .subscribe({
         next: () => {
 
-          // just refresh the page after the Add was successfull
-          this.router.navigateByUrl("/", { skipLocationChange: true }).then(
-            () => this.router.navigateByUrl('/history'));
+          setTimeout(() => {
+            // just refresh the page after the Add was successfull
+            this.router.navigateByUrl("/", { skipLocationChange: true }).then(
+              () => this.router.navigateByUrl('/history'));
+          }, 500);
         },
-        error: (err) => this.errorMessageForErrorComponent = err
+        error: (err) =>
+          {
+           this.setErrorsForActionPerfomed();
+          } 
       });
   }
 
   saveChangesActivity(): void {
 
+    this.isRequestSentLoading = true;
     this.kidService.updateActivity(this.kidId,
       {
         Id: this.selectedEditingAct.Id,
@@ -187,7 +198,9 @@ export class HistoryComponent implements OnInit {
     )
       .subscribe({
         next: () => {
-          // After the input fields were changed we set them to the selected activity
+
+          setTimeout(() => {
+             // After the input fields were changed we set them to the selected activity
           // To display updated values after it was saved.
           this.selectedEditingAct.ActivityType = this.selectedActivityType;
           this.selectedEditingAct.StartDate = new Date(this.startDateString);
@@ -201,28 +214,40 @@ export class HistoryComponent implements OnInit {
           if (index != -1) {
             this.shitActivityDates[index] = new Date(this.selectedEditingAct.StartDate);
           }
+
+          this.isRequestSentLoading = false;
+          }, 500);
+         
         },
-        error: (err) => this.errorMessageForErrorComponent = err
+        error: (err) => {
+          this.setErrorsForActionPerfomed();
+        }
       });
   }
 
   deleteActivity(): void {
 
+    this.isRequestSentLoading = true;
     this.kidService.deleteActivity(this.kidId, this.selectedEditingAct.Id)
       .subscribe({
         next: () => {
-          const index = this.activities.indexOf(this.selectedEditingAct);
-          const indexSub = this.backupActivities.indexOf(this.selectedEditingAct);
-          if (index == -1 || indexSub == -1) {
-            return;
-          }
-          this.activities.splice(index, 1);
-          this.backupActivities.splice(indexSub, 1);  // remove from backup array as well
+          setTimeout(() => {
+            const index = this.activities.indexOf(this.selectedEditingAct);
+            const indexSub = this.backupActivities.indexOf(this.selectedEditingAct);
+            if (index == -1 || indexSub == -1) {
+              return;
+            }
+            this.activities.splice(index, 1);
+            this.backupActivities.splice(indexSub, 1);  // remove from backup array as well
+  
+            // update dates arrays
+            this.shitActivityDates.splice(index, 1);  
 
-          // update dates arrays
-          this.shitActivityDates.splice(index, 1);
+            this.isRequestSentLoading = false;
+          }, 500);
+          
         },
-        error: (err) => this.errorMessageForErrorComponent = err
+        error: (err) => this.setErrorsForActionPerfomed()
       });
   }
 
@@ -321,5 +346,15 @@ export class HistoryComponent implements OnInit {
 
     });
 
+  }
+
+  setErrorsForActionPerfomed() : void {
+    this.errorMessageForAction = 'Помилка при запиті. Спробуй ще раз';
+
+    setTimeout(() => {
+      // this.errorMessageForErrorComponent = err; 
+      this.isRequestSentLoading = false;    
+      this.errorMessageForAction = '';
+    }, 2500);
   }
 }

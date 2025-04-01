@@ -1,8 +1,19 @@
 
 
-    <div class="opacity-75" style="position: fixed; left: 0; height: 100vh; width: 100vw; z-index: 100; background-color: #000000;">
-        <div class="">
+    <div class="opacity-75" style="position: fixed; left: 0; top: 0; height: 100vh; width: 100vw; z-index: 1020; background-color: #000000;">
+        <div *ngIf="errMsg === ''" class="">
             <app-loading-spinner mainColor="#ffffff"></app-loading-spinner>
+        </div>
+
+        <div *ngIf="errMsg != ''" class="bg-dark d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+                <span class="text-white my-auto">{{errMsg}}</span>
         </div>
         
     </div>
+
+    <!-- <div class="opacity-75" style="position: fixed; left: 0; top: 0; height: 100vh; width: 100vw; z-index: 1020; background-color: #000000;">
+        <div class="bg-dark container d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+                <span class="text-white my-auto">text message error</span>
+        </div>
+        
+    </div> -->
