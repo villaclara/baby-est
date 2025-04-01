@@ -7,15 +7,16 @@ import { CurrentKidService } from '../../services/CurrentKid/current-kid.service
 import { Kid } from '../../models/kid';
 import { Router } from '@angular/router';
 import { KidActivity } from '../../models/kid-activity';
-import { NgClass } from '@angular/common';
-import { NgIf } from '@angular/common';
+import { NgClass, NgIf } from '@angular/common';
 import { LoadingSpinnerComponent } from "../../compHelpers/loading-spinner/loading-spinner.component";
 import { ErrorPageComponent } from "../../errorpage/error-page/error-page.component";
+import { LoadingOverlayComponent } from '../../compHelpers/loading-overlay/loading-overlay.component';
+import { DashboardActionsEventEmitterService } from '../../services/DashboardActionsEventEmitter/dashboard-actions-event-emitter.service';
 
 @Component({
   selector: 'app-dashboard-main',
   standalone: true,
-  imports: [KidHeaderInfoComponent, MainTimerComponent, LastActivitiesComponent, NgClass, NgIf, LoadingSpinnerComponent, ErrorPageComponent],
+  imports: [KidHeaderInfoComponent, MainTimerComponent,LoadingOverlayComponent, LastActivitiesComponent, NgClass, NgIf, LoadingSpinnerComponent, ErrorPageComponent],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })
@@ -43,9 +44,14 @@ export class DashboardMainComponent implements OnInit {
   bgColorForActivityType: string = '';
   currentTheme: string = 'lightTheme';
 
+  isRequestSentLoading: boolean = false;
+  errorMessageForAction: string = '';
+
+  
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
-    private router: Router
+    private router: Router,
+    private actionEventsEmitter: DashboardActionsEventEmitterService
   ) {
     this.kidId = this.currentKidService.getCurrentKid();
   }
@@ -179,7 +185,7 @@ export class DashboardMainComponent implements OnInit {
         });
 
 
-    // Get last 6 activities to form a list of LastActivities. 
+    // Get last 10 activities to form a list of LastActivities. 
     this.kidService.getLastSomeValueKidActivitiesById(this.kidId, 10)
       .subscribe(
         {
@@ -215,7 +221,12 @@ export class DashboardMainComponent implements OnInit {
   sendNewKidActivity(activity: KidActivity): void {
 
 
-    this.currentActivity = activity;
+    console.log("dahsboard param active - " + activity.IsActiveNow);
+    console.log("dashboard currentAct active - " + this.currentActivity.IsActiveNow);
+    // this.currentActivity = activity;
+
+    this.isRequestSentLoading = true;
+
 
     // Add new Activity to api. 
     // Also update required  Input() props in child components.
@@ -224,16 +235,31 @@ export class DashboardMainComponent implements OnInit {
       this.kidService.addActivityToKid(this.kidId, activity)
         .subscribe({
           next: (data: any) => {
-            this.currentActivity.Id = data;
+            setTimeout(() => {
 
+              this.isRequestSentLoading = false;
 
-            // change time Since last activity to become '---' depending on current activityType.
-            activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() ?
-              this.timeSinceLastSleep = -1 : this.timeSinceLastEat = -1;
+              this.currentActivity.Id = data;
+
+              // change time Since last activity to become '---' depending on current activityType.
+              activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() ?
+                this.timeSinceLastSleep = -1 : this.timeSinceLastEat = -1;
+
+                // set success number to child Timer
+                this.actionEventsEmitter.triggerAction(200);
+            }, 300);
+           
           },
           error: (error) => {
-            console.log(error);
-            this.errorMessageDisplayed = 'Помилка. Спробуй ще раз.';
+            this.errorMessageForAction = 'Помилка при запиті. Спробуй ще раз';
+
+            setTimeout(() => {
+              // set error number and reset values
+              this.isRequestSentLoading = false;
+              this.errorMessageForAction = '';
+              this.currentActivity.IsActiveNow = false;
+              this.actionEventsEmitter.triggerAction(-200); 
+            }, 2500);
           }
         });
 
@@ -244,45 +270,55 @@ export class DashboardMainComponent implements OnInit {
     // Also update the last activities local list.
     else {
 
-
-
       this.kidService.updateActivity(this.kidId, activity)
         .subscribe({
           next: (data: any) => {
-            this.currentActivity.Id = data;
 
+            setTimeout(() => {
+              this.isRequestSentLoading = false;
+              this.currentActivity.Id = data;
 
-            // change time Since last activity to reset to 0 depending on updated (ended) activityType.
-            activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() ?
-              this.timeSinceLastSleep = 0 : this.timeSinceLastEat = 0;
-
-
-            // reset the current Activity values
-            this.currentActivity = {
-              ActivityType: '',
-              Id: 0,
-              KidName: '',
-              EndDate: undefined,
-              StartDate: undefined,
-              IsActiveNow: false
-            };
-
-            // add to last activities list and delete the last one
-            if (this.activities.length < 3) {
-              this.activities.push(activity);
-            }
-            else {
-              this.activities.unshift(activity);
-              this.activities.pop();
-            }
+              // change time Since last activity to reset to 0 depending on updated (ended) activityType.
+              activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() ?
+                this.timeSinceLastSleep = 0 : this.timeSinceLastEat = 0;
+    
+              // reset the current Activity values
+              this.currentActivity = {
+                ActivityType: '',
+                Id: 0,
+                KidName: '',
+                EndDate: undefined,
+                StartDate: undefined,
+                IsActiveNow: false
+              };
+  
+              // add to last activities list and delete the last one
+              if (this.activities.length < 3) {
+                this.activities.push(activity);
+              }
+              else {
+                this.activities.unshift(activity);
+                this.activities.pop();
+              }
+              // send success number
+              this.actionEventsEmitter.triggerAction(100);
+            }, 300);
+           
           },
           error: (error) => {
-            console.log(error);
-            this.errorMessageDisplayed = 'Помилка. Спробуй ще раз.';
+            this.errorMessageForAction = 'Помилка при запиті. Спробуй ще раз';
+
+            setTimeout(() => {
+              // send fail number to child TImer and reset values
+              this.isRequestSentLoading = false;    
+              this.errorMessageForAction = '';
+              this.actionEventsEmitter.triggerAction(-100);
+              this.currentActivity.IsActiveNow = true;
+            }, 2500);
           }
         });
     }
   }
 
-
+ 
 }

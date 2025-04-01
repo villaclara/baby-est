@@ -1,13 +1,13 @@
-import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, OnChanges, OnDestroy, Output, SimpleChanges } from '@angular/core';
+import { CommonModule, NgIf } from '@angular/common';
+import { Component, EventEmitter, Input, OnChanges, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { interval, map, Subject, Subscription, takeUntil, timer } from 'rxjs';
 import { TimerCounterPipe } from '../../pipes/timer-counter.pipe';
 import { KidActivity } from '../../models/kid-activity';
 import { ActivityNameTranslator } from '../../utils/activity-name-translator';
-import { NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { DateConverter } from '../../utils/date-converter';
 import { animate, keyframes, state, style, transition, trigger } from '@angular/animations';
+import { DashboardActionsEventEmitterService } from '../../services/DashboardActionsEventEmitter/dashboard-actions-event-emitter.service';
 
 @Component({
   selector: 'app-main-timer',
@@ -23,14 +23,16 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
           // transform: 'translateY(-20px)', // Starting position (off-screen)
           opacity: 0
         }),
-        animate('300ms ease-in', style({ opacity: 1, 
+        animate('300ms ease-in', style({
+          opacity: 1,
           // transform: 'translateY(0)' 
         }))   // animation: has time and the style what is AFTER
       ]),
       transition(':leave', [         // ':leave' - when *ngIf = false. 
-        animate('200ms ease-out', style({ opacity: 0, 
+        animate('200ms ease-out', style({
+          opacity: 0,
           // transform: 'translateY(-20px)'
-         }))  // animation - return to default state
+        }))  // animation - return to default state
       ])
       // ,
       // transition('false <=> true', [
@@ -49,23 +51,23 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
           'margin-top': '0',
           opacity: 1
         })),
-        transition('initial => moved', [
-          animate('150ms',
-            keyframes([
-              style({'margin-top' : '-30%', opacity: 0, }),
-              style({'margin-top' : '-20%', opacity: 0, }),
-              style({'margin-top' : '-10%', opacity: 0, }),
-              style({'margin-top' : '0', opacity: 1, })
+      transition('initial => moved', [
+        animate('150ms',
+          keyframes([
+            style({ 'margin-top': '-30%', opacity: 0, }),
+            style({ 'margin-top': '-20%', opacity: 0, }),
+            style({ 'margin-top': '-10%', opacity: 0, }),
+            style({ 'margin-top': '0', opacity: 1, })
 
-            ]))]),
-        transition('moved => initial', [
-              animate('0.1s',
-                keyframes([
-                  style({'margin-top' : '0', opacity: 1, }),
-                  style({'margin-top' : '-10%', opacity: 0, }),
-                  style({'margin-top' : '-20%', opacity: 0, }),
-                  style({'margin-top' : '-30%', opacity: 0, })
-                ]))
+          ]))]),
+      transition('moved => initial', [
+        animate('0.1s',
+          keyframes([
+            style({ 'margin-top': '0', opacity: 1, }),
+            style({ 'margin-top': '-10%', opacity: 0, }),
+            style({ 'margin-top': '-20%', opacity: 0, }),
+            style({ 'margin-top': '-30%', opacity: 0, })
+          ]))
       ])
       // transition(':enter', [
       //   style({ transform: 'translateY(0)' }), // Starting position
@@ -79,53 +81,55 @@ import { animate, keyframes, state, style, transition, trigger } from '@angular/
     trigger('playIconAnim', [
       state('defaultSize',            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
         style({                         // the style what is BEFORE
-          transform : 'scale(1)' // Starting position (off-screen)
+          transform: 'scale(1)' // Starting position (off-screen)
         })),
       state('smallerSize',
         style({                         // the style what is BEFORE
-          transform : 'scale(1)'
+          transform: 'scale(1)'
         })),
-        transition('defaultSize => smallerSize', [
-          animate('150ms',
-            keyframes([
-              style({transform : 'scale(0.9)' }),
-              style({transform : 'scale(0.8)' }),
-              style({transform : 'scale(0.9)' }),
-            ])
-          )
-        ])
+      transition('defaultSize => smallerSize', [
+        animate('150ms',
+          keyframes([
+            style({ transform: 'scale(0.9)' }),
+            style({ transform: 'scale(0.8)' }),
+            style({ transform: 'scale(0.9)' }),
+          ])
+        )
       ])
+    ])
 
   ]
 })
 
-export class MainTimerComponent implements OnChanges, OnDestroy {
+export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
 
-  constructor(private dateConverter : DateConverter) {
+  constructor(private dateConverter: DateConverter,
+    private dashboardEventsEmitter: DashboardActionsEventEmitterService) { }
 
-  }
   private translator: ActivityNameTranslator = new ActivityNameTranslator();
 
   @Output() newKidActivity: EventEmitter<KidActivity> = new EventEmitter<KidActivity>();
   // @Input() currentActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   @Input() currentActivity!: KidActivity;
 
+  private subscriptionFromDashboard: Subscription = new Subscription();
+
+  toSentKidActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
 
   isRunningTimer: boolean = false;
   startStopImageLink: string = this.isRunningTimer ? '../../../assets/img/stop_icon.png' : '../../../assets/img/play_icon.png';
 
   timerDone$: Subject<boolean> = new Subject<boolean>();
   timePassed: number = 0;
-  timePass$ = timer(1, 1000).pipe(map(n => (this.timePassed + n) * 1000));
 
   currentActivityNameUA: string = 'Чіл';
   isEatingSelected: boolean = false;
-  
+
   isEditingActivityTimes: boolean = false;
-  
+
   nowDateStartActivityInputTime: string = '';
   nowDateEndActivityInputTime: string = '';
-  
+
 
   timerSub: Subscription = new Subscription();
 
@@ -133,14 +137,61 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
 
   playIconAnimation: string = 'defaultSize';
 
+
+  ngOnInit(): void {
+
+    // subscribe for dashboard event. Is triggered when dashboard calls to the API and receives the answer.
+    this.subscriptionFromDashboard = this.dashboardEventsEmitter.action$.subscribe((resultNumber) => {
+
+      // Add Activity
+      // Success
+      if (resultNumber == 200) {
+      }
+
+      // Fail
+      else if (resultNumber == -200) {
+        this.timerDone$.next(true);
+        // Stop the timer
+        this.timePassed = 0;
+        this.isRunningTimer = false;
+        this.currentActivityNameUA = 'Чіл';
+        this.currentActivity.IsActiveNow = false;
+        this.startStopImageLink = '../../../assets/img/play_icon.png';
+
+      }
+
+      // Update Activitiy
+      // Success
+      if (resultNumber == 100) {
+        this.isRunningTimer = false;
+        this.isEatingSelected = false;
+        this.isEditingActivityTimes = false;
+        this.playIconAnimation = 'defaultSize';
+        this.currentActivity.IsActiveNow = false;
+        this.currentActivityNameUA = 'Чіл';
+        this.timePassed = 0;
+        this.moveActTypeAnimation = 'initial';
+      }
+
+      // Fail
+      else if (resultNumber == -100) {
+        let timeDiff = new Date().getTime() - new Date(this.currentActivity.StartDate!).getTime();
+        this.timePassed = Math.floor(timeDiff / 1000);
+        console.log("action status -1 in timer");
+        console.log("activenow in error -100 - " + this.currentActivity.IsActiveNow);
+        this.timerSub = timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
+        this.startStopImageLink = '../../../assets/img/stop_icon.png';
+      }
+    })
+  }
+
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
-    
+
+    console.log("active in changes - " + this.currentActivity.IsActiveNow);
     // Only refresh values if the changes is CurrentActivity object.
-    if(changes['currentActivity'])
-    {
-      if(this.timerSub)
-      {
+    if (changes['currentActivity']) {
+      if (this.timerSub) {
         this.timerSub.unsubscribe();
       }
 
@@ -151,19 +202,18 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
         this.timerSub = timer(1, 1000).pipe(takeUntil(this.timerDone$)).subscribe(() => this.timePassed += 1);
         this.startStopImageLink = '../../../assets/img/stop_icon.png';
         this.currentActivityNameUA = this.translator.changeCurrentActivityNameUA(this.currentActivity.ActivityType);
-        
+
         this.nowDateStartActivityInputTime = this.dateConverter.toHHmmString(this.currentActivity.StartDate!);
         // if ANY eating we set the IsEatingSelected to True
         this.isEatingSelected = this.currentActivity.ActivityType.toLowerCase() != 'sleeping'
-        && this.currentActivity.ActivityType != ''
-        ? true
-        : false;
+          && this.currentActivity.ActivityType != ''
+          ? true
+          : false;
 
         this.moveActTypeAnimation = this.currentActivity.ActivityType.toLowerCase() != '' ? 'moved' : 'initial'
       }
 
-      else
-      {
+      else {
         this.startStopImageLink = '../../../assets/img/play_icon.png';
 
       }
@@ -174,6 +224,7 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     this.timerDone$.unsubscribe();
+    this.subscriptionFromDashboard.unsubscribe();
   }
 
   startSelectEatingType(): void {
@@ -201,18 +252,15 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
       && this.currentActivity.ActivityType != ''
       ? true
       : false;
-    
 
 
-      this.moveActTypeAnimation = this.currentActivity.ActivityType.toLowerCase() != '' ? 'moved' : 'initial';
+
+    this.moveActTypeAnimation = this.currentActivity.ActivityType.toLowerCase() != '' ? 'moved' : 'initial';
   }
 
   startActivity(): void {
 
-
     this.playIconAnimation = 'smallerSize';
-
-      
 
     // When timer is stopped.
     // When we want to start activity and send the currentActivity to api.
@@ -230,27 +278,32 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
 
       this.nowDateStartActivityInputTime = this.dateConverter.toHHmmString(this.currentActivity.StartDate);
 
-      // Send the info to the parent to send to Api.
-      // Parent decides wheter to add or update activity.
-      this.newKidActivity.emit(this.currentActivity);
+      let actToSent: KidActivity = {
+        IsActiveNow: true,
+        StartDate: new Date(),
+        Id: this.currentActivity.Id,
+        ActivityType: this.currentActivity.ActivityType,
+        EndDate: this.currentActivity.EndDate,
+        KidName: this.currentActivity.KidName
+      };
 
       setTimeout(() => {
-      this.startStopImageLink = '../../../assets/img/stop_icon.png';
         this.playIconAnimation = 'defaultSize';
+        this.startStopImageLink = '../../../assets/img/stop_icon.png';
+      }, 300);
+
+      setTimeout(() => {
+        // Send the info to the parent to send to Api.
+        // Parent decides wheter to add or update activity.
+        // REST changes are tracked in subscription, configured in OnInit method
+        this.newKidActivity.emit(actToSent);
       }, 300);
     }
 
     // When timer is running.
     // When we want to stop activity and send the FULL activity to api.
     else {
-      // Stop the timer
-      this.timerDone$.next(true);
-      this.startStopImageLink = '../../../assets/img/play_icon.png';
-      this.isRunningTimer = false;
-      this.isEatingSelected = false;
-      this.isEditingActivityTimes = false;
 
-      
       // Stop tracking. Set StartDate
       // The input value will be used, if not changed the input should display the this.currentActivity.StartDate
       let origStartDate = new Date(this.currentActivity.StartDate!);
@@ -273,32 +326,33 @@ export class MainTimerComponent implements OnChanges, OnDestroy {
         this.currentActivity.EndDate = new Date();
       }
 
+      // Stop the timer
+      this.timerDone$.next(true);
+      this.startStopImageLink = '../../../assets/img/play_icon.png';
 
-      this.currentActivity.IsActiveNow = false;
-      this.currentActivityNameUA = 'Чіл';
-      this.timePassed = 0;
+      console.log("current activity active - " + this.currentActivity.IsActiveNow);
+      let actToSent: KidActivity = {
+        IsActiveNow: false,
+        ActivityType: this.currentActivity.ActivityType,
+        StartDate: this.currentActivity.StartDate,
+        EndDate: this.currentActivity.EndDate,
+        KidName: this.currentActivity.KidName,
+        Id: this.currentActivity.Id
+      }
 
-      this.moveActTypeAnimation = 'initial';
-      // Send the info to the parent to send to Api.
-      // Parent decides wheter to add or update activity.
-      this.newKidActivity.emit(this.currentActivity);
-
-      // Reset this.currentActivity
-      // this.currentActivity = { 
-      //   ActivityType : '', 
-      //   Id : 0, 
-      //   KidName : '', 
-      //   EndDate : undefined, 
-      //   StartDate : undefined, 
-      //   IsActiveNow : false 
-      // };
-
+      setTimeout(() => {
         this.playIconAnimation = 'defaultSize';
+        this.startStopImageLink = '../../../assets/img/play_icon.png';
+      }, 300);
+
+      setTimeout(() => {
+        // Send the info to the parent to send to Api.
+        // Parent decides wheter to add or update activity.
+        // REST changes are tracked in subscription, configured in OnInit method
+        this.newKidActivity.emit(actToSent);
+      }, 300);
     }
 
-   
   }
 
-
-  
 }

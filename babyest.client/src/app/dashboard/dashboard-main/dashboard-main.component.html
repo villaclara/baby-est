@@ -8,7 +8,9 @@
         <app-error-page [errorMessage]="errorMessageDisplayed" [pageLinkToReload]="'/main/'+kidId"></app-error-page>
     </div>
     <div *ngIf="errorMessageDisplayed === ''">
-
+        <div *ngIf="isRequestSentLoading && !isLoading">
+            <app-loading-overlay [errMsg]="errorMessageForAction"></app-loading-overlay>
+        </div>
         <div [ngClass]="{
             'bg-sleeping' : currentActivity.ActivityType.toLowerCase() === 'sleeping' && currentTheme === 'lightTheme',
             'bg-sleeping-dark' : currentActivity.ActivityType.toLowerCase() === 'sleeping' && currentTheme != 'lightTheme',
