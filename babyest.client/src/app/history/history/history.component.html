@@ -114,11 +114,14 @@
 
     <div class="container" style="padding-bottom: 15vh;">
 
-        <div class="mt-2 fs-5" *ngIf="activities.length == 0">
+        <div *ngIf="isFilterLoading">
+            <app-loading-spinner minHeight="20vh"></app-loading-spinner>
+        </div>
+        <div class="mt-2 fs-5" *ngIf="activities.length == 0 && !isFilterLoading">
             Поки що активностей не було.
         </div>
 
-        <div class="mt-2 ">
+        <div *ngIf="!isFilterLoading" class="mt-2 ">
             <div class=" p-1">
                 <div *ngFor="let activity of activities; index as i" class="mb-2">
 

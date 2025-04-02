@@ -287,17 +287,16 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
         KidName: this.currentActivity.KidName
       };
 
+      this.startStopImageLink = '../../../assets/img/stop_icon.png';
       setTimeout(() => {
         this.playIconAnimation = 'defaultSize';
-        this.startStopImageLink = '../../../assets/img/stop_icon.png';
-      }, 300);
 
-      setTimeout(() => {
         // Send the info to the parent to send to Api.
         // Parent decides wheter to add or update activity.
         // REST changes are tracked in subscription, configured in OnInit method
         this.newKidActivity.emit(actToSent);
       }, 300);
+
     }
 
     // When timer is running.
@@ -342,15 +341,13 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
 
       setTimeout(() => {
         this.playIconAnimation = 'defaultSize';
-        this.startStopImageLink = '../../../assets/img/play_icon.png';
-      }, 300);
-
-      setTimeout(() => {
+        
         // Send the info to the parent to send to Api.
         // Parent decides wheter to add or update activity.
         // REST changes are tracked in subscription, configured in OnInit method
         this.newKidActivity.emit(actToSent);
       }, 300);
+
     }
 
   }

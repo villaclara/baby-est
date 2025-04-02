@@ -68,6 +68,7 @@ export class HistoryComponent implements OnInit {
 
   isLoading: boolean = true;
   isRequestSentLoading: boolean = false;
+  isFilterLoading: boolean = false;
 
   kidId: number = 0;
   translator: ActivityNameTranslator = new ActivityNameTranslator();
@@ -257,6 +258,8 @@ export class HistoryComponent implements OnInit {
   }
 
   filterActsByHistoryType(timespan: string): void {
+    this.activities = [];
+    this.shitActivityDates = [];
     if (timespan === 'today') {
       const tod = new Date();
       let yst = new Date(tod);
@@ -269,26 +272,34 @@ export class HistoryComponent implements OnInit {
       (this.activities).forEach(element => {
         this.shitActivityDates.push(new Date(element.StartDate!))
       });
+      return;
     }
 
-    else if (timespan === 'week') {
-      const tod = new Date();
-      let yst = new Date(tod);
-      yst.setDate(yst.getDate() - 7);
+    this.isFilterLoading = true;
+    setTimeout(() => {
+      
+      if (timespan === 'week') {
+        const tod = new Date();
+        let yst = new Date(tod);
+        yst.setDate(yst.getDate() - 7);
+  
+        this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).getTime() > yst.getTime());
+  
+        this.shitActivityDates = [];
+        (this.activities).forEach(element => {
+          this.shitActivityDates.push(new Date(element.StartDate!))
+        });
+      }
+  
+      else {
+        this.activities = this.backupActivities;
+        this.shitActivityDates = [];
+        this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
+      }
+      this.isFilterLoading = false;
+    }, 300);
+    
 
-      this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).getTime() > yst.getTime());
-
-      this.shitActivityDates = [];
-      (this.activities).forEach(element => {
-        this.shitActivityDates.push(new Date(element.StartDate!))
-      });
-    }
-
-    else {
-      this.activities = this.backupActivities;
-      this.shitActivityDates = [];
-      this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
-    }
   }
 
   calculateTimes(): void {

@@ -10,4 +10,5 @@ import { NgStyle } from '@angular/common';
 })
 export class LoadingSpinnerComponent {
   @Input() mainColor: string = '#404756';
+  @Input() minHeight: string = '80vh';
 }
