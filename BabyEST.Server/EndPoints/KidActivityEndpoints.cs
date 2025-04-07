@@ -26,7 +26,16 @@ public static class KidActivityEndpoints
 	private static bool KidExistsOrBelongsToParent(int kidId, int parentId, ApplicationDbContext dbctx) =>
 		dbctx.Kids.Any(k => k.Id == kidId && k.Parents.Any(p => p.Id == parentId));
 
-	private static IResult GetAllActivitiesForKid([FromRoute] int id, ClaimsPrincipal principal, ApplicationDbContext dbctx, [FromQuery] int? last = null)
+	/// <summary>
+	/// Get activities for Kid based on query params. Default (without params) is to get all activities.
+	/// </summary>
+	/// <param name="last">Get last *num of activities</param>
+	/// <param name="forDays">Get activities for *num of days starting from today.</param>
+	/// <param name="fromDate">Date to count from activities in format yyyy-mm-dd. Used in pair with 'toDate' parameter.</param>
+	/// <param name="toDate">Date to count TO activities in format yyyy-mm-dd. Used in pair with 'fromDate' parameter.</param>
+	/// <returns></returns>
+	private static IResult GetAllActivitiesForKid([FromRoute] int id, ClaimsPrincipal principal, ApplicationDbContext dbctx,
+		[FromQuery] int? last = null, [FromQuery] int? forDays = null, [FromQuery] string? fromDate = null, [FromQuery] string? toDate = null)
 	{
 		// Get current user id
 		var pid = principal.FindFirstValue("id");
@@ -51,6 +60,22 @@ public static class KidActivityEndpoints
 		if (last is not null)
 		{
 			activities = (IOrderedQueryable<KidActivity>)activities.Take(last.Value);
+		}
+
+		else if (forDays is not null)
+		{
+			var dateOffset = DateTime.Now.AddDays((double)(-1 * forDays));
+			activities = (IOrderedQueryable<KidActivity>)activities.Where(a => a.StartDate > dateOffset);
+		}
+
+		else if (!string.IsNullOrEmpty(fromDate) && !string.IsNullOrEmpty(toDate))
+		{
+			bool parsed = DateTime.TryParse(fromDate, out var fromD);
+			bool parsed2 = DateTime.TryParse(toDate, out var toD);
+			if (parsed && parsed2)
+			{
+				activities = (IOrderedQueryable<KidActivity>)activities.Where(a => a.StartDate > fromD && a.StartDate < toD);
+			}
 		}
 
 		var activitiesDto = new List<KidActivityDto>();
