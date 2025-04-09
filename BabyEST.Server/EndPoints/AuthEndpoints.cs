@@ -4,6 +4,7 @@ using BabyEST.Server.Database;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using BC = BCrypt.Net.BCrypt;
 
@@ -11,6 +12,7 @@ namespace BabyEST.Server.EndPoints;
 
 public static class AuthEndpoints
 {
+	private static Dictionary<string, int> _dic = [];
 	public static RouteGroupBuilder MapAuthEndpoints(this RouteGroupBuilder builder)
 	{
 		builder.MapPost("/login", LoginAsync);
@@ -18,6 +20,10 @@ public static class AuthEndpoints
 		builder.MapGet("/logout", LogoutAsync).RequireAuthorization();
 
 		builder.MapPost("/register", RegisterAsync);
+
+		builder.MapPost("/validateuser", ValidateUserOnPasswordResetAskedAsync);
+
+		builder.MapPost("/setpassword", SetNewPasswordAsync);
 
 		return builder;
 	}
@@ -143,6 +149,73 @@ public static class AuthEndpoints
 			return TypedResults.StatusCode(500);
 		}
 	}
+	private static async Task<IResult> ValidateUserOnPasswordResetAskedAsync([FromBody] UserValidationModel validationModel, ApplicationDbContext dbcontext)
+	{
+		var user = await dbcontext.Parents.SingleOrDefaultAsync(u => u.Email == validationModel.Email.ToLower());
+		if (user is null)
+		{
+			return TypedResults.BadRequest();
+		}
+
+		// TODO
+		// Make check for kidname wokring. 
+		// Now it does not work because of cyrillic and latin letters in name.
+		var kidexists = await dbcontext.Kids.SingleOrDefaultAsync(k =>
+			k.Parents.Any(p => p.Id == user.Id)
+			//&& k.Name.ToLower() == validationModel.KidName.ToLower()
+			&& k.BirthDate == DateOnly.FromDateTime(validationModel.Birth));
+
+		if (kidexists is null)
+		{
+			return TypedResults.BadRequest();
+		}
+
+		var secretValue = Random.Shared.Next(1, 100);
+		_dic.Add(user.Email, secretValue);
+		// here return secret code, which should be sent with the request to change password
+		return TypedResults.Ok(secretValue);
+
+	}
+
+	private static async Task<IResult> SetNewPasswordAsync([FromBody] NewPasswordModel newPasswordModel, string password, ApplicationDbContext dbcontext, HttpContext httpcontext)
+	{
+		bool emailRequestChangePasswordexists = _dic.TryGetValue(newPasswordModel.Email, out int secretValue);
+		_dic.Remove(newPasswordModel.Email);
+		if (!emailRequestChangePasswordexists || secretValue != newPasswordModel.Secret)
+		{
+			return TypedResults.BadRequest();
+		}
+
+		try
+		{
+			var user = await dbcontext.Parents.SingleOrDefaultAsync(p => p.Email == newPasswordModel.Email.ToLower());
+
+			if (user is null)
+			{
+				return TypedResults.BadRequest();
+			}
+
+			user.PasswordHash = BC.HashPassword(newPasswordModel.Password);
+
+			await dbcontext.SaveChangesAsync();
+
+			// TODO
+			// Not sure if I want to login the user
+			var claimsPrincipal = CreateClaimsPrincipal(user.Email, user.Id);
+			await httpcontext.SignInAsync(claimsPrincipal);
+
+			return TypedResults.Ok("Password Changed and logged.");
+		}
+		catch
+		{
+			return TypedResults.StatusCode(500);
+		}
+
+
+	}
+
 
 	private record UserFormModel(string Email, string Password);
+	private record UserValidationModel(string Email, string KidName, DateTime Birth);
+	private record NewPasswordModel(int Secret, string Email, string Password);
 }
