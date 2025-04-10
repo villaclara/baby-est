@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.RegularExpressions;
 using BabyEST.Server.Database;
+using BabyEST.Server.DTOs;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -28,7 +29,7 @@ public static class AuthEndpoints
 		return builder;
 	}
 
-	private static async Task<IResult> RegisterAsync([FromBody] UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
+	private static async Task<IResult> RegisterAsync([FromBody] AuthDTOs.UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
 	{
 		try
 		{
@@ -84,7 +85,7 @@ public static class AuthEndpoints
 		return claimsPrincipal;
 	}
 
-	private static async Task<IResult> LoginAsync([FromBody] UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
+	private static async Task<IResult> LoginAsync([FromBody] AuthDTOs.UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
 	{
 		Log.Information("{@Method} - Try login with user ({@user}).", nameof(LoginAsync), userForm.Email);
 		try
@@ -149,7 +150,7 @@ public static class AuthEndpoints
 			return TypedResults.StatusCode(500);
 		}
 	}
-	private static async Task<IResult> ValidateUserOnPasswordResetAskedAsync([FromBody] UserValidationModel validationModel, ApplicationDbContext dbcontext)
+	private static async Task<IResult> ValidateUserOnPasswordResetAskedAsync([FromBody] AuthDTOs.UserValidationModel validationModel, ApplicationDbContext dbcontext)
 	{
 		var user = await dbcontext.Parents.Where(u => u.Email.ToLower() == validationModel.Email.ToLower())
 			.Include(k => k.Kids)
@@ -176,7 +177,7 @@ public static class AuthEndpoints
 
 	}
 
-	private static async Task<IResult> SetNewPasswordAsync([FromBody] NewPasswordModel newPasswordModel, string password, ApplicationDbContext dbcontext, HttpContext httpcontext)
+	private static async Task<IResult> SetNewPasswordAsync([FromBody] AuthDTOs.NewPasswordModel newPasswordModel, string password, ApplicationDbContext dbcontext, HttpContext httpcontext)
 	{
 		bool emailRequestChangePasswordexists = _dic.TryGetValue(newPasswordModel.Email, out int secretValue);
 		_dic.Remove(newPasswordModel.Email);
@@ -198,12 +199,11 @@ public static class AuthEndpoints
 
 			await dbcontext.SaveChangesAsync();
 
-			// TODO
-			// Not sure if I want to login the user
+			// Login the user right after changes were successfull.
 			var claimsPrincipal = CreateClaimsPrincipal(user.Email, user.Id);
 			await httpcontext.SignInAsync(claimsPrincipal);
 
-			return TypedResults.Ok("Password Changed and logged.");
+			return TypedResults.Ok();
 		}
 		catch
 		{
@@ -212,9 +212,4 @@ public static class AuthEndpoints
 
 
 	}
-
-
-	private record UserFormModel(string Email, string Password);
-	private record UserValidationModel(string Email, string KidName, DateTime Birth);
-	private record NewPasswordModel(int Secret, string Email, string Password);
 }
