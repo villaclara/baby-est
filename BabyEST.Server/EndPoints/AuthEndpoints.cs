@@ -151,18 +151,17 @@ public static class AuthEndpoints
 	}
 	private static async Task<IResult> ValidateUserOnPasswordResetAskedAsync([FromBody] UserValidationModel validationModel, ApplicationDbContext dbcontext)
 	{
-		var user = await dbcontext.Parents.SingleOrDefaultAsync(u => u.Email == validationModel.Email.ToLower());
+		var user = await dbcontext.Parents.Where(u => u.Email.ToLower() == validationModel.Email.ToLower())
+			.Include(k => k.Kids)
+			.FirstOrDefaultAsync();
 		if (user is null)
 		{
 			return TypedResults.BadRequest();
 		}
 
-		// TODO
-		// Make check for kidname wokring. 
-		// Now it does not work because of cyrillic and latin letters in name.
-		var kidexists = await dbcontext.Kids.SingleOrDefaultAsync(k =>
-			k.Parents.Any(p => p.Id == user.Id)
-			//&& k.Name.ToLower() == validationModel.KidName.ToLower()
+
+		var kidexists = user.Kids.FirstOrDefault(k =>
+			string.Equals(k.Name, validationModel.KidName, StringComparison.InvariantCultureIgnoreCase)
 			&& k.BirthDate == DateOnly.FromDateTime(validationModel.Birth));
 
 		if (kidexists is null)
