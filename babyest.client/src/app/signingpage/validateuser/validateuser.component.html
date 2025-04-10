@@ -1,0 +1,37 @@
+<p>Для підтвердження скидання пароля, будь ласка, заповни поля нижче.</p>
+
+
+<div>
+    <div class="pt-2">
+        <label>Email</label>
+        <div class="col-8 mx-auto">
+            <input #name="ngModel" type="email" [(ngModel)]="userModel.email" class="form-control" required email
+                placeholder="me@gmail.com" />
+            <span class="form-text" [hidden]="name.valid || name.untouched">Некоректний email</span>
+        </div>
+    </div>
+
+    <div class="pt-3">
+        <label>Ім'я будь-якої доданої дитини</label>
+        <div class="col-8 mx-auto">
+            <input name="pwd" [(ngModel)]="userModel.kidName" type="text" #pwdl="ngModel" class="form-control" />
+        </div>
+        <div class="form-text">Залиш поле пустим, якщо немає дітей.</div>
+    </div>
+
+    <div class="pt-3">
+        <label>Дата народження дитини</label>
+        <div class="col-8 mx-auto">
+            <input name="pwd" [(ngModel)]="userModel.kidBirth" required type="date" #pwdl="ngModel" class="form-control" />
+            <!-- (focus)="clearErrorMessage()" /> -->
+        </div>
+        <div class="form-text">Залиш поле пустим, якщо немає дітей.</div>
+    </div>
+
+    <div class="pt-4 col-8 mx-auto d-grid">
+
+        <button class="btn btn-primary rounded-1" [disabled]="name.invalid" (click)="emitVerifyUser()">
+            Продовжити
+        </button>
+    </div>
+</div>

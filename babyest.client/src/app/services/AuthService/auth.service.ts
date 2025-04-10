@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { UserFormData } from '../../models/user-form-data';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { VerifyUserModel } from '../../models/verify-user-model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +31,19 @@ export class AuthService {
 
    tryLogout() : Observable<any> {
     return this.http.get('/auth/logout', { headers: this.headers1 });
+   }
+
+   tryValidateUser(userModel: VerifyUserModel): Observable<any> {
+    return this.http.post('/auth/validateuser', 
+      JSON.stringify({email: userModel.email, kidname: userModel.kidName, birth: userModel.kidBirth}),
+      {headers: this.headers1}
+      );
+   }
+
+   setPassword(secret: number, em: string, pwd: string): Observable<any> {
+    return this.http.post('/auth/setpassword', 
+      JSON.stringify({ secret: secret, email: em, password: pwd}),
+      { headers: this.headers1 }
+      );
    }
 }

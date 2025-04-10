@@ -6,6 +6,10 @@ import { AuthService } from '../services/AuthService/auth.service';
 import { UserFormData } from '../models/user-form-data';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
+import { ValidateuserComponent } from "./validateuser/validateuser.component";
+import { ChangepasswordComponent } from "./changepassword/changepassword.component";
+import { VerifyUserModel } from '../models/verify-user-model';
+import { SetPasswordModel } from '../models/set-password-model';
 
 
 @Component({
@@ -13,7 +17,7 @@ import { NgIf } from '@angular/common';
   templateUrl: './signingpage.component.html',
   styleUrl: './signingpage.component.css',
   standalone: true,
-  imports: [FormsModule, NgIf]
+  imports: [FormsModule, NgIf, ValidateuserComponent, ChangepasswordComponent]
 })
 export class SigningpageComponent {
 
@@ -24,8 +28,14 @@ export class SigningpageComponent {
   // login/register stuff
   user = new UserFormData('', '');
   confirmPassword: string = "";
-
+  
   isActionLoading: boolean = false;
+  isPasswordResetValidationAsked: boolean = false;
+  isChangePassword: boolean = false;
+
+  passwordResetResponseMessage: string = '';
+
+  private secret: number = 0;
 
   login() {
 
@@ -85,6 +95,13 @@ export class SigningpageComponent {
   regbutclass: string = "notactive";
   changeRegistering(value: boolean) {
     this.isRegistering = value;
+
+    // reset all booleans to default when clicked on Login/Register
+    this.isActionLoading = false;
+    this.isChangePassword = false;
+    this.isPasswordResetValidationAsked = false;
+    this.clearErrorMessage();
+
     if (this.isRegistering) {
       this.regbutclass = "";
       this.logbutclass = "notactive";
@@ -95,5 +112,35 @@ export class SigningpageComponent {
     }
   }
 
+  forgotPasswordClick(): void {
+    this.isPasswordResetValidationAsked = true;
+  }
+
+  verificationSuccessChangePassword(): void {
+    this.isChangePassword = true;
+  }
+
+  // is called when received from validateuser.component
+  tryValidateUser(verifyModel: VerifyUserModel): void {
+    this.authService.tryValidateUser(verifyModel)
+      .subscribe({
+        next: (data: number) =>
+        {
+          this.passwordResetResponseMessage = '';
+          // save the received key
+          this.secret = data;
+          // show next component (set new password)
+          this.isChangePassword = true;
+        },
+        error: (err: any) =>
+        {
+          this.passwordResetResponseMessage = 'Помилка при верифікації. Перевірте введені дані.';
+        }
+      })
+  }
+
+  trySetnewPassword(model: SetPasswordModel): void {
+
+  }
 }
 

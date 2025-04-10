@@ -136,4 +136,21 @@
         <span [hidden]="errorMessage.length == 0">{{errorMessage}}</span>
     </div>
 
+     <!-- Forgot Password Section -->
+     <div *ngIf="errorMessage">
+        <p class="btn" (click)="forgotPasswordClick()">Забули пароль?</p>
+    </div>
+
+    <div *ngIf="isPasswordResetValidationAsked">
+        <app-validateuser (validationModelEmit)="tryValidateUser($event)"></app-validateuser>
+    </div>
+
+    <div *ngIf="passwordResetResponseMessage != ''">
+        <p>pwd reset msg - {{ passwordResetResponseMessage }}</p>
+    </div>
+
+    <div *ngIf="isChangePassword">
+        <app-changepassword></app-changepassword>
+    </div>
+
 </div>
