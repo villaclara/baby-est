@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using BabyEST.Server.Database;
 using BabyEST.Server.DTOs;
+using BabyEST.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
@@ -160,10 +161,17 @@ public static class AuthEndpoints
 			return TypedResults.BadRequest();
 		}
 
+		var kidexists = string.IsNullOrEmpty(validationModel.KidName) switch
+		{
+			true => user.Kids.Count == 0 ? new Kid() : null,
+			false => user.Kids.FirstOrDefault(k =>
+						string.Equals(k.Name, validationModel.KidName, StringComparison.InvariantCultureIgnoreCase)
+						&& k.BirthDate == DateOnly.FromDateTime(validationModel.Birth))
+		};
 
-		var kidexists = user.Kids.FirstOrDefault(k =>
-			string.Equals(k.Name, validationModel.KidName, StringComparison.InvariantCultureIgnoreCase)
-			&& k.BirthDate == DateOnly.FromDateTime(validationModel.Birth));
+		//user.Kids.FirstOrDefault(k =>
+		//	string.Equals(k.Name, validationModel.KidName, StringComparison.InvariantCultureIgnoreCase)
+		//	&& k.BirthDate == DateOnly.FromDateTime(validationModel.Birth));
 
 		if (kidexists is null)
 		{
