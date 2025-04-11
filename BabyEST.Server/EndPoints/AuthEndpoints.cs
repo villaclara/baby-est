@@ -161,7 +161,8 @@ public static class AuthEndpoints
 			return TypedResults.BadRequest();
 		}
 
-		var kidexists = string.IsNullOrEmpty(validationModel.KidName) switch
+		var normalizedKidName = validationModel.KidName?.Trim();
+		var kidexists = string.IsNullOrEmpty(normalizedKidName) switch
 		{
 			true => user.Kids.Count == 0 ? new Kid() : null,
 			false => user.Kids.FirstOrDefault(k =>
@@ -186,7 +187,7 @@ public static class AuthEndpoints
 
 	}
 
-	private static async Task<IResult> SetNewPasswordAsync([FromBody] AuthDTOs.NewPasswordModel newPasswordModel, string password, ApplicationDbContext dbcontext, HttpContext httpcontext)
+	private static async Task<IResult> SetNewPasswordAsync([FromBody] AuthDTOs.NewPasswordModel newPasswordModel, ApplicationDbContext dbcontext, HttpContext httpcontext)
 	{
 		bool emailRequestChangePasswordexists = _dic.TryGetValue(newPasswordModel.Email, out int secretValue);
 		_dic.Remove(newPasswordModel.Email);
