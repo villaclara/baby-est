@@ -179,7 +179,8 @@ public static class AuthEndpoints
 		}
 
 		var secretValue = Random.Shared.Next(1, 100);
-		_dic.Add(user.Email, secretValue);
+
+		_dic[user.Email] = secretValue;
 		// here return secret code, which should be sent with the request to change password
 		return TypedResults.Ok(secretValue);
 
