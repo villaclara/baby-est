@@ -1,15 +1,10 @@
-import { HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms'
-import { catchError, map, ObservableInput, tap, throwError } from 'rxjs';
 import { AuthService } from '../services/AuthService/auth.service';
 import { UserFormData } from '../models/user-form-data';
 import { Router } from '@angular/router';
 import { NgIf } from '@angular/common';
-import { ValidateuserComponent } from "./validateuser/validateuser.component";
 import { ChangepasswordComponent } from "./changepassword/changepassword.component";
-import { VerifyUserModel } from '../models/verify-user-model';
-import { SetPasswordModel } from '../models/set-password-model';
 
 
 @Component({
@@ -17,7 +12,7 @@ import { SetPasswordModel } from '../models/set-password-model';
   templateUrl: './signingpage.component.html',
   styleUrl: './signingpage.component.css',
   standalone: true,
-  imports: [FormsModule, NgIf, ValidateuserComponent, ChangepasswordComponent]
+  imports: [FormsModule, NgIf, ChangepasswordComponent]
 })
 export class SigningpageComponent {
 
@@ -116,31 +111,5 @@ export class SigningpageComponent {
     this.isPasswordResetValidationAsked = true;
   }
 
-  verificationSuccessChangePassword(): void {
-    this.isChangePassword = true;
-  }
-
-  // is called when received from validateuser.component
-  tryValidateUser(verifyModel: VerifyUserModel): void {
-    this.authService.tryValidateUser(verifyModel)
-      .subscribe({
-        next: (data: number) =>
-        {
-          this.passwordResetResponseMessage = '';
-          // save the received key
-          this.secret = data;
-          // show next component (set new password)
-          this.isChangePassword = true;
-        },
-        error: (err: any) =>
-        {
-          this.passwordResetResponseMessage = 'Помилка при верифікації. Перевірте введені дані.';
-        }
-      })
-  }
-
-  trySetnewPassword(model: SetPasswordModel): void {
-
-  }
 }
 

@@ -141,15 +141,15 @@
         <p class="btn" (click)="forgotPasswordClick()">Забули пароль?</p>
     </div>
 
-    <div *ngIf="isPasswordResetValidationAsked">
+    <!-- <div *ngIf="isPasswordResetValidationAsked">
         <app-validateuser (validationModelEmit)="tryValidateUser($event)"></app-validateuser>
     </div>
 
     <div *ngIf="passwordResetResponseMessage != ''">
         <p>pwd reset msg - {{ passwordResetResponseMessage }}</p>
-    </div>
+    </div> -->
 
-    <div *ngIf="isChangePassword">
+    <div *ngIf="isPasswordResetValidationAsked">
         <app-changepassword></app-changepassword>
     </div>
 
