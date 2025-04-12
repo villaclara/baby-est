@@ -188,7 +188,6 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
   // When the parent has set CurrentActivity property (in Http get) we want to display actual values of timer etc.
   ngOnChanges(changes: SimpleChanges): void {
 
-    console.log("active in changes - " + this.currentActivity.IsActiveNow);
     // Only refresh values if the changes is CurrentActivity object.
     if (changes['currentActivity']) {
       if (this.timerSub) {
