@@ -20,24 +20,17 @@ import { DashboardActionsEventEmitterService } from '../../services/DashboardAct
     trigger('slideIn', [                // name of animation and trigger
       transition(':enter', [            // animation when the some condition (state) is met. ':enter' - when *ngIf= true
         style({                         // the style what is BEFORE
-          // transform: 'translateY(-20px)', // Starting position (off-screen)
           opacity: 0
         }),
         animate('300ms ease-in', style({
           opacity: 1,
-          // transform: 'translateY(0)' 
         }))   // animation: has time and the style what is AFTER
       ]),
       transition(':leave', [         // ':leave' - when *ngIf = false. 
         animate('200ms ease-out', style({
           opacity: 0,
-          // transform: 'translateY(-20px)'
         }))  // animation - return to default state
       ])
-      // ,
-      // transition('false <=> true', [
-      //   animate('0.5s ease-in-out') // Duration and easing
-      // ])
     ]),
 
     trigger('moveDown', [
@@ -69,13 +62,6 @@ import { DashboardActionsEventEmitterService } from '../../services/DashboardAct
             style({ 'margin-top': '-30%', opacity: 0, })
           ]))
       ])
-      // transition(':enter', [
-      //   style({ transform: 'translateY(0)' }), // Starting position
-      //   animate('300ms ease-in', style({ transform: 'translateY(50px)' })) // Move items down when new element appears
-      // ]),
-      // transition(':leave', [
-      //   animate('300ms ease-out', style({ transform: 'translateY(0)' })) // Reset position when leaving
-      // ]),
     ]),
 
     trigger('playIconAnim', [
@@ -112,31 +98,25 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
   // @Input() currentActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   @Input() currentActivity!: KidActivity;
 
+  // Is triggered when dashboard calls to the API and receives the answer
   private subscriptionFromDashboard: Subscription = new Subscription();
-
-  toSentKidActivity: KidActivity = { ActivityType: '', Id: 0, KidName: '', StartDate: undefined, EndDate: undefined, IsActiveNow: false };
 
   isRunningTimer: boolean = false;
   startStopImageLink: string = this.isRunningTimer ? '../../../assets/img/stop_icon.png' : '../../../assets/img/play_icon.png';
 
   timerDone$: Subject<boolean> = new Subject<boolean>();
   timePassed: number = 0;
+  timerSub: Subscription = new Subscription();
 
   currentActivityNameUA: string = 'Чіл';
   isEatingSelected: boolean = false;
-
   isEditingActivityTimes: boolean = false;
 
   nowDateStartActivityInputTime: string = '';
   nowDateEndActivityInputTime: string = '';
 
-
-  timerSub: Subscription = new Subscription();
-
   moveActTypeAnimation: string = 'initial';   // animation for Play/Stop icons to Move down-up
-
   playIconAnimation: string = 'defaultSize';
-
 
   ngOnInit(): void {
 
@@ -214,12 +194,10 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
 
       else {
         this.startStopImageLink = '../../../assets/img/play_icon.png';
-
       }
     }
 
   }
-
 
   ngOnDestroy(): void {
     this.timerDone$.unsubscribe();
@@ -251,8 +229,6 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
       && this.currentActivity.ActivityType != ''
       ? true
       : false;
-
-
 
     this.moveActTypeAnimation = this.currentActivity.ActivityType.toLowerCase() != '' ? 'moved' : 'initial';
   }
@@ -294,7 +270,7 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
         // Parent decides wheter to add or update activity.
         // REST changes are tracked in subscription, configured in OnInit method
         this.newKidActivity.emit(actToSent);
-      }, 300);
+      }, 200);
 
     }
 
@@ -345,7 +321,7 @@ export class MainTimerComponent implements OnInit, OnChanges, OnDestroy {
         // Parent decides wheter to add or update activity.
         // REST changes are tracked in subscription, configured in OnInit method
         this.newKidActivity.emit(actToSent);
-      }, 300);
+      }, 200);
 
     }
 
