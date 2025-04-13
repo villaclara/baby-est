@@ -20,44 +20,32 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
       state('out', style({ 'margin-top': '-120%', opacity: 0 })),
       transition('in => out', animate('400ms ease-in')),
       transition('out => in', animate('400ms ease-out')),
-    ]),
-    //   trigger('slideInOut', [
-    //     transition(':enter', [
-    //       style({ height: '0px', opacity: 0 }),
-    //       animate('300ms ease-out', style({ height: '*', opacity: 1 }))
-    //     ]),
-    //     transition(':leave', [
-    //       animate('300ms ease-in', style({ height: '0px', opacity: 0 }))
-    //     ])
-    //   ]
-    // )
+    ])
   ]
 })
 
 export class ChangepasswordComponent {
-  setPasswordModel: SetPasswordModel = new SetPasswordModel(0, '', '');
-  confirmPassword: string = '';
-
+  
   verifyModel: VerifyUserModel = new VerifyUserModel('', new Date());
-
   verificationResponseMessage: string = '';
-  passwordResetResponseMessage: string = '';
-  secret: number = 0;
-
+  
   isUnderVerification: boolean = false;
   isVerificationSuccess: boolean = false;
-
   isUnderPasswordChange: boolean = false;
+  
+  secret: number = 0;
+  
+  setPasswordModel: SetPasswordModel = new SetPasswordModel(0, '', '');
+  confirmPassword: string = '';
+  passwordResetResponseMessage: string = '';
 
   @Output() moveBackPressedEvent: EventEmitter<boolean> = new EventEmitter<boolean>();
 
   constructor(private authService: AuthService,
     private router: Router) { }
 
-
-  // is called when received from validateuser.component
+  
   verifyUserCall(): void {
-
     this.isUnderVerification = true;
     this.authService.tryVerifyUser(this.verifyModel)
       .subscribe({

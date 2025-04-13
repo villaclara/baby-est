@@ -15,14 +15,6 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   standalone: true,
   imports: [FormsModule, NgIf, ChangepasswordComponent],
   animations: [
-    //  // Shift entire page content upward
-    //  trigger('pageShift', [
-    //   state('in', style({ transform: 'translateY(0)', opacity: 1})),
-    //   state('out', style({ transform: 'translateY(-100%)', opacity: 0})),
-    //   transition('in => out', animate('400ms ease-in')),
-    //   transition('out => in', animate('400ms ease-out')),
-    // ]),
-
 
      // Shift entire page content upward
      trigger('pageShift', [
@@ -31,7 +23,6 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
       transition('in => out', animate('400ms ease-in')),
       transition('out => in', animate('400ms ease-out')),
     ]),
-
 
 
     // Slide child from bottom to center
@@ -50,25 +41,28 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 export class SigningpageComponent {
 
   constructor(private authService: AuthService,
-    private router: Router
-  ) { }
+    private router: Router) { }
 
   // login/register stuff
   user = new UserFormData('', '');
   
+  errorMessage: string = "";
+
+  // show/hide the login/register form and highlight it
+  isRegistering: boolean = false;
+  logbutclass: string = "";
+  regbutclass: string = "notactive";
+
+
   // for access the loginForm object in ts code. used in resetting valid.
   @ViewChild('loginForm') signForm!: NgForm;
 
-
-  confirmPassword: string = "";
-  
+  confirmPassword: string = "";  
   isActionLoading: boolean = false;
   isPasswordResetValidationAsked: boolean = false;
   isChangePassword: boolean = false;
 
   passwordResetResponseMessage: string = '';
-
-  private secret: number = 0;
 
   login() {
 
@@ -89,13 +83,7 @@ export class SigningpageComponent {
           this.errorMessage = err.error;
         }
       });
-
-    // this.http.post('/auth/login', JSON.stringify({email: this.user.email, password: this.user.password}), { headers: this.headers1})
-    // .pipe(map((data:any) => { this.errorMessage = "EROR" + data.toString(); }), 
-    // catchError((error) => { console.log("bruh"); console.log(error); return []}))
-    // .subscribe((data : any) => this.errorMessage = "DATA" + data.toString());
   }
-
 
   clearErrorMessage(): void {
     this.errorMessage = '';
@@ -120,12 +108,6 @@ export class SigningpageComponent {
       });
   }
 
-  errorMessage: string = "";
-
-  // show/hide the login/register form and highlight it
-  isRegistering: boolean = false;
-  logbutclass: string = "";
-  regbutclass: string = "notactive";
   changeRegistering(value: boolean) {
     this.isRegistering = value;
 
@@ -153,7 +135,6 @@ export class SigningpageComponent {
   {
     if(isPressed)
     {
-      console.log('rerutn back ispasswordreset = false');
       this.isPasswordResetValidationAsked = false;
       this.errorMessage = '';
       this.isRegistering = false;
