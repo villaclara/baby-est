@@ -17,7 +17,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
     // Shift entire page content upward
     trigger('pageShift', [
       state('in', style({ 'margin-top': '0', opacity: 1 })),
-      state('out', style({ 'margin-top': '-50vh', opacity: 0 })),
+      state('out', style({ 'margin-top': '-120%', opacity: 0 })),
       transition('in => out', animate('400ms ease-in')),
       transition('out => in', animate('400ms ease-out')),
     ]),
