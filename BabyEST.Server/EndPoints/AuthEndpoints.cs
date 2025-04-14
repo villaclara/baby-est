@@ -1,9 +1,12 @@
 ﻿using System.Security.Claims;
 using System.Text.RegularExpressions;
 using BabyEST.Server.Database;
+using BabyEST.Server.DTOs;
+using BabyEST.Server.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 using BC = BCrypt.Net.BCrypt;
 
@@ -11,6 +14,7 @@ namespace BabyEST.Server.EndPoints;
 
 public static class AuthEndpoints
 {
+	private static Dictionary<string, int> _dic = [];
 	public static RouteGroupBuilder MapAuthEndpoints(this RouteGroupBuilder builder)
 	{
 		builder.MapPost("/login", LoginAsync);
@@ -19,10 +23,14 @@ public static class AuthEndpoints
 
 		builder.MapPost("/register", RegisterAsync);
 
+		builder.MapPost("/validateuser", ValidateUserOnPasswordResetAskedAsync);
+
+		builder.MapPost("/setpassword", SetNewPasswordAsync);
+
 		return builder;
 	}
 
-	private static async Task<IResult> RegisterAsync([FromBody] UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
+	private static async Task<IResult> RegisterAsync([FromBody] AuthDTOs.UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
 	{
 		try
 		{
@@ -78,7 +86,7 @@ public static class AuthEndpoints
 		return claimsPrincipal;
 	}
 
-	private static async Task<IResult> LoginAsync([FromBody] UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
+	private static async Task<IResult> LoginAsync([FromBody] AuthDTOs.UserFormModel userForm, ApplicationDbContext appcontext, HttpContext httpcontext)
 	{
 		Log.Information("{@Method} - Try login with user ({@user}).", nameof(LoginAsync), userForm.Email);
 		try
@@ -143,6 +151,75 @@ public static class AuthEndpoints
 			return TypedResults.StatusCode(500);
 		}
 	}
+	private static async Task<IResult> ValidateUserOnPasswordResetAskedAsync([FromBody] AuthDTOs.UserValidationModel validationModel, ApplicationDbContext dbcontext)
+	{
+		var user = await dbcontext.Parents.Where(u => u.Email.ToLower() == validationModel.Email.ToLower())
+			.Include(k => k.Kids)
+			.FirstOrDefaultAsync();
+		if (user is null)
+		{
+			return TypedResults.BadRequest();
+		}
 
-	private record UserFormModel(string Email, string Password);
+		var normalizedKidName = validationModel.KidName?.Trim();
+		var kidexists = string.IsNullOrEmpty(normalizedKidName) switch
+		{
+			true => user.Kids.Count == 0 ? new Kid() : null,
+			false => user.Kids.FirstOrDefault(k =>
+						string.Equals(k.Name, validationModel.KidName, StringComparison.InvariantCultureIgnoreCase)
+						&& k.BirthDate == DateOnly.FromDateTime(validationModel.Birth))
+		};
+
+		//user.Kids.FirstOrDefault(k =>
+		//	string.Equals(k.Name, validationModel.KidName, StringComparison.InvariantCultureIgnoreCase)
+		//	&& k.BirthDate == DateOnly.FromDateTime(validationModel.Birth));
+
+		if (kidexists is null)
+		{
+			return TypedResults.BadRequest();
+		}
+
+		var secretValue = Random.Shared.Next(1, 100);
+
+		_dic[user.Email] = secretValue;
+		// here return secret code, which should be sent with the request to change password
+		return TypedResults.Ok(secretValue);
+
+	}
+
+	private static async Task<IResult> SetNewPasswordAsync([FromBody] AuthDTOs.NewPasswordModel newPasswordModel, ApplicationDbContext dbcontext, HttpContext httpcontext)
+	{
+		bool emailRequestChangePasswordexists = _dic.TryGetValue(newPasswordModel.Email, out int secretValue);
+		_dic.Remove(newPasswordModel.Email);
+		if (!emailRequestChangePasswordexists || secretValue != newPasswordModel.Secret)
+		{
+			return TypedResults.BadRequest();
+		}
+
+		try
+		{
+			var user = await dbcontext.Parents.SingleOrDefaultAsync(p => p.Email == newPasswordModel.Email.ToLower());
+
+			if (user is null)
+			{
+				return TypedResults.BadRequest();
+			}
+
+			user.PasswordHash = BC.HashPassword(newPasswordModel.Password);
+
+			await dbcontext.SaveChangesAsync();
+
+			// Login the user right after changes were successfull.
+			var claimsPrincipal = CreateClaimsPrincipal(user.Email, user.Id);
+			await httpcontext.SignInAsync(claimsPrincipal);
+
+			return TypedResults.Ok();
+		}
+		catch
+		{
+			return TypedResults.StatusCode(500);
+		}
+
+
+	}
 }

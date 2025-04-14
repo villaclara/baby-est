@@ -125,7 +125,7 @@ public class AuthEnpointsTests : IClassFixture<TestWebApplicationFactory<Program
 	public async Task Logout_Return200()
 	{
 		// Arrange 
-		var login = await _client.PostAsJsonAsync(_url + "/login", new { Email = "test1@test.com", Password = "password" });
+		var login = await _client.PostAsJsonAsync(_url + "/login", new { Email = "test3@test.com", Password = "password" });
 		login.EnsureSuccessStatusCode();
 		var message = "Logged out.";
 
@@ -151,4 +151,100 @@ public class AuthEnpointsTests : IClassFixture<TestWebApplicationFactory<Program
 		Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
 	}
 
+
+	[Theory]
+	[InlineData("test1@test.com", "kid2Parent2", "2022-02-02")]
+	[InlineData("test2@test.com", "", "")]
+	public async Task ValidateUser_ValidCreds_Return200(string email, string? kidname, string? strKidBirth)
+	{
+		// Arrange
+		bool isparsed = DateOnly.TryParse(strKidBirth, out DateOnly kidBirth);
+		if (!isparsed)
+		{
+			kidBirth = DateOnly.FromDateTime(DateTime.Now);
+		}
+		var validationForm = new { Email = email, KidName = kidname, Birth = kidBirth };
+
+		// Act
+		var response = await _client.PostAsJsonAsync(_url + "/validateuser", validationForm);
+		Assert.True(response.IsSuccessStatusCode);
+		var content = await response.Content.ReadFromJsonAsync<int>();
+
+		// Assert
+		Assert.NotEqual(0, content);
+	}
+
+	[Theory]
+	[InlineData("test1@test.com", "kid2Parent23", "2022-02-02")]    // wrong kidname
+	[InlineData("test111@test.com", "", "")]                        // wrong email
+	[InlineData("test1@test.com", "kid2Parent", "2025-02-02")]      // wrong kidBirth
+	public async Task ValidateUser_WrongCreds_Return400(string email, string? kidname, string? strKidBirth)
+	{
+		// Arrange
+		bool isparsed = DateOnly.TryParse(strKidBirth, out DateOnly kidBirth);
+		if (!isparsed)
+		{
+			kidBirth = DateOnly.FromDateTime(DateTime.Now);
+		}
+		var validationForm = new { Email = email, KidName = kidname, Birth = kidBirth };
+
+		// Act
+		var response = await _client.PostAsJsonAsync(_url + "/validateuser", validationForm);
+
+		// Assert
+		Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+	}
+
+	[Theory]
+	[InlineData("test1@test.com", "kid2Parent2", "2022-02-02", "newpassword")]
+	[InlineData("test2@test.com", "", "", "newpassword2")]
+	public async Task ChangePassword_ValidSecret_Return200(string email, string? kidname, string? strKidBirth, string newPwd)
+	{
+		// Arrange
+		bool isparsed = DateOnly.TryParse(strKidBirth, out DateOnly kidBirth);
+		if (!isparsed)
+		{
+			kidBirth = DateOnly.FromDateTime(DateTime.Now);
+		}
+		var validationForm = new { Email = email, KidName = kidname, Birth = kidBirth };
+
+		// Act + Assert
+		var response = await _client.PostAsJsonAsync(_url + "/validateuser", validationForm);
+		Assert.True(response.IsSuccessStatusCode);
+
+		var content = await response.Content.ReadFromJsonAsync<int>();
+		Assert.NotEqual(0, content);
+
+		var changePasswordForm = new { Secret = content, Email = email, Password = newPwd };
+
+		var response2 = await _client.PostAsJsonAsync(_url + "/setpassword", changePasswordForm);
+		Assert.True(response2.IsSuccessStatusCode);
+	}
+
+	[Theory]
+	[InlineData("test1@test.com", "kid2Parent2", "2022-02-02", "newpassword")]
+	[InlineData("test2@test.com", "", "", "newpassword2")]
+	public async Task ChangePassword_WrongSecret_Return200(string email, string? kidname, string? strKidBirth, string newPwd)
+	{
+		// Arrange
+		bool isparsed = DateOnly.TryParse(strKidBirth, out DateOnly kidBirth);
+		if (!isparsed)
+		{
+			kidBirth = DateOnly.FromDateTime(DateTime.Now);
+		}
+		var validationForm = new { Email = email, KidName = kidname, Birth = kidBirth };
+
+		// Act + Assert
+		var response = await _client.PostAsJsonAsync(_url + "/validateuser", validationForm);
+		Assert.True(response.IsSuccessStatusCode);
+
+		var content = await response.Content.ReadFromJsonAsync<int>();
+		content++;
+		Assert.NotEqual(0, content);
+
+		var changePasswordForm = new { Secret = content, Email = email, Password = newPwd };
+
+		var response2 = await _client.PostAsJsonAsync(_url + "/setpassword", changePasswordForm);
+		Assert.Equal(HttpStatusCode.BadRequest, response2.StatusCode);
+	}
 }

@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { UserFormData } from '../../models/user-form-data';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { VerifyUserModel } from '../../models/verify-user-model';
+import { SetPasswordModel } from '../../models/set-password-model';
 
 @Injectable({
   providedIn: 'root'
@@ -30,5 +32,19 @@ export class AuthService {
 
    tryLogout() : Observable<any> {
     return this.http.get('/auth/logout', { headers: this.headers1 });
+   }
+
+   tryVerifyUser(userModel: VerifyUserModel): Observable<any> {
+    return this.http.post('/auth/validateuser', 
+      JSON.stringify({email: userModel.email, kidname: userModel.kidName, birth: userModel.kidBirth}),
+      {headers: this.headers1}
+      );
+   }
+
+   trySetPassword(model: SetPasswordModel): Observable<any> {
+    return this.http.post('/auth/setpassword', 
+      JSON.stringify({ secret: model.secret, email: model.email, password: model.password}),
+      { headers: this.headers1 }
+      );
    }
 }

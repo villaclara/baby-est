@@ -259,7 +259,7 @@ export class DashboardMainComponent implements OnInit {
               this.errorMessageForAction = '';
               this.currentActivity.IsActiveNow = false;
               this.actionEventsEmitter.triggerAction(-200); 
-            }, 2500);
+            }, 2500);  // here display the error message for 2.5 sec
           }
         });
 
@@ -279,8 +279,9 @@ export class DashboardMainComponent implements OnInit {
               this.currentActivity.Id = data;
 
               // change time Since last activity to reset to 0 depending on updated (ended) activityType.
-              activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() ?
-                this.timeSinceLastSleep = 0 : this.timeSinceLastEat = 0;
+              activity.ActivityType.toLowerCase() == 'sleeping'.toLowerCase() 
+              ? this.timeSinceLastSleep = Math.floor((new Date().getTime() - new Date(activity.EndDate!).getTime()) / 1000) 
+                : this.timeSinceLastEat = Math.floor((new Date().getTime() - new Date(activity.EndDate!).getTime()) / 1000);
     
               // reset the current Activity values
               this.currentActivity = {
@@ -314,7 +315,7 @@ export class DashboardMainComponent implements OnInit {
               this.errorMessageForAction = '';
               this.actionEventsEmitter.triggerAction(-100);
               this.currentActivity.IsActiveNow = true;
-            }, 2500);
+            }, 2500); // display the error message for 2.5 sec and then hide it
           }
         });
     }

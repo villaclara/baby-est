@@ -9,3 +9,10 @@ input.ng-touched.ng-valid {
 .notactive {
     opacity: 0.8;
 }
+  
+  .main-content {
+    /* z-index here to move behind the BABY EST title when password reset asked */
+    z-index: 1;
+    overflow: hidden;
+  }
+  
