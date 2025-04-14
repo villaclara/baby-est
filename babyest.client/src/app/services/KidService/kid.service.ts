@@ -1,10 +1,11 @@
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable } from 'rxjs';
 import { Kid } from '../../models/kid';
 import { CurrentKidService } from '../CurrentKid/current-kid.service';
 import { KidActivity } from '../../models/kid-activity';
 import { ErrorHandlerService } from '../ErrorHandler/error-handler.service';
+import { formatDate } from '@angular/common';
 
 @Injectable({
   providedIn: 'root'
@@ -84,6 +85,34 @@ export class KidService {
     );
   }
 
+  getForDaysKidActivitiesById(kidId: number, forDays: number): Observable<KidActivity[]> {
+    let url = `api/kid/${kidId}/activity?forDays=${forDays}`;
+    return this.http.get<KidActivity[]>(url).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
+  }
+
+  getKidActivitiesWithParams(
+    kidId: number, options: {
+      lastDays?: number,
+      forDays?: number,
+      fromDate?: string,
+      toDate?: string
+    }): Observable<KidActivity[]> {
+    let url = `api/kid/${kidId}/activity`;
+
+    let params = this.createUrlWithQueryParams({ 
+      last: options.lastDays,
+      forDays: options.forDays,
+      fromDate: options.fromDate,
+      toDate: options.toDate
+    });
+
+    return this.http.get<KidActivity[]>(url, { params }).pipe(
+      catchError(err => this.errorHandler.handle(err))
+    );
+  }
+
   getLastSleepByKidId(kidId: number): Observable<KidActivity> {
     let url: string = `api/kid/${kidId}/activity/last?actType=sleep`;
     return this.http.get<KidActivity>(url).pipe(
@@ -133,5 +162,40 @@ export class KidService {
     return this.http.delete(url).pipe(
       catchError(err => this.errorHandler.handle(err))
     );
+  }
+
+
+  // Create URL link with query params
+  createUrlWithQueryParams(
+    options: { 
+      last?: number, 
+      forDays?: number, 
+      fromDate?: string, 
+      toDate?: string 
+    }): HttpParams
+  {
+    let params = new HttpParams();
+
+    if(options.last)
+    {
+      params = params.set('last', options.last);
+    }
+
+    if(options.forDays)
+    {
+      params = params.set('forDays', options.forDays);
+    }
+
+    if(options.fromDate)
+    {
+      params = params.set('fromDate', options.fromDate);
+    }
+
+    if(options.toDate)
+    {
+      params = params.set('toDate', options.toDate);
+    }
+
+    return params;
   }
 }
