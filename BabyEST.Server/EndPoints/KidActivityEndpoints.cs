@@ -29,6 +29,9 @@ public static class KidActivityEndpoints
 	/// <summary>
 	/// Get activities for Kid based on query params. Default (without params) is to get all activities.
 	/// </summary>
+	/// 
+	/// Do not specify any query parameter to get the ALL history. 
+	/// 
 	/// <param name="last">Get last *num of activities</param>
 	/// <param name="forDays">Get activities for *num of days starting from today.</param>
 	/// <param name="fromDate">Date to count from activities in format yyyy-mm-dd. Used in pair with 'toDate' parameter.</param>
@@ -57,6 +60,8 @@ public static class KidActivityEndpoints
 			return TypedResults.BadRequest("Activities not found.");
 		}
 
+
+		// Check query params by priority
 		if (last is not null)
 		{
 			activities = (IOrderedQueryable<KidActivity>)activities.Take(last.Value);
@@ -68,13 +73,18 @@ public static class KidActivityEndpoints
 			activities = (IOrderedQueryable<KidActivity>)activities.Where(a => a.StartDate > dateOffset);
 		}
 
-		else if (!string.IsNullOrEmpty(fromDate) && !string.IsNullOrEmpty(toDate))
+		// Here OR operator because if some value is NOT passed for date. Then return empty list.
+		else if (!string.IsNullOrEmpty(fromDate) || !string.IsNullOrEmpty(toDate))
 		{
 			bool parsed = DateTime.TryParse(fromDate, out var fromD);
 			bool parsed2 = DateTime.TryParse(toDate, out var toD);
 			if (parsed && parsed2)
 			{
-				activities = (IOrderedQueryable<KidActivity>)activities.Where(a => a.StartDate > fromD && a.StartDate < toD);
+				activities = (IOrderedQueryable<KidActivity>)activities.Where(a => a.StartDate >= fromD && a.StartDate <= toD);
+			}
+			else
+			{
+				activities = new List<KidActivity>().AsQueryable().OrderBy(a => a.StartDate);
 			}
 		}
 

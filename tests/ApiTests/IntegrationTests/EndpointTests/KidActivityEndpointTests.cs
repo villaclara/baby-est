@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Http.Json;
+using System.Text;
 using ApiTests.IntegrationTests.Helpers;
 using BabyEST.Server.DTOs;
 
@@ -65,6 +66,77 @@ public class KidActivityEndpointTests : IClassFixture<TestWebApplicationFactory<
 
 	}
 
+	[Theory]
+	[InlineData("test1@test.com", "password", 1, 2, 0, 0, null, null)]
+	[InlineData("test1@test.com", "password", 1, 2, 2, 0, null, null)]
+	[InlineData("test1@test.com", "password", 1, 2, 0, 365, null, null)]
+	[InlineData("test1@test.com", "password", 1, 2, 0, 0, "2024-02-02", "2025-05-05")]
+	[InlineData("test1@test.com", "password", 1, 0, 0, 0, "2024-02-02", null)]
+	[InlineData("test1@test.com", "password", 1, 0, 0, 0, null, "2024-02-02")]
+	[InlineData("test1@test.com", "password", 1, 0, 0, 0, "asd", "asd")]
+	[InlineData("test1@test.com", "password", 1, 2, 2, 1000, "2024-02-02", "2025-04-04")]
+	public async Task GetAllActivitiesForKid_WithQueryParams_Return200(string email, string password, int kidId, int expectedAmount,
+		int? lastValue, int? forDays, string? fromDate, string? toDate)
+	{
+		// Arrange 
+		var login = await _client.PostAsJsonAsync("/auth/login", new { Email = email, Password = password });
+		login.EnsureSuccessStatusCode();
+
+		var sb = new StringBuilder();
+		sb.Append(_url + $"/{kidId}/activity");
+
+		if (lastValue > 0)
+		{
+			sb.Append($"?last={lastValue}");
+		}
+		if (forDays > 0)
+		{
+			if (sb.ToString().EndsWith("activity"))
+			{
+				sb.Append($"?forDays={forDays}");
+			}
+			else
+			{
+				sb.Append($"&forDays={forDays}");
+			}
+		}
+		if (fromDate is not null)
+		{
+			if (sb.ToString().EndsWith("activity"))
+			{
+				sb.Append($"?fromDate={fromDate}");
+			}
+			else
+			{
+				sb.Append($"&fromDate={fromDate}");
+			}
+		}
+		if (toDate is not null)
+		{
+			if (sb.ToString().EndsWith("activity"))
+			{
+				sb.Append($"?toDate={toDate}");
+			}
+			else
+			{
+				sb.Append($"&toDate={toDate}");
+			}
+		}
+		var link = sb.ToString();
+
+
+		// Act 
+		var response = await _client.GetAsync(link);
+
+		// Assert
+		Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+
+		var content = await response.Content.ReadFromJsonAsync<List<KidActivityDto>>();
+
+		Assert.NotNull(content);
+		Assert.Equal(expectedAmount, content.Count);
+
+	}
 
 	[Theory]
 	[InlineData("test1@test.com", "password", 3)]
