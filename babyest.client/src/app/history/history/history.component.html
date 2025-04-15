@@ -93,25 +93,33 @@
 
             <div class="col">
                 <input type="radio" class="btn-check btn-secondary" name="options" id="todayHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('today')" checked />
+                    (change)="onHistoryTypeSelected('today')" 
+
+                    checked />
                 <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="todayHistory">Доба</label>
             </div>
 
             <div class="col">
                 <input type="radio" class="btn btn-check" name="options" id="weekHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('week')" />
+                    (change)="onHistoryTypeSelected('week')" 
+
+                    />
                 <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="weekHistory">Тиждень</label>
             </div>
 
             <div class="col">
                 <input type="radio" class="btn-check" name="options" id="alltimeHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('month')" />
+                    (change)="onHistoryTypeSelected('month')" 
+
+                    />
                 <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="alltimeHistory">Місяць</label>
             </div>
 
             <div class="col-2">
                 <input type="radio" class="btn-check" name="options" id="filterHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('filter')" />
+                    (change)="onHistoryTypeSelected('filter')" 
+
+                    />
                 <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="filterHistory">
                     <i class="bi bi-funnel-fill"></i>
                 </label>
@@ -122,33 +130,43 @@
 
     <!-- Filter modal appears on top of all elements -->
     <div *ngIf="isFilterDisplay">
-        <div class="container bg-white">
+        <div class="container bg-white filter-display">
             <div class="row">
                 <span> Вибери дату або проміжок для якого хочеш отримати активності</span>
             </div>
 
-            <div>
-                <!-- <mat-form-field style="max-width: 50vw; max-height: 50vh;">
-                    <mat-label>Enter a date range</mat-label>
-                    <mat-date-range-input [rangePicker]="picker">
-                      <input matStartDate placeholder="Start date">
-                      <input matEndDate placeholder="End date">
-                    </mat-date-range-input>
-                    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
-                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-date-range-picker #picker></mat-date-range-picker>
-                  </mat-form-field> -->
-                  
+            <div class="row my-1">
+                <!-- <div class="col-3 pe-0"> -->
+                    <label for="inputDateStart">Від</label>
+                <!-- </div> -->
+                <div class="col-auto ps-0 mx-auto">
+                    <input id="inputDateStart" type="date" class="form-control"
+                    [(ngModel)]="filterFromDateString" />
+                </div>
+                    <span class="small">Якщо не вибрано - активності від початку.</span>
             </div>
+
+            <div class="row my-1">
+                <!-- <div class="col-3 pe-0"> -->
+                    <label for="inputDateStart">До</label>
+                <!-- </div> -->
+                <div class="col-auto ps-0 mx-auto">
+                    <input id="inputDateStart" type="date" class="form-control"
+                    [(ngModel)]="filterToDateString" />
+                </div>
+                <span class="small">Якщо не вибрано - активності до сьогодні.</span>
+            </div>
+
+            
             <div class="row">
                 <div class="col">
-                    <button type="button" class="btn">
+                    <button type="button" class="btn" (click)="CancelFilterButtonClick()">
                         Скасувати
                     </button>
                 </div>
 
                 <div class="col">
-                    <button type="button" class="btn">
+                    <button type="button" class="btn" (click)="OKFilterButtonClik()">
                         OK
                     </button>
                 </div>

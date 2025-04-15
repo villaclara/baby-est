@@ -15,6 +15,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { StatsComponent } from '../stats/stats.component';
 import { MonthlocalePipe } from '../../pipes/monthlocale.pipe';
 import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loading-overlay.component";
+import { concatWith } from 'rxjs';
 
 @Component({
   selector: 'app-history',
@@ -100,7 +101,11 @@ export class HistoryComponent implements OnInit {
   totalSleepTimeNight: number = 0;
   totalSleepTimeFullDay: number = 0;
 
+  historyTypeSelected: string = 'today';
+
   isFilterDisplay: boolean = false;
+  filterFromDateString: string = '';
+  filterToDateString: string = 'filter';
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
@@ -142,6 +147,9 @@ export class HistoryComponent implements OnInit {
 
     this.currentTheme = this.currentKidService.getTheme();
     this.currentKidService.themeChanged$.subscribe((newTheme) => this.currentTheme = newTheme);
+
+    this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
+    console.log(this.filterToDateString);
   }
 
   editActivity(actId: number): void {
@@ -274,11 +282,15 @@ export class HistoryComponent implements OnInit {
 
 
   onHistoryTypeSelected(timespan: string): void {
+
+    this.historyTypeSelected = timespan;
+
     if(timespan === 'filter')
     {
       this.showFilter();
       return;
     }
+    this.isFilterDisplay = false;
     this.filterActsByHistoryType(timespan);
   }
 
@@ -410,5 +422,23 @@ export class HistoryComponent implements OnInit {
 
   showFilter(): void {
     this.isFilterDisplay = true;
+  }
+
+  OKFilterButtonClik(): void {
+
+  }
+
+  CancelFilterButtonClick(): void {
+    this.isFilterDisplay = false;
+    this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
+    this.filterFromDateString = '';
+    this.historyTypeSelected = 'today';
+
+    this.activities = [];
+    this.shitActivityDates = [];
+
+
+    (document!.getElementById('todayHistory') as HTMLInputElement).checked = true;
+    this.onHistoryTypeSelected('today');
   }
 }

@@ -27,4 +27,11 @@ export class DateConverter {
         const mm = new Date(date).getMinutes() < 10 ? "0" + new Date(date).getMinutes() : new Date(date).getMinutes();
         return y + "-" + m + "-" + d + "T" + hh + ":" + mm + ":00";
     }
+
+    toOnlyDateString(date: Date): string {
+        const y = new Date(date).getFullYear();
+        const m = new Date(date).getMonth() < 9 ? "0" + (new Date(date).getMonth() + 1) : (new Date(date).getMonth() + 1);
+        const d = new Date(date).getDate() < 10 ? "0" + new Date(date).getDate() : new Date(date).getDate();
+        return y + "-" + m + "-" + d;
+    }
 }

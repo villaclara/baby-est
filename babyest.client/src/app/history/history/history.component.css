@@ -5,3 +5,18 @@
     /* box-shadow: 0.1rem 0.1rem 0.1rem #454242; */
     /* box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.2), 5px 5px 5px rgba(0, 0, 0, 0.1) */
 }
+
+.filter-display {
+    position: absolute;
+    width: 100vw;
+    height: 90vh;
+    top: 5vh;
+    bottom: 5vh;
+    z-index: 2000;
+    /* z-index: 2000; */
+    /* height: auto; */
+    /* width: 80vw; */
+    /* max-width: 500px; */
+    /* left: 50%; */
+    /* transform: translateX(-50%); */
+}
