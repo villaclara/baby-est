@@ -108,6 +108,51 @@
                     (change)="onHistoryTypeSelected('month')" />
                 <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="alltimeHistory">Місяць</label>
             </div>
+
+            <div class="col-2">
+                <input type="radio" class="btn-check" name="options" id="filterHistory" autocomplete="off"
+                    (change)="onHistoryTypeSelected('filter')" />
+                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="filterHistory">
+                    <i class="bi bi-funnel-fill"></i>
+                </label>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Filter modal appears on top of all elements -->
+    <div *ngIf="isFilterDisplay">
+        <div class="container bg-white">
+            <div class="row">
+                <span> Вибери дату або проміжок для якого хочеш отримати активності</span>
+            </div>
+
+            <div>
+                <!-- <mat-form-field style="max-width: 50vw; max-height: 50vh;">
+                    <mat-label>Enter a date range</mat-label>
+                    <mat-date-range-input [rangePicker]="picker">
+                      <input matStartDate placeholder="Start date">
+                      <input matEndDate placeholder="End date">
+                    </mat-date-range-input>
+                    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #picker></mat-date-range-picker>
+                  </mat-form-field> -->
+                  
+            </div>
+            <div class="row">
+                <div class="col">
+                    <button type="button" class="btn">
+                        Скасувати
+                    </button>
+                </div>
+
+                <div class="col">
+                    <button type="button" class="btn">
+                        OK
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 

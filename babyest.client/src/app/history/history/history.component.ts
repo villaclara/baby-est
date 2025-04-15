@@ -100,6 +100,8 @@ export class HistoryComponent implements OnInit {
   totalSleepTimeNight: number = 0;
   totalSleepTimeFullDay: number = 0;
 
+  isFilterDisplay: boolean = false;
+
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
     // this.kidService.getKidActivitiesById(currentKidId).subscribe({
@@ -272,6 +274,11 @@ export class HistoryComponent implements OnInit {
 
 
   onHistoryTypeSelected(timespan: string): void {
+    if(timespan === 'filter')
+    {
+      this.showFilter();
+      return;
+    }
     this.filterActsByHistoryType(timespan);
   }
 
@@ -399,5 +406,9 @@ export class HistoryComponent implements OnInit {
       this.isRequestSentLoading = false;    
       this.errorMessageForAction = '';
     }, 2500);
+  }
+
+  showFilter(): void {
+    this.isFilterDisplay = true;
   }
 }
