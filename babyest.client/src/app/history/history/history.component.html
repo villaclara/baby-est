@@ -12,8 +12,9 @@
         <app-loading-overlay [errMsg]="errorMessageForAction"></app-loading-overlay>
     </div>
 
-    
-    <app-stats [sleepTimeToday]="totalSleepTimeFullDay" [sleepTimeNight]="totalSleepTimeNight"></app-stats>
+    <div class="container pt-2">
+        <app-stats [sleepTimeToday]="totalSleepTimeFullDay" [sleepTimeNight]="totalSleepTimeNight"></app-stats>
+    </div>
 
     <hr />
 
@@ -74,7 +75,9 @@
     </div>
 
 
-    <div class="container pt-2" style="position: sticky; top: 0px; z-index: 1010; background-color: #ebeaf0;">
+    <div class="brighterIfNeeded">
+
+    <div class="container pt-2" style="position: sticky; top: 0px; z-index: 1010;">
         <div class="row">
 
             <div class="col">
@@ -92,15 +95,17 @@
         <div class="row g-0 pb-2 my-2 border-bottom m-1 border-2 border-dark border-opacity-50">
 
             <div class="col">
-                <input type="radio" class="btn-check btn-secondary" name="options" id="todayHistory" autocomplete="off"
+                <input type="radio" class="btn-check" name="options" id="todayHistory" autocomplete="off"
                     (change)="onHistoryTypeSelected('today')" 
 
                     checked />
-                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="todayHistory">Доба</label>
+                <label class="btn custombg-radiobuttons shadow fs-6" for="todayHistory"
+                [ngClass]="{'btn-outline-primary' : currentTheme === 'lightTheme',
+                    'btn-outline-success' : currentTheme === 'darkTheme'}">Доба</label>
             </div>
 
             <div class="col">
-                <input type="radio" class="btn btn-check" name="options" id="weekHistory" autocomplete="off"
+                <input type="radio" class="btn-check" name="options" id="weekHistory" autocomplete="off"
                     (change)="onHistoryTypeSelected('week')" 
 
                     />
@@ -290,6 +295,7 @@
         </div>
     </div>
 
+</div>
 
 
 

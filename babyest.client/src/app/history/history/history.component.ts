@@ -3,7 +3,7 @@ import { SingleActivityComponent } from '../../single-activity/single-activity.c
 import { KidService } from '../../services/KidService/kid.service';
 import { KidActivity } from '../../models/kid-activity';
 import { CurrentKidService } from '../../services/CurrentKid/current-kid.service';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor, NgIf, NgClass } from '@angular/common';
 import { LoadingSpinnerComponent } from "../../compHelpers/loading-spinner/loading-spinner.component";
 import { ActivityNameTranslator } from '../../utils/activity-name-translator';
 import { FormsModule } from '@angular/forms';
@@ -15,12 +15,12 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { StatsComponent } from '../stats/stats.component';
 import { MonthlocalePipe } from '../../pipes/monthlocale.pipe';
 import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loading-overlay.component";
-import { concatWith } from 'rxjs';
 
 @Component({
   selector: 'app-history',
   standalone: true,
-  imports: [SingleActivityComponent, NgFor, NgIf, LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe, LoadingOverlayComponent],
+  imports: [SingleActivityComponent, NgFor, NgIf, NgClass,
+     LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe, LoadingOverlayComponent],
   providers: [DateConverter],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
