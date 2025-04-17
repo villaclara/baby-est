@@ -20,7 +20,7 @@ import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loadi
   selector: 'app-history',
   standalone: true,
   imports: [SingleActivityComponent, NgFor, NgIf, NgClass,
-     LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe, LoadingOverlayComponent],
+    LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe, LoadingOverlayComponent],
   providers: [DateConverter],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
@@ -100,6 +100,8 @@ export class HistoryComponent implements OnInit {
 
   totalSleepTimeNight: number = 0;
   totalSleepTimeFullDay: number = 0;
+  avgSleepTimeNight: number = 0;
+  avgSleepTimesFullday: number = 0;
 
   historyTypeSelected: string = 'today';
 
@@ -205,10 +207,9 @@ export class HistoryComponent implements OnInit {
               () => this.router.navigateByUrl('/history'));
           }, 500);
         },
-        error: (err) =>
-          {
-           this.setErrorsForActionPerfomed();
-          } 
+        error: (err) => {
+          this.setErrorsForActionPerfomed();
+        }
       });
   }
 
@@ -229,24 +230,24 @@ export class HistoryComponent implements OnInit {
         next: () => {
 
           setTimeout(() => {
-             // After the input fields were changed we set them to the selected activity
-          // To display updated values after it was saved.
-          this.selectedEditingAct.ActivityType = this.selectedActivityType;
-          this.selectedEditingAct.StartDate = new Date(this.startDateString);
-          this.selectedEditingAct.EndDate = new Date(this.endDateString);
+            // After the input fields were changed we set them to the selected activity
+            // To display updated values after it was saved.
+            this.selectedEditingAct.ActivityType = this.selectedActivityType;
+            this.selectedEditingAct.StartDate = new Date(this.startDateString);
+            this.selectedEditingAct.EndDate = new Date(this.endDateString);
 
-          this.isEditingKid = false;
-          this.activeEditingKidId = 0;
+            this.isEditingKid = false;
+            this.activeEditingKidId = 0;
 
-          // change dates array
-          const index = this.activities.indexOf(this.selectedEditingAct);
-          if (index != -1) {
-            this.shitActivityDates[index] = new Date(this.selectedEditingAct.StartDate);
-          }
+            // change dates array
+            const index = this.activities.indexOf(this.selectedEditingAct);
+            if (index != -1) {
+              this.shitActivityDates[index] = new Date(this.selectedEditingAct.StartDate);
+            }
 
-          this.isRequestSentLoading = false;
+            this.isRequestSentLoading = false;
           }, 500);
-         
+
         },
         error: (err) => {
           this.setErrorsForActionPerfomed();
@@ -268,13 +269,13 @@ export class HistoryComponent implements OnInit {
             }
             this.activities.splice(index, 1);
             this.backupActivities.splice(indexSub, 1);  // remove from backup array as well
-  
+
             // update dates arrays
-            this.shitActivityDates.splice(index, 1);  
+            this.shitActivityDates.splice(index, 1);
 
             this.isRequestSentLoading = false;
           }, 500);
-          
+
         },
         error: (err) => this.setErrorsForActionPerfomed()
       });
@@ -285,8 +286,7 @@ export class HistoryComponent implements OnInit {
 
     this.historyTypeSelected = timespan;
 
-    if(timespan === 'filter')
-    {
+    if (timespan === 'filter') {
       this.showFilter();
       return;
     }
@@ -314,28 +314,27 @@ export class HistoryComponent implements OnInit {
 
     this.isFilterLoading = true;
     setTimeout(() => {
-      
+
       if (timespan === 'week') {
         const tod = new Date();
         let lastWeek = new Date(tod);
         lastWeek.setDate(lastWeek.getDate() - 7);
         this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).getTime() > lastWeek.getTime());
-  
+
         this.shitActivityDates = [];
         (this.activities).forEach(element => {
           this.shitActivityDates.push(new Date(element.StartDate!))
         });
       }
-  
-      else if(timespan === 'month')
-      {
+
+      else if (timespan === 'month') {
         console.log('month');
         const tod = new Date();
         let lastMonth = new Date(tod);
         lastMonth.setDate(lastMonth.getDate() - 31);
-  
+
         this.activities = this.backupActivities.filter(el => new Date(el.StartDate!).getTime() > lastMonth.getTime());
-  
+
         this.shitActivityDates = [];
         (this.activities).forEach(element => {
           this.shitActivityDates.push(new Date(element.StartDate!))
@@ -349,7 +348,7 @@ export class HistoryComponent implements OnInit {
       }
       this.isFilterLoading = false;
     }, 300);
-    
+
 
   }
 
@@ -408,14 +407,84 @@ export class HistoryComponent implements OnInit {
 
     });
 
+
+    // average times calculation
+    const toda = new Date();
+
+    let dates: Date[] = [];
+
+    let sleepsForDay: number[] = [];
+    let sleepsforNight: number[] = [];
+    let index: number = 0;
+
+    // fill array of dates for the month before
+    let yst1 = new Date(tod);
+    for (let i = 0; i < 31; i++) {
+      const tod = new Date();
+      tod.setDate(tod.getDate() - i);
+      dates.push(tod);
+      sleepsForDay[i] = 0;
+      sleepsforNight[i] = 0;
+    }
+
+
+
+    // do checks if date matches and add to the sleep time for day/night element of array
+    for (let i = 0; i < dates.length; i++) {
+      for (let j = 0; j < this.backupActivities.length; j++) {
+        let elStart = new Date(this.backupActivities[j].StartDate!);
+        let elEnd = new Date(this.backupActivities[j].EndDate!);
+
+
+        if (elStart.toDateString() === new Date(dates[i]).toDateString()) {
+          // console.log(`elstart - ${elStart}, elend - ${elEnd}`);
+          console.log("match");
+          console.log(`i - ${i}, j - ${j}`);
+          console.log(`elstart - ${elStart}, elend - ${elEnd}`);
+          if (this.backupActivities[j].IsActiveNow) {
+            sleepsForDay[index] += Math.floor(new Date().getTime() - elStart.getTime());
+
+            if (new Date(this.backupActivities[i].StartDate!).getHours() >= 19 || new Date(this.backupActivities[j].StartDate!).getHours() <= 8) {
+              sleepsforNight[index] += Math.floor((new Date().getTime() - elStart.getTime()) / 1000);
+            }
+            continue;
+          }
+
+          sleepsForDay[index] += Math.floor((elEnd.getTime() - elStart.getTime()) / 1000);
+
+          if (new Date(this.backupActivities[j].StartDate!).getHours() >= 19 || new Date(this.backupActivities[j].StartDate!).getHours() <= 8) {
+            sleepsforNight[index] += Math.floor((elEnd.getTime() - elStart.getTime()) / 1000);
+          }
+
+          console.log('added sleepsfordayi - ' + sleepsForDay[index]);
+          console.log(`last i - ${i}, j - ${j}`);
+
+        }
+      }
+    }
+
+    let sleepDayCount: number = 0;
+    let sleepDayTotal: number = 0;
+    for (let i = 0; i < sleepsForDay.length; i++) {
+      if (sleepsForDay[i] != 0) {
+        sleepDayCount++;
+        sleepDayTotal += sleepsForDay[i];
+        console.log("sleepdayi - " + sleepsForDay[i] + " i - " + i);
+      }
+    }
+
+    this.avgSleepTimesFullday = Math.floor(sleepDayTotal / sleepDayCount);
+    console.log('sleepdaycount - ' + sleepDayCount);
+    console.log("average sleep day - " + this.avgSleepTimesFullday);
+
   }
 
-  setErrorsForActionPerfomed() : void {
+  setErrorsForActionPerfomed(): void {
     this.errorMessageForAction = 'Помилка при запиті. Спробуй ще раз';
 
     setTimeout(() => {
       // this.errorMessageForErrorComponent = err; 
-      this.isRequestSentLoading = false;    
+      this.isRequestSentLoading = false;
       this.errorMessageForAction = '';
     }, 2500);
   }

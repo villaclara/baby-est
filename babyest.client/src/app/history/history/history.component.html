@@ -13,7 +13,11 @@
     </div>
 
     <div class="container pt-2">
-        <app-stats [sleepTimeToday]="totalSleepTimeFullDay" [sleepTimeNight]="totalSleepTimeNight"></app-stats>
+        <app-stats 
+            [sleepTimeToday]="totalSleepTimeFullDay" 
+            [sleepTimeNight]="totalSleepTimeNight"
+            [averageSleepFullday]="avgSleepTimesFullday"
+            [averageSleepNight]="avgSleepTimeNight"></app-stats>
     </div>
 
     <hr />
