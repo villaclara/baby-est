@@ -115,29 +115,11 @@ export class HistoryComponent implements OnInit {
 
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
-    // this.kidService.getKidActivitiesById(currentKidId).subscribe({
-    //   next: (data: KidActivity[]) => {
-    //     this.backupActivities = data;
-    //     this.activities = this.backupActivities;
-
-    //     this.calculateTimes();
-
-    //     this.filterActsByHistoryType("today");
-
-    //     this.isLoading = false;
-    //   },
-    //   error: (err: any) => {
-    //     console.log(err.message);
-    //     this.isLoading = false;
-    //     this.errorMessageForErrorComponent = err;
-    //   }
-    // });
 
     this.kidService.getKidActivitiesWithParams(currentKidId, { forDays: 31 }).subscribe({
       next: (data: KidActivity[]) => {
         this.backupActivities = data;
         this.activities = this.backupActivities;
-
 
         this.sleepCalculator = new SleepiTimeCalculator(this.backupActivities);
 
@@ -180,7 +162,6 @@ export class HistoryComponent implements OnInit {
       this.selectedActivityType = this.selectedEditingAct.ActivityType;
 
       this.activeEditingKidId = actId;
-
     }
 
   }
@@ -385,10 +366,42 @@ export class HistoryComponent implements OnInit {
   }
 
   OKFilterButtonClik(): void {
+    const fromDate = new Date(this.filterFromDateString);
+    const toDate = new Date(this.filterToDateString);
+
+    function dateDiffInDays(a: Date, b: Date) {
+      const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+      // Discard the time and time-zone information.
+      const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+      const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+    
+      return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
+    this.daySpanToCalcTimes = dateDiffInDays(fromDate, toDate);
+
+    console.log(this.daySpanToCalcTimes);
+    this.kidService.getKidActivitiesWithParams(this.kidId, 
+      { 
+        fromDate: this.filterFromDateString,
+        toDate: this.filterToDateString })
+        .subscribe({
+          next: (data: KidActivity[]) => {
+            this.sleepCalculator = new SleepiTimeCalculator(data);
+            this.calculateTimes();
+        this.isFilterDisplay = false;
+
+          },
+          error: (err: any) => {
+            this.isFilterDisplay = false;
+
+          }
+        });
 
   }
 
   CancelFilterButtonClick(): void {
+    // reset values 
     this.isFilterDisplay = false;
     this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
     this.filterFromDateString = '';
@@ -397,7 +410,7 @@ export class HistoryComponent implements OnInit {
     this.activities = [];
     this.shitActivityDates = [];
 
-
+    // set the 'Today' radio button selected
     (document!.getElementById('todayHistory') as HTMLInputElement).checked = true;
     this.onHistoryTypeSelected('today');
   }
