@@ -80,8 +80,10 @@ public static class KidActivityEndpoints
 			bool parsed2 = DateTime.TryParse(toDate, out var toD);
 			if (parsed && parsed2)
 			{
+				// Setting to UTC because the dates are stored in UTC in db so we want real values.
+				fromD = fromD.AddMilliseconds(1).ToUniversalTime();
 				// assign the time 23:59:59 to the toDate object as we want to get the activities for the full Day of ToDate.
-				toD = toD.AddHours(23).AddMinutes(59).AddSeconds(59);
+				toD = toD.AddHours(23).AddMinutes(59).AddSeconds(59).ToUniversalTime();
 				activities = (IOrderedQueryable<KidActivity>)activities.Where(a => a.StartDate >= fromD && a.StartDate <= toD);
 			}
 			else
