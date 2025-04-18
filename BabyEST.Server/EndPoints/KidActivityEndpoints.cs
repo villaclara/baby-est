@@ -80,10 +80,13 @@ public static class KidActivityEndpoints
 			bool parsed2 = DateTime.TryParse(toDate, out var toD);
 			if (parsed && parsed2)
 			{
+				// assign the time 23:59:59 to the toDate object as we want to get the activities for the full Day of ToDate.
+				toD = toD.AddHours(23).AddMinutes(59).AddSeconds(59);
 				activities = (IOrderedQueryable<KidActivity>)activities.Where(a => a.StartDate >= fromD && a.StartDate <= toD);
 			}
 			else
 			{
+				// empty list
 				activities = new List<KidActivity>().AsQueryable().OrderBy(a => a.StartDate);
 			}
 		}
