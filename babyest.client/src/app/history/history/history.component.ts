@@ -15,6 +15,7 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
 import { StatsComponent } from '../stats/stats.component';
 import { MonthlocalePipe } from '../../pipes/monthlocale.pipe';
 import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loading-overlay.component";
+import { SleepiTimeCalculator } from '../../utils/sleepi-time-calculator';
 
 @Component({
   selector: 'app-history',
@@ -60,6 +61,8 @@ import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loadi
 })
 export class HistoryComponent implements OnInit {
 
+  private sleepCalculator!: SleepiTimeCalculator;
+
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private dateConverter: DateConverter,
@@ -102,6 +105,7 @@ export class HistoryComponent implements OnInit {
   totalSleepTimeFullDay: number = 0;
   avgSleepTimeNight: number = 0;
   avgSleepTimesFullday: number = 0;
+  daySpanToCalcTimes: number = 31;
 
   historyTypeSelected: string = 'today';
 
@@ -134,9 +138,12 @@ export class HistoryComponent implements OnInit {
         this.backupActivities = data;
         this.activities = this.backupActivities;
 
-        this.calculateTimes();
+
+        this.sleepCalculator = new SleepiTimeCalculator(this.backupActivities);
 
         this.filterActsByHistoryType("today");
+        
+        this.calculateTimes();
 
         this.isLoading = false;
       },
@@ -354,129 +361,13 @@ export class HistoryComponent implements OnInit {
 
   calculateTimes(): void {
 
-    let toChangeSleepNight = true;
-    // reset the value in time between 15.00 - 19.00
-    if (new Date().getHours() < 19 && new Date().getHours() >= 15) {
-      this.totalSleepTimeNight = 0;
-      toChangeSleepNight = false;
-    }
+    const a = this.sleepCalculator.calculateTotalTimes(this.daySpanToCalcTimes);
+    this.totalSleepTimeFullDay = a.totalSleepDay;
+    this.totalSleepTimeNight = a.totalSleepNight;
 
-    const tod = new Date();
-    let yst = new Date(tod);
-    yst.setDate(yst.getDate() - 1);
-
-    // filter the activities to get only for today and yesterday (yesterday hours more than current)
-    let acts = this.backupActivities.filter(el => new Date(el.StartDate!).toDateString() == tod.toDateString()
-      || (new Date(el.StartDate!).toDateString() == yst.toDateString() && new Date(el.StartDate!).getHours() >= tod.getHours()));
-
-
-    acts.forEach(element => {
-
-      // Sleeping and not active
-      if (element.ActivityType.toLowerCase() === 'sleeping' && !element.IsActiveNow) {
-
-        if (toChangeSleepNight) {
-
-          // if today is >19 hours, we want to get only todays sleep time starting more than 19
-          if (new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() >= 19) {
-            this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
-            console.log("date before more 19 today,");
-          }
-
-          // Sleep time Night -- yesterday > 19.00 && today <= 8 (startDate)
-          else if (new Date().getHours() < 19) {
-            if ((new Date(element.StartDate!).toDateString() == tod.toDateString() && new Date(element.StartDate!).getHours() <= 8)
-              || (new Date(element.StartDate!).toDateString() == yst.toDateString() && new Date(element.StartDate!).getHours() >= 19)) {
-              this.totalSleepTimeNight += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
-              console.log('else');
-            }
-          }
-        }
-
-        // Sleep time Total doba
-        this.totalSleepTimeFullDay += Math.floor((new Date(element.EndDate!).getTime() - new Date(element.StartDate!).getTime()) / 1000);
-      }
-
-      // Separate case when activity is active
-      if (element.ActivityType.toLowerCase() === 'sleeping' && element.IsActiveNow) {
-        if (toChangeSleepNight) {
-          this.totalSleepTimeNight += Math.floor((new Date().getTime() - new Date(element.StartDate!).getTime()) / 1000);
-        }
-        this.totalSleepTimeFullDay += Math.floor((new Date().getTime() - new Date(element.StartDate!).getTime()) / 1000);
-      }
-
-    });
-
-
-    // average times calculation
-    const toda = new Date();
-
-    let dates: Date[] = [];
-
-    let sleepsForDay: number[] = [];
-    let sleepsforNight: number[] = [];
-    let index: number = 0;
-
-    // fill array of dates for the month before
-    let yst1 = new Date(tod);
-    for (let i = 0; i < 31; i++) {
-      const tod = new Date();
-      tod.setDate(tod.getDate() - i);
-      dates.push(tod);
-      sleepsForDay[i] = 0;
-      sleepsforNight[i] = 0;
-    }
-
-
-
-    // do checks if date matches and add to the sleep time for day/night element of array
-    for (let i = 0; i < dates.length; i++) {
-      for (let j = 0; j < this.backupActivities.length; j++) {
-        let elStart = new Date(this.backupActivities[j].StartDate!);
-        let elEnd = new Date(this.backupActivities[j].EndDate!);
-
-
-        if (elStart.toDateString() === new Date(dates[i]).toDateString()) {
-          // console.log(`elstart - ${elStart}, elend - ${elEnd}`);
-          console.log("match");
-          console.log(`i - ${i}, j - ${j}`);
-          console.log(`elstart - ${elStart}, elend - ${elEnd}`);
-          if (this.backupActivities[j].IsActiveNow) {
-            sleepsForDay[index] += Math.floor(new Date().getTime() - elStart.getTime());
-
-            if (new Date(this.backupActivities[i].StartDate!).getHours() >= 19 || new Date(this.backupActivities[j].StartDate!).getHours() <= 8) {
-              sleepsforNight[index] += Math.floor((new Date().getTime() - elStart.getTime()) / 1000);
-            }
-            continue;
-          }
-
-          sleepsForDay[index] += Math.floor((elEnd.getTime() - elStart.getTime()) / 1000);
-
-          if (new Date(this.backupActivities[j].StartDate!).getHours() >= 19 || new Date(this.backupActivities[j].StartDate!).getHours() <= 8) {
-            sleepsforNight[index] += Math.floor((elEnd.getTime() - elStart.getTime()) / 1000);
-          }
-
-          console.log('added sleepsfordayi - ' + sleepsForDay[index]);
-          console.log(`last i - ${i}, j - ${j}`);
-
-        }
-      }
-    }
-
-    let sleepDayCount: number = 0;
-    let sleepDayTotal: number = 0;
-    for (let i = 0; i < sleepsForDay.length; i++) {
-      if (sleepsForDay[i] != 0) {
-        sleepDayCount++;
-        sleepDayTotal += sleepsForDay[i];
-        console.log("sleepdayi - " + sleepsForDay[i] + " i - " + i);
-      }
-    }
-
-    this.avgSleepTimesFullday = Math.floor(sleepDayTotal / sleepDayCount);
-    console.log('sleepdaycount - ' + sleepDayCount);
-    console.log("average sleep day - " + this.avgSleepTimesFullday);
-
+    const b = this.sleepCalculator.calculateAverageTimes(this.daySpanToCalcTimes);
+    this.avgSleepTimesFullday = b.avgSleepDay;
+    this.avgSleepTimeNight = b.avgSleepNight;
   }
 
   setErrorsForActionPerfomed(): void {
