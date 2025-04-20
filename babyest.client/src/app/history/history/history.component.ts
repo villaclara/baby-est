@@ -107,6 +107,7 @@ export class HistoryComponent implements OnInit {
   avgSleepTimesFullday: number = 0;
   daySpanToCalcTimes: number = 31;
   fromDateToCalcTimes: Date = new Date();
+  toDateToCalcTimes: Date = new Date();
 
   historyTypeSelected: string = 'today';
 
@@ -287,6 +288,9 @@ export class HistoryComponent implements OnInit {
     this.activities = [];
     this.shitActivityDates = [];
     this.fromDateToCalcTimes = new Date();
+    const d = new Date();
+    d.setDate(this.fromDateToCalcTimes.getDate() - 31);
+    this.toDateToCalcTimes = d;
     console.log("fromdatetocalctimes - " + this.fromDateToCalcTimes);
     if (timespan === 'today') {
       console.log('today selected');
@@ -325,6 +329,9 @@ export class HistoryComponent implements OnInit {
         });
 
         this.daySpanToCalcTimes = 7;
+        const d = new Date();
+        d.setDate(this.fromDateToCalcTimes.getDate() - 7);
+        this.toDateToCalcTimes = d;
         this.sleepCalculator.setBackupActivities(this.backupActivities);
         this.calculateTimes();
       }
@@ -359,13 +366,15 @@ export class HistoryComponent implements OnInit {
 
   }
 
-  calculateTimes(): void {
+  calculateTimes(skipTotal? : boolean): void {
 
-    const a = this.sleepCalculator.calculateTotalTimes();
-    this.totalSleepTimeFullDay = a.totalSleepDay;
-    this.totalSleepTimeNight = a.totalSleepNight;
+    if(!skipTotal)
+    {
+      const a = this.sleepCalculator.calculateTotalTimes();
+      this.totalSleepTimeFullDay = a.totalSleepDay;
+      this.totalSleepTimeNight = a.totalSleepNight;
+    }
 
-    console.log('from calculate times - ' + this.fromDateToCalcTimes);
     const b = this.sleepCalculator.calculateAverageTimes(this.daySpanToCalcTimes, this.fromDateToCalcTimes);
     this.avgSleepTimesFullday = b.avgSleepDay;
     this.avgSleepTimeNight = b.avgSleepNight;
@@ -418,7 +427,8 @@ export class HistoryComponent implements OnInit {
           next: (data: KidActivity[]) => {
             this.sleepCalculator.setBackupActivities(data.filter(el => el.ActivityType.toLowerCase() === 'sleeping'));
             this.fromDateToCalcTimes = toDate;
-            this.sleepCalculator.calculateAverageTimes(this.daySpanToCalcTimes, this.fromDateToCalcTimes);
+            this.toDateToCalcTimes = fromDate;
+            this.calculateTimes(true);  // pass true to skip total times calculation
             this.isFilterDisplay = false;
 
             this.activities = data;
