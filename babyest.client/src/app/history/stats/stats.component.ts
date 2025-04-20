@@ -19,6 +19,8 @@ export class StatsComponent {
 
   @Input() averageSleepFullday: number = 0;
 
+  @Input() daySpanCount: number = 31;
+
   someDate: number = new Date().getHours();
 
 

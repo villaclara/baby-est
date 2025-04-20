@@ -106,6 +106,7 @@ export class HistoryComponent implements OnInit {
   avgSleepTimeNight: number = 0;
   avgSleepTimesFullday: number = 0;
   daySpanToCalcTimes: number = 31;
+  fromDateToCalcTimes: Date = new Date();
 
   historyTypeSelected: string = 'today';
 
@@ -121,11 +122,11 @@ export class HistoryComponent implements OnInit {
         this.backupActivities = data;
         this.activities = this.backupActivities;
 
-        this.sleepCalculator = new SleepiTimeCalculator(this.backupActivities);
+        this.sleepCalculator = new SleepiTimeCalculator(this.backupActivities.filter(el => el.ActivityType.toLowerCase() === 'sleeping'));
 
         this.filterActsByHistoryType("today");
         
-        this.calculateTimes();
+        // this.calculateTimes();
 
         this.isLoading = false;
       },
@@ -285,7 +286,10 @@ export class HistoryComponent implements OnInit {
   filterActsByHistoryType(timespan: string): void {
     this.activities = [];
     this.shitActivityDates = [];
+    this.fromDateToCalcTimes = new Date();
+    console.log("fromdatetocalctimes - " + this.fromDateToCalcTimes);
     if (timespan === 'today') {
+      console.log('today selected');
       const tod = new Date();
       let yst = new Date(tod);
       yst.setDate(yst.getDate() - 1);
@@ -297,6 +301,11 @@ export class HistoryComponent implements OnInit {
       (this.activities).forEach(element => {
         this.shitActivityDates.push(new Date(element.StartDate!))
       });
+
+
+      this.daySpanToCalcTimes = 31;
+      this.sleepCalculator.setBackupActivities(this.backupActivities);
+      this.calculateTimes();
       return;
     }
 
@@ -304,6 +313,7 @@ export class HistoryComponent implements OnInit {
     setTimeout(() => {
 
       if (timespan === 'week') {
+        console.log('week');
         const tod = new Date();
         let lastWeek = new Date(tod);
         lastWeek.setDate(lastWeek.getDate() - 7);
@@ -313,6 +323,10 @@ export class HistoryComponent implements OnInit {
         (this.activities).forEach(element => {
           this.shitActivityDates.push(new Date(element.StartDate!))
         });
+
+        this.daySpanToCalcTimes = 7;
+        this.sleepCalculator.setBackupActivities(this.backupActivities);
+        this.calculateTimes();
       }
 
       else if (timespan === 'month') {
@@ -327,9 +341,14 @@ export class HistoryComponent implements OnInit {
         (this.activities).forEach(element => {
           this.shitActivityDates.push(new Date(element.StartDate!))
         });
+
+        this.daySpanToCalcTimes = 31;
+        this.sleepCalculator.setBackupActivities(this.backupActivities);
+        this.calculateTimes();
       }
 
       else {
+        console.log('else called');
         this.activities = this.backupActivities;
         this.shitActivityDates = [];
         this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
@@ -342,11 +361,12 @@ export class HistoryComponent implements OnInit {
 
   calculateTimes(): void {
 
-    const a = this.sleepCalculator.calculateTotalTimes(this.daySpanToCalcTimes);
+    const a = this.sleepCalculator.calculateTotalTimes();
     this.totalSleepTimeFullDay = a.totalSleepDay;
     this.totalSleepTimeNight = a.totalSleepNight;
 
-    const b = this.sleepCalculator.calculateAverageTimes(this.daySpanToCalcTimes);
+    console.log('from calculate times - ' + this.fromDateToCalcTimes);
+    const b = this.sleepCalculator.calculateAverageTimes(this.daySpanToCalcTimes, this.fromDateToCalcTimes);
     this.avgSleepTimesFullday = b.avgSleepDay;
     this.avgSleepTimeNight = b.avgSleepNight;
   }
@@ -366,6 +386,12 @@ export class HistoryComponent implements OnInit {
   }
 
   OKFilterButtonClik(): void {
+    // if the value is not provided, we display full history
+    if(this.filterFromDateString === '')
+      {
+        this.filterFromDateString = '2025-01-01';
+      }
+      
     const fromDate = new Date(this.filterFromDateString);
     const toDate = new Date(this.filterToDateString);
 
@@ -375,10 +401,13 @@ export class HistoryComponent implements OnInit {
       const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
       const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
     
-      return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+      return Math.floor((utc2 - utc1) / _MS_PER_DAY) + 1;
     }
 
+
     this.daySpanToCalcTimes = dateDiffInDays(fromDate, toDate);
+
+    
 
     console.log(this.daySpanToCalcTimes);
     this.kidService.getKidActivitiesWithParams(this.kidId, 
@@ -387,9 +416,14 @@ export class HistoryComponent implements OnInit {
         toDate: this.filterToDateString })
         .subscribe({
           next: (data: KidActivity[]) => {
-            this.sleepCalculator = new SleepiTimeCalculator(data);
-            this.calculateTimes();
-        this.isFilterDisplay = false;
+            this.sleepCalculator.setBackupActivities(data.filter(el => el.ActivityType.toLowerCase() === 'sleeping'));
+            this.fromDateToCalcTimes = toDate;
+            this.sleepCalculator.calculateAverageTimes(this.daySpanToCalcTimes, this.fromDateToCalcTimes);
+            this.isFilterDisplay = false;
+
+            this.activities = data;
+            this.shitActivityDates = [];
+            this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
 
           },
           error: (err: any) => {

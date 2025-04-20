@@ -8,27 +8,35 @@ export class SleepiTimeCalculator {
         this.backupActivities = acts;
     }
 
-    calculateAverageTimes(daysCount: number): { avgSleepDay: number, avgSleepNight: number } {
+    setBackupActivities(acts: KidActivity[]): void {
+        this.backupActivities = acts;
+    }
+
+    calculateAverageTimes(daysCount: number, fromDate: Date): { avgSleepDay: number, avgSleepNight: number } {
         // average times calculation section
-        let daySpan: number = 31;
+        let daySpan: number = daysCount; 
         let dates: Date[] = [];
         let sleepsForDay: number[] = Array(daySpan).fill(0);
         let sleepsforNight: number[] = Array(daySpan).fill(0);
 
         // fill array of dates for the month before
         for (let i = 0; i < daySpan; i++) {
-            const tod = new Date();
+            const tod = new Date(fromDate);
             tod.setDate(tod.getDate() - i);
             dates.push(tod);
         }
 
+   
+
         // do checks if date matches and add to the sleep time for day/night element of array
         for (let i = 0; i < dates.length; i++) {
             for (let j = 0; j < this.backupActivities.length; j++) {
-                let elStart = new Date(this.backupActivities[j].StartDate!);
-                let elEnd = new Date(this.backupActivities[j].EndDate!);
+                // let elStart = new Date(this.backupActivities[j].StartDate!);
+                // let elEnd = new Date(this.backupActivities[j].EndDate!);
 
-                if (elStart.toDateString() === new Date(dates[i]).toDateString()) {
+                if (new Date(this.backupActivities[j].StartDate!).toDateString() === new Date(dates[i]).toDateString()) {
+                    let elStart = new Date(this.backupActivities[j].StartDate!);
+                    let elEnd = new Date(this.backupActivities[j].EndDate!);
                     if (this.backupActivities[j].IsActiveNow) {
                         sleepsForDay[i] += Math.floor((new Date().getTime() - elStart.getTime()) / 1000);
 
@@ -39,7 +47,8 @@ export class SleepiTimeCalculator {
                     }
 
                     sleepsForDay[i] += Math.floor((elEnd.getTime() - elStart.getTime()) / 1000);
-
+                    console.log('added sleepforday');
+                    
                     if (new Date(this.backupActivities[j].StartDate!).getHours() >= 19 || new Date(this.backupActivities[j].StartDate!).getHours() <= 8) {
                         sleepsforNight[i] += Math.floor((elEnd.getTime() - elStart.getTime()) / 1000);
                     }
@@ -72,7 +81,8 @@ export class SleepiTimeCalculator {
         }
     }
 
-    calculateTotalTimes(daysCount: number): { totalSleepDay: number, totalSleepNight: number } {
+    // No need to pass the daySpan and fromDate params as we calculate total time only for last day
+    calculateTotalTimes(): { totalSleepDay: number, totalSleepNight: number } {
 
         let totalSleepTimeNight: number = 0;
         let totalSleepTimeFullDay: number = 0;
