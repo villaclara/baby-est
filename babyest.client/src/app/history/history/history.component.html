@@ -81,10 +81,12 @@
     </div>
 
 
-    <div class="brighterIfNeeded">
+    <div class="container">
 
-    <div class="container pt-2" style="position: sticky; top: 0px; z-index: 1010;">
-        <div class="row">
+
+
+    <div class=" pt-2" style="position: sticky; top: 0px; left: 1vw; right: 1vw; z-index: 1010; background-color: #ebeaf0;">
+                <div class="row">
 
             <div class="col">
 
@@ -185,7 +187,7 @@
         </div>
     </div>
 
-    <div class="container" style="padding-bottom: 15vh;">
+    <div class="" style="padding-bottom: 15vh;">
 
         <div *ngIf="isFilterLoading">
             <app-loading-spinner minHeight="20vh"></app-loading-spinner>
@@ -217,7 +219,7 @@
                         {{shitActivityDates[i] | monthlocale : 'shortValues'}}
                     </div>
 
-                    <div class="ps-2">
+                    <div class="ps-1 pe-1">
 
                         <app-single-activity [activity]="activity" [isRichSingleActivity]="true"
                             [editingKidId]="activeEditingKidId" [currentTheme]="currentTheme"
@@ -299,7 +301,7 @@
                 </div>
             </div>
         </div>
-    </div>
+</div>
 
 </div>
 
