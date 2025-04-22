@@ -13,16 +13,12 @@
     </div>
 
     <div class="container pt-2">
-        <app-stats 
-            [sleepTimeToday]="totalSleepTimeFullDay" 
-            [sleepTimeNight]="totalSleepTimeNight"
-            [averageSleepFullday]="avgSleepTimesFullday"
-            [averageSleepNight]="avgSleepTimeNight"
-            [fromDate]="fromDateToCalcTimes"
-            [toDate]="toDateToCalcTimes"></app-stats>
+        <app-stats [sleepTimeToday]="totalSleepTimeFullDay" [sleepTimeNight]="totalSleepTimeNight"
+            [averageSleepFullday]="avgSleepTimesFullday" [averageSleepNight]="avgSleepTimeNight"
+            [fromDate]="fromDateToCalcTimes" [toDate]="toDateToCalcTimes"></app-stats>
     </div>
 
-    <hr class="my-2"/>
+    <hr class="my-2" />
 
     <div class="text-end me-2">
         <button type="button" class="btn btn-outline-secondary" (click)="toggleAddActivity()">Додати нову активність
@@ -85,230 +81,224 @@
 
 
 
-    <div class=" pt-2" style="position: sticky; top: 0px; left: 1vw; right: 1vw; z-index: 1010; background-color: #ebeaf0;">
-                <div class="row">
+        <div id="radiobuttons" class=" pt-2"
+            style="position: sticky; top: 0px; left: 1vw; right: 1vw; z-index: 1010; background-color: #ebeaf0;">
+            <div class="row">
 
-            <div class="col">
+                <div class="col">
 
-                <span class="fs-4 fw-light text-center">Активності</span>
-            </div>
-            <!-- <div class="col">
+                    <span class="fs-4 fw-light text-center">Активності</span>
+                </div>
+                <!-- <div class="col">
 
                 <div class="pt-2 text-end me-2">
                     <button type="button" class="btn btn-outline-secondary" (click)="toggleAddActivity()">+
                     </button>
                 </div>
             </div> -->
-        </div>
-        <div class="row g-0 pb-2 my-2 border-bottom m-1 border-2 border-dark border-opacity-50">
-
-            <div class="col">
-                <input type="radio" class="btn-check" name="options" id="todayHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('today')" 
-
-                    checked />
-                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="todayHistory">Доба</label>
             </div>
+            <div class="row g-0 pb-2 my-2 border-bottom m-1 border-2 border-dark border-opacity-50">
 
-            <div class="col">
-                <input type="radio" class="btn-check" name="options" id="weekHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('week')" 
-
-                    />
-                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="weekHistory">Тиждень</label>
-            </div>
-
-            <div class="col">
-                <input type="radio" class="btn-check" name="options" id="monthHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('month')" 
-
-                    />
-                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="monthHistory">Місяць</label>
-            </div>
-
-            <div class="col-2">
-                <input type="radio" class="btn-check" name="options" id="filterHistory" autocomplete="off"
-                    (change)="onHistoryTypeSelected('filter')" 
-
-                    />
-                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="filterHistory">
-                    <i class="bi bi-funnel-fill"></i>
-                </label>
-            </div>
-        </div>
-    </div>
-
-
-    <!-- Filter modal appears on top of all elements -->
-    <div *ngIf="isFilterDisplay" [@filterDisplay]="isFilterDisplay">
-        <div class="container brighterIfNeeded filter-display pt-3">
-            <div class="row">
-                <span class="fs-5 fw-lighter"> Вибери дату або проміжок для якого хочеш отримати активності</span>
-            </div>
-
-            <div class="row my-1">
-                <!-- <div class="col-3 pe-0"> -->
-                    <label for="inputDateStart">Від</label>
-                <!-- </div> -->
-                <div class="col-auto ps-0 mx-auto">
-                    <input id="inputDateStart" type="date" class="form-control"
-                    [(ngModel)]="filterFromDateString" />
-                </div>
-                    <span class="small">Якщо не вибрано - активності від початку.</span>
-            </div>
-
-            <div class="row my-1">
-                <!-- <div class="col-3 pe-0"> -->
-                    <label for="inputDateStart">До</label>
-                <!-- </div> -->
-                <div class="col-auto ps-0 mx-auto">
-                    <input id="inputDateStart" type="date" class="form-control"
-                    [(ngModel)]="filterToDateString" />
-                </div>
-                <span class="small">Якщо не вибрано - активності до сьогодні.</span>
-            </div>
-
-            
-            <div class="row">
                 <div class="col">
-                    <button type="button" class="btn filterButtons shadow shadow-lg" [ngClass]="{
+                    <input type="radio" class="btn-check" name="options" id="todayHistory" autocomplete="off"
+                        (change)="onHistoryTypeSelected('today')" checked />
+                    <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6"
+                        for="todayHistory">Доба</label>
+                </div>
+
+                <div class="col">
+                    <input type="radio" class="btn-check" name="options" id="weekHistory" autocomplete="off"
+                        (change)="onHistoryTypeSelected('week')" />
+                    <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6"
+                        for="weekHistory">Тиждень</label>
+                </div>
+
+                <div class="col">
+                    <input type="radio" class="btn-check" name="options" id="monthHistory" autocomplete="off"
+                        (change)="onHistoryTypeSelected('month')" />
+                    <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6"
+                        for="monthHistory">Місяць</label>
+                </div>
+
+                <div class="col-2">
+                    <input type="radio" class="btn-check" name="options" id="filterHistory" autocomplete="off"
+                        (change)="onHistoryTypeSelected('filter')" />
+                    <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="filterHistory">
+                        <i class="bi bi-funnel-fill"></i>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Filter modal appears on top of all elements -->
+        <div *ngIf="isFilterDisplay" [@filterDisplay]="isFilterDisplay">
+            <div class="container brighterIfNeeded filter-display pt-3" style="border: 1px solid darkgrey !important">
+                <div class="row">
+                    <span class="fs-5 fw-lighter"> Вибери дату або проміжок для якого хочеш отримати активності</span>
+                </div>
+
+                <div class="row my-1 pt-4">
+                    <!-- <div class="col-3 pe-0"> -->
+                    <label for="inputDateStart">Від</label>
+                    <!-- </div> -->
+                    <div class="col-auto ps-0 mx-auto">
+                        <input id="inputDateStart" type="date" class="form-control"
+                            [(ngModel)]="filterFromDateString" />
+                    </div>
+                    <span class="small">Якщо не вибрано - активності від початку.</span>
+                </div>
+
+                <div class="row my-1">
+                    <!-- <div class="col-3 pe-0"> -->
+                    <label for="inputDateStart">До</label>
+                    <!-- </div> -->
+                    <div class="col-auto ps-0 mx-auto">
+                        <input id="inputDateStart" type="date" class="form-control" [(ngModel)]="filterToDateString" />
+                    </div>
+                    <span class="small">Якщо не вибрано - активності до сьогодні.</span>
+                </div>
+
+
+                <div class="row pt-4">
+                    <div class="col">
+                        <button type="button" class="btn filterButtons shadow shadow-lg" [ngClass]="{
                         'btn-warning' : currentTheme === 'lightTheme',
                         'btn-outline-warning' : currentTheme != 'lightTheme'
-                    }" (click)="CancelFilterButtonClick()"> 
-                        Скасувати
-                    </button>
-                </div>
+                    }" (click)="CancelFilterButtonClick()">
+                            Скасувати
+                        </button>
+                    </div>
 
-                <div class="col">
-                    <button type="button" class="btn filterButtons shadow-lg" 
-                    [ngClass]="{
+                    <div class="col">
+                        <button type="button" class="btn filterButtons shadow-lg" [ngClass]="{
                         'btn-outline-dark' : currentTheme === 'lightTheme',
                         'btn-light' : currentTheme != 'lightTheme'
                     }" (click)="OKFilterButtonClik()">
-                        OK
-                    </button>
+                            OK
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="" style="padding-bottom: 15vh;">
+        <div class="" style="padding-bottom: 15vh;">
 
-        <div *ngIf="isFilterLoading">
-            <app-loading-spinner minHeight="20vh"></app-loading-spinner>
-        </div>
-        <div class="mt-2 fs-5" *ngIf="activities.length == 0 && !isFilterLoading">
-            Поки що активностей не було.
-        </div>
+            <div *ngIf="isFilterLoading">
+                <app-loading-spinner minHeight="20vh"></app-loading-spinner>
+            </div>
+            <div class="mt-2 fs-5" *ngIf="activities.length == 0 && !isFilterLoading">
+                Поки що активностей не було.
+            </div>
 
-        <div *ngIf="!isFilterLoading" class="mt-2 ">
-            <div class=" p-1">
-                <div *ngFor="let activity of activities; index as i" class="mb-2">
+            <div *ngIf="!isFilterLoading" class="mt-2 ">
+                <div class=" p-1">
+                    <div *ngFor="let activity of activities; index as i" class="mb-2">
 
-                    <!-- <div class="text-start fs-5" *ngIf="i == 0 && shitActivityDates[i].toDateString() == dates[i]">
+                        <!-- <div class="text-start fs-5" *ngIf="i == 0 && shitActivityDates[i].toDateString() == dates[i]">
                         {{dates[i]}}
                     </div> -->
 
-                    <!-- first element of the array. Its actually the same as below,
+                        <!-- first element of the array. Its actually the same as below,
                      but here we do not check i-1 element -->
-                    <div class="text-start fs-5" *ngIf="i == 0">
-                        <span *ngIf="shitActivityDates[i].getDate() == todayDate.getDate()"
-                            class="fs-5 text-secondary">Сьогодні: </span>
+                        <div class="text-start fs-5" *ngIf="i == 0">
+                            <span *ngIf="shitActivityDates[i].getDate() == todayDate.getDate()"
+                                class="fs-5 text-secondary">Сьогодні: </span>
 
-                        {{shitActivityDates[i] | monthlocale : 'shortValues'}}
-                    </div>
+                            {{shitActivityDates[i] | monthlocale : 'shortValues'}}
+                        </div>
 
-                    <!-- Check if the date for current activity is NOT the same as for previous. Then we display the Date string -->
-                    <div class="text-start fs-5 mt-3"
-                        *ngIf="i > 0 && shitActivityDates[i].getDate() != shitActivityDates[i-1].getDate()">
-                        {{shitActivityDates[i] | monthlocale : 'shortValues'}}
-                    </div>
+                        <!-- Check if the date for current activity is NOT the same as for previous. Then we display the Date string -->
+                        <div class="text-start fs-5 mt-3"
+                            *ngIf="i > 0 && shitActivityDates[i].getDate() != shitActivityDates[i-1].getDate()">
+                            {{shitActivityDates[i] | monthlocale : 'shortValues'}}
+                        </div>
 
-                    <div class="ps-1 pe-1">
+                        <div class="ps-1 pe-1">
 
-                        <app-single-activity [activity]="activity" [isRichSingleActivity]="true"
-                            [editingKidId]="activeEditingKidId" [currentTheme]="currentTheme"
-                            (selectedEditActivityEmit)="editActivity($event)"></app-single-activity>
+                            <app-single-activity [activity]="activity" [isRichSingleActivity]="true"
+                                [editingKidId]="activeEditingKidId" [currentTheme]="currentTheme"
+                                (selectedEditActivityEmit)="editActivity($event)"></app-single-activity>
 
 
-                        <div *ngIf="isEditingKid && activity.Id == selectedEditingAct.Id" @moveDownNgIf>
+                            <div *ngIf="isEditingKid && activity.Id == selectedEditingAct.Id" @moveDownNgIf>
 
-                            <div class="row m-0">
+                                <div class="row m-0">
 
-                                <div class="col">
-                                    <div class="row my-1">
-                                        <div class="col-3 pe-0">
-                                            <label>Тип</label>
+                                    <div class="col">
+                                        <div class="row my-1">
+                                            <div class="col-3 pe-0">
+                                                <label>Тип</label>
+                                            </div>
+                                            <div class="col-auto ps-0">
+                                                <select class="form-select" [(ngModel)]="selectedActivityType">
+                                                    <option value="{{selectedEditingAct.ActivityType}}">
+                                                        {{activityTypeLocalUA}}</option>
+                                                    <option value="sleeping">Сон</option>
+                                                    <option value="eatingleft">Годування.Ліва</option>
+                                                    <option value="eatingright">Годування.Права</option>
+                                                    <option value="eatingboth">Годування.Обидві</option>
+                                                    <option value="eatingbottle">Годування.Пляшка</option>
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col-auto ps-0">
-                                            <select class="form-select" [(ngModel)]="selectedActivityType">
-                                                <option value="{{selectedEditingAct.ActivityType}}">
-                                                    {{activityTypeLocalUA}}</option>
-                                                <option value="sleeping">Сон</option>
-                                                <option value="eatingleft">Годування.Ліва</option>
-                                                <option value="eatingright">Годування.Права</option>
-                                                <option value="eatingboth">Годування.Обидві</option>
-                                                <option value="eatingbottle">Годування.Пляшка</option>
-                                            </select>
+
+                                        <div class="row my-1">
+                                            <div class="col-3 pe-0">
+                                                <label for="inputDateStart">Початок</label>
+                                            </div>
+                                            <div class="col-auto ps-0">
+                                                <input id="inputDateStart" type="datetime-local" class="form-control"
+                                                    [(ngModel)]="startDateString" />
+                                            </div>
                                         </div>
+
+
+                                        <div class="row my-1">
+                                            <div class="col-3 pe-0">
+                                                <label for="inputDateEnd">Кінець</label>
+                                            </div>
+                                            <div class="col-auto ps-0">
+                                                <input id="inputDateEnd" type="datetime-local" class="form-control"
+                                                    [(ngModel)]="endDateString" />
+                                            </div>
+                                        </div>
+
                                     </div>
 
-                                    <div class="row my-1">
-                                        <div class="col-3 pe-0">
-                                            <label for="inputDateStart">Початок</label>
+                                    <div class="row">
+                                        <div class="col border rounded-5 border-success-subtle">
+                                            <button type="button" class="btn btn-outline-success border-0"
+                                                (click)="saveChangesActivity()">
+                                                <i class="bi bi-floppy-fill fs-5"></i>
+                                            </button>
+
                                         </div>
-                                        <div class="col-auto ps-0">
-                                            <input id="inputDateStart" type="datetime-local" class="form-control"
-                                                [(ngModel)]="startDateString" />
+                                        <div class="col-auto">
+
+                                        </div>
+                                        <div class="col border rounded-5 border-danger-subtle">
+                                            <button type="button" class="btn btn-outline-danger border-0"
+                                                (click)="deleteActivity()">
+                                                <i class="bi bi-trash3-fill fs-5"></i>
+                                            </button>
+
                                         </div>
                                     </div>
-
-
-                                    <div class="row my-1">
-                                        <div class="col-3 pe-0">
-                                            <label for="inputDateEnd">Кінець</label>
-                                        </div>
-                                        <div class="col-auto ps-0">
-                                            <input id="inputDateEnd" type="datetime-local" class="form-control"
-                                                [(ngModel)]="endDateString" />
-                                        </div>
+                                    <div class="row">
                                     </div>
 
-                                </div>
-
-                                <div class="row">
-                                    <div class="col border rounded-5 border-success-subtle">
-                                        <button type="button" class="btn btn-outline-success border-0"
-                                            (click)="saveChangesActivity()">
-                                            <i class="bi bi-floppy-fill fs-5"></i>
-                                        </button>
-
-                                    </div>
-                                    <div class="col-auto">
-
-                                    </div>
-                                    <div class="col border rounded-5 border-danger-subtle">
-                                        <button type="button" class="btn btn-outline-danger border-0"
-                                            (click)="deleteActivity()">
-                                            <i class="bi bi-trash3-fill fs-5"></i>
-                                        </button>
-
-                                    </div>
-                                </div>
-                                <div class="row">
                                 </div>
 
                             </div>
-
                         </div>
-                    </div>
 
+                    </div>
                 </div>
             </div>
         </div>
-</div>
 
-</div>
+    </div>
 
 
 

@@ -270,6 +270,8 @@ export class HistoryComponent implements OnInit {
             const index = this.activities.indexOf(this.selectedEditingAct);
             const indexSub = this.backupActivities.indexOf(this.selectedEditingAct);
             if (index == -1 || indexSub == -1) {
+              this.isRequestSentLoading = false;
+              console.log('index --- ' + index + " indexsub --- " + indexSub);
               return;
             }
             this.activities.splice(index, 1);
@@ -411,6 +413,11 @@ export class HistoryComponent implements OnInit {
     this.activities = [];
     this.isEditingKid = false;
     this.isAddingNewActivity = false;
+
+
+    // do this to hide the radiobuttons (filters) so the animation of filter appearring plays correctly
+    (document!.getElementById('radiobuttons') as HTMLInputElement).style.zIndex = '0';
+
   }
 
   OKFilterButtonClik(): void {
@@ -435,10 +442,7 @@ export class HistoryComponent implements OnInit {
       return Math.floor((utc2 - utc1) / _MS_PER_DAY) + 1;
     }
 
-
     this.daySpanToCalcTimes = dateDiffInDays(fromDate, toDate);
-
-
 
     this.isRequestSentLoading = true;
     this.kidService.getKidActivitiesWithParams(this.kidId,
@@ -448,21 +452,24 @@ export class HistoryComponent implements OnInit {
       })
       .subscribe({
         next: (data: KidActivity[]) => {
+          this.activities = data;
+          this.backupActivities = data;
+          this.shitActivityDates = [];
+          this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
+          
           this.sleepCalculator.setBackupActivities(data.filter(el => el.ActivityType.toLowerCase() === 'sleeping'));
           this.fromDateToCalcTimes = toDate;
           this.toDateToCalcTimes = fromDate;
           this.calculateTimes(true);  // pass true to skip total times calculation
           
-          this.activities = data;
-          this.shitActivityDates = [];
-          this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
-          
           this.isFilterDisplay = false;
+          (document!.getElementById('radiobuttons') as HTMLInputElement).style.zIndex = '1010';
           this.isRequestSentLoading = false;
 
         },
         error: (err: any) => {
           this.isFilterDisplay = false;
+          (document!.getElementById('radiobuttons') as HTMLInputElement).style.zIndex = '1010';
           this.isRequestSentLoading = false;
         }
       });
@@ -471,6 +478,7 @@ export class HistoryComponent implements OnInit {
 
   CancelFilterButtonClick(): void {
     // reset values 
+    (document!.getElementById('radiobuttons') as HTMLInputElement).style.zIndex = '1010';
     this.isFilterDisplay = false;
     this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
     this.filterFromDateString = '';

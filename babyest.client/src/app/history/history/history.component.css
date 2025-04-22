@@ -9,15 +9,8 @@
 .filter-display {
     position: absolute;
     width: 90vw;
-    height: 40vh;
-    top: 43%;
-    z-index: 2000;
+    height: 45vh;
+    top: 30%;
+    z-index: 10;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.2);
-    
-    /* z-index: 2000; */
-    /* height: auto; */
-    /* width: 80vw; */
-    /* max-width: 500px; */
-    /* left: 50%; */
-    /* transform: translateX(-50%); */
 }
