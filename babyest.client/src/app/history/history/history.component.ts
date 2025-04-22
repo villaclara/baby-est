@@ -400,7 +400,12 @@ export class HistoryComponent implements OnInit {
       {
         this.filterFromDateString = '2025-01-01';
       }
-      
+
+    if(this.filterToDateString === '')
+    {
+      this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
+    }
+
     const fromDate = new Date(this.filterFromDateString);
     const toDate = new Date(this.filterToDateString);
 

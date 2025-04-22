@@ -4,6 +4,7 @@ import { Injectable } from "@angular/core";
 export class DateConverter {
     constructor() { }
 
+    // hh:mm
     toHHmmString(date : Date) : string {
         const hh = new Date(date).getHours() < 10 ? "0" + new Date(date).getHours() : new Date(date).getHours();
         const mm = new Date(date).getMinutes() < 10 ? "0" + new Date(date).getMinutes() : new Date(date).getMinutes();
@@ -11,6 +12,7 @@ export class DateConverter {
         return ddd;
     }
 
+    // yyyy-mm-ddThh:mm:00;
     toDate(str : string) : Date {
         let y = new Date().getFullYear();
         let m = new Date().getMonth() < 9 ? "0" + (new Date().getMonth() + 1) : new Date().getMonth();
@@ -19,6 +21,7 @@ export class DateConverter {
         return new Date(ddd);
     }
 
+    // yyyy-mm-ddThh:mm:00
     shitDateToISOString(date: Date) : string {
         const y = new Date(date).getFullYear();
         const m = new Date(date).getMonth() < 9 ? "0" + (new Date(date).getMonth() + 1) : (new Date(date).getMonth() + 1);
@@ -28,6 +31,7 @@ export class DateConverter {
         return y + "-" + m + "-" + d + "T" + hh + ":" + mm + ":00";
     }
 
+    // yyyy-mm-dd
     toOnlyDateString(date: Date): string {
         const y = new Date(date).getFullYear();
         const m = new Date(date).getMonth() < 9 ? "0" + (new Date(date).getMonth() + 1) : (new Date(date).getMonth() + 1);

@@ -22,9 +22,9 @@
             [toDate]="toDateToCalcTimes"></app-stats>
     </div>
 
-    <hr />
+    <hr class="my-2"/>
 
-    <div class="pt-2 text-end me-2">
+    <div class="text-end me-2">
         <button type="button" class="btn btn-outline-secondary" (click)="toggleAddActivity()">Додати нову активність
         </button>
     </div>
@@ -107,9 +107,7 @@
                     (change)="onHistoryTypeSelected('today')" 
 
                     checked />
-                <label class="btn custombg-radiobuttons shadow fs-6" for="todayHistory"
-                [ngClass]="{'btn-outline-primary' : currentTheme === 'lightTheme',
-                    'btn-outline-success' : currentTheme === 'darkTheme'}">Доба</label>
+                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="todayHistory">Доба</label>
             </div>
 
             <div class="col">
