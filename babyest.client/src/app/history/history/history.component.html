@@ -140,10 +140,10 @@
 
 
     <!-- Filter modal appears on top of all elements -->
-    <div *ngIf="isFilterDisplay">
-        <div class="container brighterIfNeeded filter-display">
+    <div *ngIf="isFilterDisplay" [@filterDisplay]="isFilterDisplay">
+        <div class="container brighterIfNeeded filter-display pt-3">
             <div class="row">
-                <span> Вибери дату або проміжок для якого хочеш отримати активності</span>
+                <span class="fs-5 fw-lighter"> Вибери дату або проміжок для якого хочеш отримати активності</span>
             </div>
 
             <div class="row my-1">
@@ -171,13 +171,20 @@
             
             <div class="row">
                 <div class="col">
-                    <button type="button" class="btn" (click)="CancelFilterButtonClick()">
+                    <button type="button" class="btn filterButtons shadow shadow-lg" [ngClass]="{
+                        'btn-warning' : currentTheme === 'lightTheme',
+                        'btn-outline-warning' : currentTheme != 'lightTheme'
+                    }" (click)="CancelFilterButtonClick()"> 
                         Скасувати
                     </button>
                 </div>
 
                 <div class="col">
-                    <button type="button" class="btn" (click)="OKFilterButtonClik()">
+                    <button type="button" class="btn filterButtons shadow-lg" 
+                    [ngClass]="{
+                        'btn-outline-dark' : currentTheme === 'lightTheme',
+                        'btn-light' : currentTheme != 'lightTheme'
+                    }" (click)="OKFilterButtonClik()">
                         OK
                     </button>
                 </div>

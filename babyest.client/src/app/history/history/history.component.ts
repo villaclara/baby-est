@@ -56,7 +56,20 @@ import { SleepiTimeCalculator } from '../../utils/sleepi-time-calculator';
           opacity: 1
         }),
         animate('100ms ease-in', style({ 'opacity': '0' }))]),
-    ])
+    ]),
+    trigger('filterDisplay', [
+      transition(':enter', [           // animation when the some condition (state) is met. ':enter' - when *ngIf= true
+        style({                         // the style what is BEFORE
+          opacity: 0 // Starting position (off-screen)
+        }),
+        animate('150ms ease-in', style({ opacity: 1 }))]),
+      transition(':leave', [
+        style({                         // the style what is AFTER
+          opacity: 1
+        }),
+        animate('150ms linear', style({ opacity: 0 }))]),
+
+    ]),
   ]
 })
 export class HistoryComponent implements OnInit {
@@ -396,6 +409,8 @@ export class HistoryComponent implements OnInit {
   showFilter(): void {
     this.isFilterDisplay = true;
     this.activities = [];
+    this.isEditingKid = false;
+    this.isAddingNewActivity = false;
   }
 
   OKFilterButtonClik(): void {
@@ -425,7 +440,7 @@ export class HistoryComponent implements OnInit {
 
 
 
-    console.log(this.daySpanToCalcTimes);
+    this.isRequestSentLoading = true;
     this.kidService.getKidActivitiesWithParams(this.kidId,
       {
         fromDate: this.filterFromDateString,
@@ -437,16 +452,18 @@ export class HistoryComponent implements OnInit {
           this.fromDateToCalcTimes = toDate;
           this.toDateToCalcTimes = fromDate;
           this.calculateTimes(true);  // pass true to skip total times calculation
-          this.isFilterDisplay = false;
-
+          
           this.activities = data;
           this.shitActivityDates = [];
           this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
+          
+          this.isFilterDisplay = false;
+          this.isRequestSentLoading = false;
 
         },
         error: (err: any) => {
           this.isFilterDisplay = false;
-
+          this.isRequestSentLoading = false;
         }
       });
 

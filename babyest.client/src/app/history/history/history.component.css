@@ -9,10 +9,11 @@
 .filter-display {
     position: absolute;
     width: 90vw;
-    height: 35vh;
-    top: 45%;
+    height: 40vh;
+    top: 43%;
     z-index: 2000;
-    box-shadow: 2px 2px 2px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.2);
+    
     /* z-index: 2000; */
     /* height: auto; */
     /* width: 80vw; */
