@@ -8,11 +8,11 @@
 
 .filter-display {
     position: absolute;
-    width: 100vw;
-    height: 90vh;
-    top: 5vh;
-    bottom: 5vh;
+    width: 90vw;
+    height: 35vh;
+    top: 45%;
     z-index: 2000;
+    box-shadow: 2px 2px 2px;
     /* z-index: 2000; */
     /* height: auto; */
     /* width: 80vw; */

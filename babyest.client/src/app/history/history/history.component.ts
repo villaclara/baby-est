@@ -115,6 +115,8 @@ export class HistoryComponent implements OnInit {
   filterFromDateString: string = '';
   filterToDateString: string = 'filter';
 
+  previousFilterSelected: string = 'today';
+
   ngOnInit(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
 
@@ -126,7 +128,7 @@ export class HistoryComponent implements OnInit {
         this.sleepCalculator = new SleepiTimeCalculator(this.backupActivities.filter(el => el.ActivityType.toLowerCase() === 'sleeping'));
 
         this.filterActsByHistoryType("today");
-        
+
         // this.calculateTimes();
 
         this.isLoading = false;
@@ -291,9 +293,7 @@ export class HistoryComponent implements OnInit {
     const d = new Date();
     d.setDate(this.fromDateToCalcTimes.getDate() - 31);
     this.toDateToCalcTimes = d;
-    console.log("fromdatetocalctimes - " + this.fromDateToCalcTimes);
     if (timespan === 'today') {
-      console.log('today selected');
       const tod = new Date();
       let yst = new Date(tod);
       yst.setDate(yst.getDate() - 1);
@@ -310,6 +310,7 @@ export class HistoryComponent implements OnInit {
       this.daySpanToCalcTimes = 31;
       this.sleepCalculator.setBackupActivities(this.backupActivities);
       this.calculateTimes();
+      this.previousFilterSelected = 'today';
       return;
     }
 
@@ -334,6 +335,7 @@ export class HistoryComponent implements OnInit {
         this.toDateToCalcTimes = d;
         this.sleepCalculator.setBackupActivities(this.backupActivities);
         this.calculateTimes();
+        this.previousFilterSelected = 'week';
       }
 
       else if (timespan === 'month') {
@@ -352,9 +354,11 @@ export class HistoryComponent implements OnInit {
         this.daySpanToCalcTimes = 31;
         this.sleepCalculator.setBackupActivities(this.backupActivities);
         this.calculateTimes();
+        this.previousFilterSelected = 'month';
       }
 
       else {
+        // SHOULD never be called
         console.log('else called');
         this.activities = this.backupActivities;
         this.shitActivityDates = [];
@@ -366,10 +370,9 @@ export class HistoryComponent implements OnInit {
 
   }
 
-  calculateTimes(skipTotal? : boolean): void {
+  calculateTimes(skipTotal?: boolean): void {
 
-    if(!skipTotal)
-    {
+    if (!skipTotal) {
       const a = this.sleepCalculator.calculateTotalTimes();
       this.totalSleepTimeFullDay = a.totalSleepDay;
       this.totalSleepTimeNight = a.totalSleepNight;
@@ -392,17 +395,16 @@ export class HistoryComponent implements OnInit {
 
   showFilter(): void {
     this.isFilterDisplay = true;
+    this.activities = [];
   }
 
   OKFilterButtonClik(): void {
     // if the value is not provided, we display full history
-    if(this.filterFromDateString === '')
-      {
-        this.filterFromDateString = '2025-01-01';
-      }
+    if (this.filterFromDateString === '') {
+      this.filterFromDateString = '2025-01-01';
+    }
 
-    if(this.filterToDateString === '')
-    {
+    if (this.filterToDateString === '') {
       this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
     }
 
@@ -414,38 +416,39 @@ export class HistoryComponent implements OnInit {
       // Discard the time and time-zone information.
       const utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
       const utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-    
+
       return Math.floor((utc2 - utc1) / _MS_PER_DAY) + 1;
     }
 
 
     this.daySpanToCalcTimes = dateDiffInDays(fromDate, toDate);
 
-    
+
 
     console.log(this.daySpanToCalcTimes);
-    this.kidService.getKidActivitiesWithParams(this.kidId, 
-      { 
+    this.kidService.getKidActivitiesWithParams(this.kidId,
+      {
         fromDate: this.filterFromDateString,
-        toDate: this.filterToDateString })
-        .subscribe({
-          next: (data: KidActivity[]) => {
-            this.sleepCalculator.setBackupActivities(data.filter(el => el.ActivityType.toLowerCase() === 'sleeping'));
-            this.fromDateToCalcTimes = toDate;
-            this.toDateToCalcTimes = fromDate;
-            this.calculateTimes(true);  // pass true to skip total times calculation
-            this.isFilterDisplay = false;
+        toDate: this.filterToDateString
+      })
+      .subscribe({
+        next: (data: KidActivity[]) => {
+          this.sleepCalculator.setBackupActivities(data.filter(el => el.ActivityType.toLowerCase() === 'sleeping'));
+          this.fromDateToCalcTimes = toDate;
+          this.toDateToCalcTimes = fromDate;
+          this.calculateTimes(true);  // pass true to skip total times calculation
+          this.isFilterDisplay = false;
 
-            this.activities = data;
-            this.shitActivityDates = [];
-            this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
+          this.activities = data;
+          this.shitActivityDates = [];
+          this.activities.forEach(el => this.shitActivityDates.push(new Date(el.StartDate!)));
 
-          },
-          error: (err: any) => {
-            this.isFilterDisplay = false;
+        },
+        error: (err: any) => {
+          this.isFilterDisplay = false;
 
-          }
-        });
+        }
+      });
 
   }
 
@@ -454,13 +457,30 @@ export class HistoryComponent implements OnInit {
     this.isFilterDisplay = false;
     this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
     this.filterFromDateString = '';
-    this.historyTypeSelected = 'today';
+    // this.historyTypeSelected = 'today';
 
     this.activities = [];
     this.shitActivityDates = [];
 
-    // set the 'Today' radio button selected
-    (document!.getElementById('todayHistory') as HTMLInputElement).checked = true;
-    this.onHistoryTypeSelected('today');
+    // set the previous radio button selected
+    this.onHistoryTypeSelected(this.previousFilterSelected);
+    switch (this.previousFilterSelected) {
+      case "today": {
+        (document!.getElementById('todayHistory') as HTMLInputElement).checked = true;
+        break;
+      }
+      case "week": {
+        (document!.getElementById('weekHistory') as HTMLInputElement).checked = true;
+        break;
+      }
+      case "month": {
+        (document!.getElementById('monthHistory') as HTMLInputElement).checked = true;
+        break;
+      }
+      default: {
+        (document!.getElementById('todayHistory') as HTMLInputElement).checked = true;
+        break;
+      }
+    }
   }
 }

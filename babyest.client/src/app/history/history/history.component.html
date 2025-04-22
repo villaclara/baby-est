@@ -119,11 +119,11 @@
             </div>
 
             <div class="col">
-                <input type="radio" class="btn-check" name="options" id="alltimeHistory" autocomplete="off"
+                <input type="radio" class="btn-check" name="options" id="monthHistory" autocomplete="off"
                     (change)="onHistoryTypeSelected('month')" 
 
                     />
-                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="alltimeHistory">Місяць</label>
+                <label class="btn btn-outline-primary custombg-radiobuttons shadow fs-6" for="monthHistory">Місяць</label>
             </div>
 
             <div class="col-2">
@@ -141,7 +141,7 @@
 
     <!-- Filter modal appears on top of all elements -->
     <div *ngIf="isFilterDisplay">
-        <div class="container bg-white filter-display">
+        <div class="container brighterIfNeeded filter-display">
             <div class="row">
                 <span> Вибери дату або проміжок для якого хочеш отримати активності</span>
             </div>
