@@ -146,7 +146,7 @@
                 </div>
 
                 <!-- Forgot Password Section -->
-                <div *ngIf="errorMessage">
+                <div *ngIf="errorMessage != 'Logged in.' && errorMessage != 'Register completed.' && errorMessage">
                     <p class="btn text-primary" style="filter: brightness(90%);" (click)="forgotPasswordClick()">Забули пароль?</p>
                 </div>
             </div>
