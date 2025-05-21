@@ -2,13 +2,16 @@
   <app-loading-spinner></app-loading-spinner>
 </div>
 
+<div *ngIf="!isOnline">
+  <app-offline-default-page pageLinkToReload="/parent"></app-offline-default-page>
+</div>
 
 <div *ngIf="!isLoading" class="container">
 
   <div *ngIf="errorMessageDisplayed != ''">
     <app-error-page [errorMessage]="errorMessageDisplayed" pageLinkToReload="/parent"></app-error-page>
   </div>
-  <div *ngIf="errorMessageDisplayed === ''">
+  <div *ngIf="errorMessageDisplayed === '' && isOnline">
     
     <!-- <app-loading-overlay></app-loading-overlay> -->
     <!-- My ACCOUNT -->

@@ -2,14 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { CurrentKidService } from '../services/CurrentKid/current-kid.service';
 import { Subject } from 'rxjs';
-import { NgStyle } from '@angular/common';
+import { NgStyle, NgClass } from '@angular/common';
 import { Meta } from '@angular/platform-browser';
 import { ThemeCheckerService } from '../services/ThemeChecker/theme-checker.service';
+import { NetworkService } from '../services/NetworkService/network-service.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, RouterOutlet, RouterLinkActive, NgStyle],
+  imports: [RouterLink, RouterOutlet, RouterLinkActive, NgStyle, NgClass],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
@@ -20,11 +21,14 @@ export class HomeComponent implements OnInit {
   themeClassStr: string = 'lightTheme';
   themeClassStr1: string = 'lightTheme';
 
+  wifiIcon: string = '';
+
   constructor(
     private currentKidService: CurrentKidService, 
     private router : Router,
-  private meta: Meta,
-  private themeChecker : ThemeCheckerService) {
+    private meta: Meta,
+    private themeChecker : ThemeCheckerService,
+    private networkService: NetworkService) {
 
     this.mainLink = "/main/" + currentKidService.getCurrentKid();
     currentKidService.kidChanged$.subscribe(data => this.mainLink = ("/main/" + data));
@@ -62,6 +66,13 @@ export class HomeComponent implements OnInit {
 
     this.themeChecker.startDoingAction();
 
+    // this.wifiIcon = this.networkService.checkOnlineStatusManually() ? 'bi-wifi text-white' : 'bi-wifi-off text-secondary';
+    this.networkService.onlineStatus$.subscribe(isOnline => 
+    {
+      console.log("online changed. call home component - " + isOnline);
+      this.wifiIcon = isOnline ? 'bi-wifi text-success' : 'bi-wifi-off text-secondary';
+    }
+    )
 
   }
 

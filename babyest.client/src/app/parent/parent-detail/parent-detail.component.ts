@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { KidsOfParent, Parent } from '../../models/parent';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/AuthService/auth.service';
@@ -10,43 +10,45 @@ import { KidService } from '../../services/KidService/kid.service';
 import { Kid } from '../../models/kid';
 import { LoadingSpinnerComponent } from "../../compHelpers/loading-spinner/loading-spinner.component";
 import { ErrorPageComponent } from "../../errorpage/error-page/error-page.component";
-import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loading-overlay.component";
+import { NetworkService } from '../../services/NetworkService/network-service.service';
+import { OfflineDefaultPageComponent } from "../../offlinepage/offline-default-page/offline-default-page.component";
+import { Subject, takeUntil } from 'rxjs';
 
 
 @Component({
   selector: 'app-parent-detail',
   standalone: true,
-  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, ErrorPageComponent, LoadingOverlayComponent],
+  imports: [CommonModule, FormsModule, LoadingSpinnerComponent, ErrorPageComponent, OfflineDefaultPageComponent],
   templateUrl: './parent-detail.component.html',
   styleUrl: './parent-detail.component.css'
 })
 
 
-export class ParentDetailComponent implements OnInit {
+export class ParentDetailComponent implements OnInit, OnDestroy {
 
 
-  onKidSelected(id : number) {
+  onKidSelected(id: number) {
     this.currentKidService.setCurrentKid(id);
     this.activeKidId = this.currentKidService.getCurrentKid();
     this.router.navigateByUrl('main/' + this.activeKidId);
-}
+  }
 
   errorMessageDisplayed: string = '';
   isPlusKidBtnClicked: boolean = false;
   isEditingKid: boolean = false;
   selectedEditingKidId: number = 0;
-  newParentEmail : string = '';
+  newParentEmail: string = '';
 
   selectedTheme: string = '';
   isAutoThemeChecked: boolean = true;
 
-  version: string = "v1.0.14";
+  version: string = "v1.0.15";
   constructor(private authService: AuthService,
     private router: Router,
     private parentService: ParentService,
     private currentKidService: CurrentKidService,
-    private kidService: KidService) { }
-
+    private kidService: KidService,
+    private networkService: NetworkService) { }
 
 
   currentParent: Parent = { Id: 0, Email: '', Kids: [] };
@@ -55,15 +57,45 @@ export class ParentDetailComponent implements OnInit {
   kidModelName: string = '';
   kidModelBirth: Date = new Date();
 
-  isLoading: boolean = true;  
+  isLoading: boolean = false;
+  isOnline: boolean = false;
+  private destroy$ = new Subject<void>();
+
   ngOnInit(): void {
-    this.initializeParentInfo();
+
+    // SUbscriptions and receive local values
     this.activeKidId = this.currentKidService.getCurrentKid();
     this.selectedTheme = this.currentKidService.getTheme();
     this.isAutoThemeChecked = this.currentKidService.getAutoTheme();
-
     this.currentKidService.themeChanged$.subscribe((newTheme) => this.selectedTheme = newTheme);
+    this.networkService.onlineStatus$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isOnline => {
+        if (!this.isOnline && isOnline) {
+          this.isLoading = true;
+          this.initializeParentInfo();
+        }
+        this.isOnline = isOnline;
+      }
+      )
+
+    // Assign isOnline and do not call the rest if we are offline
+    this.isOnline = this.networkService.currentNetworkStatus;
+    if (!this.isOnline) {
+      return;
+    }
+
+
+    this.initializeParentInfo();
+
   }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+    this.currentKidService.kidChanged$.unsubscribe();
+  }
+
 
   plusKidBtnClick(kidNumber: number): void {
 
@@ -159,25 +191,24 @@ export class ParentDetailComponent implements OnInit {
     this.router.navigate(['/main/', kidId]);
   }
 
-  onBackBtnClick() : void {
+  onBackBtnClick(): void {
     this.isEditingKid = false;
     this.isPlusKidBtnClicked = false;
   }
 
 
-  addNewParent() : void {
-    if(this.newParentEmail === '')
-    {
+  addNewParent(): void {
+    if (this.newParentEmail === '') {
       return;
     }
-    
+
     this.parentService.addNewParentToKid(this.selectedEditingKidId, this.newParentEmail).subscribe(
       {
         next: () => {
           this.initializeParentInfo();
           this.newParentEmail = '';
         },
-        error: (err) => { console.log (err.message) }
+        error: (err) => { console.log(err.message) }
       }
     );
 
@@ -185,12 +216,15 @@ export class ParentDetailComponent implements OnInit {
   }
 
   private initializeParentInfo(): void {
+
+    this.isLoading = true;
+    this.errorMessageDisplayed = '';
     this.parentService.getParentInfo().subscribe(
       {
         next: (data: Parent) => {
           this.currentParent = data;
           this.currentParent.Kids = data.Kids as KidsOfParent[];
-          
+
           this.isLoading = false;
         },
         error: (err: Error) => {
@@ -207,7 +241,7 @@ export class ParentDetailComponent implements OnInit {
           localStorage.removeItem("activekid");
           this.router.navigate(['/signin'])
         },
-          
+
         error: (err: Error) => {
           this.errorMessageDisplayed = err.message;
         }
@@ -221,7 +255,7 @@ export class ParentDetailComponent implements OnInit {
     this.currentKidService.setTheme(this.selectedTheme);
   }
 
-  onAutoThemeChanged() : void {
+  onAutoThemeChanged(): void {
     this.currentKidService.setAutoTheme(this.isAutoThemeChecked);
   }
 
