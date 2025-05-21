@@ -1,4 +1,4 @@
-import { Component, OnInit, Optional } from '@angular/core';
+import { Component, OnDestroy, OnInit, Optional } from '@angular/core';
 import { SingleActivityComponent } from '../../single-activity/single-activity.component';
 import { KidService } from '../../services/KidService/kid.service';
 import { KidActivity } from '../../models/kid-activity';
@@ -16,12 +16,15 @@ import { StatsComponent } from '../stats/stats.component';
 import { MonthlocalePipe } from '../../pipes/monthlocale.pipe';
 import { LoadingOverlayComponent } from "../../compHelpers/loading-overlay/loading-overlay.component";
 import { SleepiTimeCalculator } from '../../utils/sleepi-time-calculator';
+import { Subject, takeUntil } from 'rxjs';
+import { NetworkService } from '../../services/NetworkService/network-service.service';
+import { OfflineDefaultPageComponent } from "../../offlinepage/offline-default-page/offline-default-page.component";
 
 @Component({
   selector: 'app-history',
   standalone: true,
   imports: [SingleActivityComponent, NgFor, NgIf, NgClass,
-    LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe, LoadingOverlayComponent],
+    LoadingSpinnerComponent, FormsModule, ErrorPageComponent, StatsComponent, MonthlocalePipe, LoadingOverlayComponent, OfflineDefaultPageComponent],
   providers: [DateConverter],
   templateUrl: './history.component.html',
   styleUrl: './history.component.css',
@@ -72,18 +75,19 @@ import { SleepiTimeCalculator } from '../../utils/sleepi-time-calculator';
     ]),
   ]
 })
-export class HistoryComponent implements OnInit {
+export class HistoryComponent implements OnInit, OnDestroy {
 
   private sleepCalculator!: SleepiTimeCalculator;
 
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private dateConverter: DateConverter,
-    private router: Router) {
+    private router: Router,
+    private networkService: NetworkService) {
     this.kidId = this.currentKidService.getCurrentKid();
   }
+  
 
-  isLoading: boolean = true;
   isRequestSentLoading: boolean = false;
   isFilterLoading: boolean = false;
 
@@ -130,7 +134,46 @@ export class HistoryComponent implements OnInit {
 
   previousFilterSelected: string = 'today';
 
+  isLoading: boolean = false;
+  isOnline: boolean = false;
+  private destroy$ = new Subject<void>();
+
+
   ngOnInit(): void {
+    
+    this.currentTheme = this.currentKidService.getTheme();
+    this.currentKidService.themeChanged$.subscribe((newTheme) => this.currentTheme = newTheme);
+
+    this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
+
+    this.networkService.onlineStatus$
+          .pipe(takeUntil(this.destroy$))
+          .subscribe(isOnline => {
+            if (!this.isOnline && isOnline) {
+              this.isLoading = true;
+              this.initializeKidActivities();
+            }
+            this.isOnline = isOnline;
+          });
+
+          
+    // Assign isOnline and do not call the rest if we are offline
+    this.isOnline = this.networkService.currentNetworkStatus;
+    if (!this.isOnline) {
+      return;
+    }
+
+    this.initializeKidActivities();
+
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
+
+  initializeKidActivities(): void {
     const currentKidId = this.currentKidService.getCurrentKid();
 
     this.kidService.getKidActivitiesWithParams(currentKidId, { forDays: 31 }).subscribe({
@@ -152,12 +195,6 @@ export class HistoryComponent implements OnInit {
         this.errorMessageForErrorComponent = err;
       }
     });
-
-    this.currentTheme = this.currentKidService.getTheme();
-    this.currentKidService.themeChanged$.subscribe((newTheme) => this.currentTheme = newTheme);
-
-    this.filterToDateString = this.dateConverter.toOnlyDateString(new Date());
-    console.log(this.filterToDateString);
   }
 
   editActivity(actId: number): void {

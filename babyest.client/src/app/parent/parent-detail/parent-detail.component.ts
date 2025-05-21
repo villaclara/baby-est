@@ -76,8 +76,7 @@ export class ParentDetailComponent implements OnInit, OnDestroy {
           this.initializeParentInfo();
         }
         this.isOnline = isOnline;
-      }
-      )
+      });
 
     // Assign isOnline and do not call the rest if we are offline
     this.isOnline = this.networkService.currentNetworkStatus;

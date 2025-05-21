@@ -2,12 +2,15 @@
     <app-loading-spinner></app-loading-spinner>
 </div>
 
+<div *ngIf="!isOnline">
+  <app-offline-default-page pageLinkToReload="/parent"></app-offline-default-page>
+</div>
 
 <div *ngIf="!isLoading && errorMessageForErrorComponent != ''">
     <app-error-page [errorMessage]='errorMessageForErrorComponent' pageLinkToReload="/history"></app-error-page>
 </div>
 
-<div *ngIf="!isLoading && errorMessageForErrorComponent === ''">
+<div *ngIf="!isLoading && errorMessageForErrorComponent === '' && isOnline">
     <div *ngIf="isRequestSentLoading && !isLoading">
         <app-loading-overlay [errMsg]="errorMessageForAction"></app-loading-overlay>
     </div>
