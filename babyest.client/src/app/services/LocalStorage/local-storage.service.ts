@@ -16,7 +16,7 @@ export class LocalStorageService {
   private _pendingActs: KidActivity[] = [];
   private _canDeletePendingActs: boolean = false;
 
-  private _failedSyncActs: KidActivity[] = [];
+  failedSyncActs: KidActivity[] = [];
 
   pendingActsChanged$: Subject<number> = new Subject<number>();
 
@@ -140,17 +140,48 @@ export class LocalStorageService {
 
     this.currentSyncState = SyncStatus.Synchronizing;
 
+    let completedCount = 0;
+    const totalRequests = this._pendingActs.length;
+
+    const checkAllDone = () => {
+      completedCount++;
+      if (completedCount === totalRequests) {
+        console.log('All requests completed');
+
+        // after synchronizing we set to true
+        console.log("end of foreach loop in synch changes - value - " + this._canDeletePendingActs);
+        this._canDeletePendingActs = true;
+
+        // change current Sync State to Success/Fail after a bit delay if the requests were done very quickly 
+        setTimeout(() => {
+          this.currentSyncState = this.failedSyncActs.length != 0 ? SyncStatus.SyncError : SyncStatus.SyncSuccess;
+
+          // here we emit bool value if reqeust success to FailedSyncActivities PAGE to be displayed also with delay
+          setTimeout(() => {
+            this.syncCompletedWithResult$.next(this.currentSyncState == SyncStatus.SyncSuccess ? true : false);
+
+            // clearing acts anyway
+            this.clearPendingActs();
+          }, 500);
+        }, 500);
+      }
+    };
+
     console.log("start of foreach loop in synch changes - value - " + this._canDeletePendingActs);
     // this.canDeletePendingActs = true;
     this._pendingActs.forEach(element => {
-      if (element.IsActiveNow) {
-        // it is not working because the isACtiveNow will be always false
+
+      // If Id == -1 it means that the activity was started OFFLINE so we need to Add to API
+      if (element.Id != -1) {
         this.actService.updateActivity(this.currentKidService.getCurrentKid(), element)
           .subscribe({
             next: () => {
               console.log(`act updated - ${element.Id}`);
             },
-            error: () => { }
+            error: () => {
+              this.failedSyncActs.push(element);
+            },
+            complete: checkAllDone
           });
       }
       else {
@@ -159,30 +190,14 @@ export class LocalStorageService {
             next: () => {
               console.log(`act added - ${element.Id}, ${element.ActivityType}`);
             },
-            error: () => { }
+            error: () => {
+              this.failedSyncActs.push(element);
+            },
+            complete: checkAllDone
           });
       }
       console.log("called action for element id in array - ");
     });
-
-
-    // after synchronizing we set to true
-    this._canDeletePendingActs = true;
-    console.log("end of foreach loop in synch changes - value - " + this._canDeletePendingActs);
-
-    setTimeout(() => {
-      this.currentSyncState = SyncStatus.SynchSuccess;
-      setTimeout(() => {
-        // clearing acts
-        this.clearPendingActs();
-        this.syncCompletedWithResult$.next(false);
-      }, 2000);
-    }, 3000);
-
   }
 
 }
-
-
-// TODO
-// 1. in pending acts when synchronize some should be UPDATE some POST (check if id != -1 then we update, else we post)

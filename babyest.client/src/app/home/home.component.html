@@ -40,15 +40,16 @@
         <div class="col-3 me-0">
             <div class="text-end">
                 <div>
-                    <i class="fs-3" [ngClass]="[syncIconCurrent, syncStatus === 10 ? 'syncIconRotation' : '']"></i>
-                    <span class="fs-4" style="display: inline-block;" *ngIf="pendingActsCount != 0">{{ pendingActsCount }}</span>
+                    <i class="fs-3 text-info" [ngClass]="[syncIconCurrent, syncStatus === 10 ? 'syncIconRotation' : '']" ></i>
+                    <span class="fs-4 text-info fw-bolder" style="display: inline-block;" *ngIf="pendingActsCount != 0">{{ pendingActsCount }}</span>
                 </div>
             </div>
         </div>
         <div class="col-1 ps-0">
             <div class="">
                 <!-- <i class="bi bi-wifi text-white my-auto fs-3"></i> -->
-                <i class="bi fs-3" [ngClass]="wifiIcon"></i>
+                <i class="bi fs-3" [ngClass]="wifiIcon"
+                style="-webkit-text-stroke: 0.05rem;"></i>
             </div>
         </div>
     </div>

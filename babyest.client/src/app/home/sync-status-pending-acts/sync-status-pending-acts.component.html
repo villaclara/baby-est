@@ -1,24 +1,42 @@
+<style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+    }
 
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #ddd;
+    }
+
+    th {
+      background-color: #f8f9fa;
+      font-weight: 600;
+    }
+</style>
 <div *ngIf="isDisplayed" style="position: fixed; left: 0; top: 0; height: 100vh; width: 100vw; z-index: 1050; background-color: #ffffff;">
 
     <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
         <div>
             <div>
-                Проблеми при синхронізації наступних активностей:
+                Наступні активності НЕ були синхронізовані:
             </div>
             
-            <div class="">
-                <div *ngFor="let act of pendingActs; let i = index">
-                    <div class="table">
-                        <tr>
-                            <td>{{ act.ActivityType }}</td>
-                            <td>{{ act.StartDate }} </td>
-                            <td>{{ act.EndDate }}</td>
-                            <td>status</td>
+            <table>
+                <tr>
+                    <th>Тип</th>
+                    <th>Початок</th>
+                    <th>Кінець</th>
+                </tr>
+                        <tr *ngFor="let act of pendingActs; let i = index">
+                            <td>{{ act.ActivityType}}</td>
+                            <td>{{ act.StartDate | date: 'dd/MM HH:mm'}} </td>
+                            <td>{{ act.EndDate | date: 'dd/MM HH:mm'}}</td>
                         </tr>
-                    </div>
-                </div> 
-            </div>
+            </table>
             
             <div>
                 Будь ласка, додай їх вручну.

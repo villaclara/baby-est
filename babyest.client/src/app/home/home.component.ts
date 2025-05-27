@@ -30,8 +30,6 @@ export class HomeComponent implements OnInit {
   pendingActsCount: number = 0;
   syncStatus: SyncStatus = SyncStatus.Nothing;
 
-  displayFailSyncActs: boolean = false;
-
   constructor(
     private currentKidService: CurrentKidService, 
     private router : Router,
@@ -78,12 +76,10 @@ export class HomeComponent implements OnInit {
     this.themeChecker.startDoingAction();
 
     // this.wifiIcon = this.networkService.checkOnlineStatusManually() ? 'bi-wifi text-white' : 'bi-wifi-off text-secondary';
-    this.networkService.onlineStatus$.subscribe(isOnline => 
-    {
+    this.networkService.onlineStatus$.subscribe(isOnline => {
       console.log("online changed. call home component - " + isOnline);
-      this.wifiIcon = isOnline ? 'bi-wifi text-success' : 'bi-wifi-off text-secondary';
-    }
-    )
+      this.wifiIcon = isOnline ? 'bi-wifi text-success' : 'bi-wifi-off text-danger';
+    });
 
     // subscribe to changes in local storage service of pending acts count
     // to display the number of pending acts to sync in the header
@@ -106,8 +102,8 @@ export class HomeComponent implements OnInit {
             this.syncIconCurrent = 'bi bi-arrow-repeat';
             break;
           }
-          case SyncStatus.SynchSuccess: {
-            this.syncIconCurrent = 'bi bi-check-all';
+          case SyncStatus.SyncSuccess: {
+            this.syncIconCurrent = 'bi bi-check2';
             break;
           }
           case SyncStatus.SyncError: {
@@ -121,7 +117,6 @@ export class HomeComponent implements OnInit {
     console.log("syncstatus home after switch - " + this.syncStatus);
 
 
-    this.localStorageService.syncCompletedWithResult$.subscribe(value => { if(!value) { this.displayFailSyncActs = true; } });
   }
 
 
