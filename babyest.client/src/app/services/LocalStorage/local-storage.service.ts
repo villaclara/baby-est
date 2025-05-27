@@ -3,6 +3,9 @@ import { Kid } from '../../models/kid';
 import { KidActivity } from '../../models/kid-activity';
 import { KidService } from '../KidService/kid.service';
 import { CurrentKidService } from '../CurrentKid/current-kid.service';
+import { Subject } from 'rxjs';
+import { SyncStatus } from '../../models/sync-status';
+import { SyncStatusPendingActsComponent } from '../../home/sync-status-pending-acts/sync-status-pending-acts.component';
 
 @Injectable({
   providedIn: 'root'
@@ -10,12 +13,31 @@ import { CurrentKidService } from '../CurrentKid/current-kid.service';
 export class LocalStorageService {
 
 
-  private pendingActs: KidActivity[] = [];
-  private canDeletePendingActs: boolean = false;
+  private _pendingActs: KidActivity[] = [];
+  private _canDeletePendingActs: boolean = false;
 
-  constructor(private actService: KidService, 
-    private currentKidService: CurrentKidService
-  ) { }
+  private _failedSyncActs: KidActivity[] = [];
+
+  pendingActsChanged$: Subject<number> = new Subject<number>();
+
+  syncStatusChanged$: Subject<SyncStatus> = new Subject<SyncStatus>();
+
+  syncCompletedWithResult$: Subject<boolean> = new Subject<boolean>();
+
+  private _currentState: SyncStatus = SyncStatus.Nothing;
+  set currentSyncState(value: SyncStatus) {
+    this._currentState = value;
+    console.log("set new value to current state in localstorage - " + value);
+    this.syncStatusChanged$.next(this._currentState);
+  }
+
+  get currentSyncState(): SyncStatus {
+    console.log("get curernt state in local - " + this._currentState);
+    return this._currentState;
+  }
+
+  constructor(private actService: KidService,
+    private currentKidService: CurrentKidService) { }
 
   addKidHeaderInfoToLocalStorage(kid: Kid): void {
     localStorage.setItem("kidinfo", JSON.stringify(kid));
@@ -51,7 +73,7 @@ export class LocalStorageService {
 
   addCurrentActivityToLocalStorage(act: KidActivity) {
     localStorage.setItem("currentact", JSON.stringify(act));
-    
+
   }
 
   // Probably no need as we get Current ACTIVE activity from Last acts
@@ -64,90 +86,99 @@ export class LocalStorageService {
 
     // IN case of stopping the activity (updating it)
     // remove ACTIVE actitivy from list of pending with isActive = true 
-      const index = this.pendingActs.findIndex(act => act.IsActiveNow === true);
-      if(index != -1)
-      {
-        this.pendingActs.splice(index, 1);
-      }
+    const index = this._pendingActs.findIndex(act => act.IsActiveNow === true);
+    if (index != -1) {
+      this._pendingActs.splice(index, 1);
+    }
 
     // add activity to list
-    this.pendingActs.push(act);
+    this._pendingActs.push(act);
 
-    localStorage.setItem("pendingacts", JSON.stringify(this.pendingActs));
+    localStorage.setItem("pendingacts", JSON.stringify(this._pendingActs));
+
+    this.pendingActsChanged$.next(this._pendingActs.length);
+
+    this.currentSyncState = SyncStatus.Pending;
   }
 
   getPendingActsFromLocalStorage(): KidActivity[] {
     const localacts = localStorage.getItem("pendingacts");
-    if(localacts != null) {
-      this.pendingActs = JSON.parse(localacts);
+    if (localacts != null) {
+      this._pendingActs = JSON.parse(localacts);
     }
     else {
-      this.pendingActs = [];
+      this._pendingActs = [];
     }
-    return this.pendingActs;
+    return this._pendingActs;
   }
 
 
   private clearPendingActs(): void {
-    console.log("call clear pending acts - value - " + this.canDeletePendingActs);
+    console.log("call clear pending acts - value - " + this._canDeletePendingActs);
 
     // If nothing to delete or any other reason we return
-    if(!this.canDeletePendingActs)
-    {
+    if (!this._canDeletePendingActs) {
       return;
     }
     localStorage.removeItem("pendingacts");
-    this.pendingActs = [];
-    this.canDeletePendingActs = false;
+    this._pendingActs = [];
+    this._canDeletePendingActs = false;
+    this.pendingActsChanged$.next(this._pendingActs.length);
+
+    this.currentSyncState = SyncStatus.Nothing;
+
   }
 
   synchronizePendingActs(): void {
 
     // nothing to sync, no pending acts
-    if(this.pendingActs.length === 0)
-    {
+    if (this._pendingActs.length === 0) {
       console.log("nothing to sync. return");
-      this.canDeletePendingActs = false;
+      this._canDeletePendingActs = false;
       return;
     }
 
-    console.log("start of foreach loop in synch changes - value - " + this.canDeletePendingActs);
+    this.currentSyncState = SyncStatus.Synchronizing;
+
+    console.log("start of foreach loop in synch changes - value - " + this._canDeletePendingActs);
     // this.canDeletePendingActs = true;
-    this.pendingActs.forEach(element => {
-      if(element.IsActiveNow)
-      {
+    this._pendingActs.forEach(element => {
+      if (element.IsActiveNow) {
         // it is not working because the isACtiveNow will be always false
         this.actService.updateActivity(this.currentKidService.getCurrentKid(), element)
-        .subscribe({
-          next: () => {
-            console.log(`act updated - ${element.Id}`);
-          },
-          error: () => {}
-        });
+          .subscribe({
+            next: () => {
+              console.log(`act updated - ${element.Id}`);
+            },
+            error: () => { }
+          });
       }
-      else
-      {
+      else {
         this.actService.addActivityToKid(this.currentKidService.getCurrentKid(), element)
-        .subscribe({
-          next: () => {
-            console.log(`act added - ${element.Id}, ${element.ActivityType}`);
-          },
-          error: () => {}
-        });
+          .subscribe({
+            next: () => {
+              console.log(`act added - ${element.Id}, ${element.ActivityType}`);
+            },
+            error: () => { }
+          });
       }
       console.log("called action for element id in array - ");
     });
 
 
     // after synchronizing we set to true
-    this.canDeletePendingActs = true;
-    console.log("end of foreach loop in synch changes - value - " + this.canDeletePendingActs);
-    
-    // clearing acts
-    this.clearPendingActs();
+    this._canDeletePendingActs = true;
+    console.log("end of foreach loop in synch changes - value - " + this._canDeletePendingActs);
+
     setTimeout(() => {
-      
-    }, 100);
+      this.currentSyncState = SyncStatus.SynchSuccess;
+      setTimeout(() => {
+        // clearing acts
+        this.clearPendingActs();
+        this.syncCompletedWithResult$.next(false);
+      }, 2000);
+    }, 3000);
+
   }
 
 }

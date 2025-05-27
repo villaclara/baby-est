@@ -124,7 +124,7 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
           // get if any pending acts are in storage
           // it can be if doing changes in offline -> closing app -> opening app
           this.localStorageService.getPendingActsFromLocalStorage();
-          console.log("sync called in init)");
+          console.log("dashboard sync called in init)");
 
           // synchronize pending acts if any
           // internally the clearPendingActs is called

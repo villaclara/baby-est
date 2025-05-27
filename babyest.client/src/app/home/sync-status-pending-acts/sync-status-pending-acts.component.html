@@ -1,0 +1,32 @@
+
+<div *ngIf="isDisplayed" style="position: fixed; left: 0; top: 0; height: 100vh; width: 100vw; z-index: 1050; background-color: #ffffff;">
+
+    <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
+        <div>
+            <div>
+                Проблеми при синхронізації наступних активностей:
+            </div>
+            
+            <div class="">
+                <div *ngFor="let act of pendingActs; let i = index">
+                    <div class="table">
+                        <tr>
+                            <td>{{ act.ActivityType }}</td>
+                            <td>{{ act.StartDate }} </td>
+                            <td>{{ act.EndDate }}</td>
+                            <td>status</td>
+                        </tr>
+                    </div>
+                </div> 
+            </div>
+            
+            <div>
+                Будь ласка, додай їх вручну.
+            </div>
+            
+            <div class="">
+                <button type="button" class="btn btn-primary" (click)="close()">ОК</button>
+            </div>
+        </div>
+    </div>
+</div>

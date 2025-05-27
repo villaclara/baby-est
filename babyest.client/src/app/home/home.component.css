@@ -19,3 +19,13 @@ a {
     background-color: #404756;
     outline: none;
 }
+
+
+.syncIconRotation {
+    display: inline-block; /* Important */
+    animation: rotationAnim 2s ease-in-out infinite;
+}
+
+@keyframes rotationAnim {
+  100% { transform: rotate(360deg); }
+}
