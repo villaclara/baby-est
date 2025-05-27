@@ -23,7 +23,7 @@
                 <app-kid-header-info [kid]="kid" [kidAge]="kidAge" [timeSinceLastEat]="timeSinceLastEat"
                     [timeSinceLastSleep]="timeSinceLastSleep" [showPlaceholder]="!isHeaderInfoDisplay"></app-kid-header-info>
 
-                <div *ngIf="!mainSectionTimerLastActs">
+                <div *ngIf="!isDisplayedMainSectionTimerLastActs">
                     <div class="container d-flex align-items-center justify-content-center" style="min-height: 50vh;">
                         <div class="spinner-grow" role="status">
                             <span class="visually-hidden">Loading...</span>
@@ -31,7 +31,7 @@
                     </div>
                 </div>
 
-                <div *ngIf="mainSectionTimerLastActs">
+                <div *ngIf="isDisplayedMainSectionTimerLastActs">
 
                     <app-main-timer (newKidActivity)="sendNewKidActivity($event)"
                     [currentActivity]="currentActivity"></app-main-timer>
