@@ -22,7 +22,7 @@
     <div class="d-flex align-items-center justify-content-center" style="min-height: 100vh;">
         <div>
             <div>
-                Наступні активності НЕ були синхронізовані:
+               <p> Наступні активності НЕ були синхронізовані: </p>
             </div>
             
             <table>
@@ -31,19 +31,21 @@
                     <th>Початок</th>
                     <th>Кінець</th>
                 </tr>
-                        <tr *ngFor="let act of pendingActs; let i = index">
+                        <tr *ngFor="let act of failedActs; let i = index">
                             <td>{{ act.ActivityType}}</td>
                             <td>{{ act.StartDate | date: 'dd/MM HH:mm'}} </td>
                             <td>{{ act.EndDate | date: 'dd/MM HH:mm'}}</td>
                         </tr>
             </table>
-            
+             
             <div>
+                <p>
                 Будь ласка, додай їх вручну.
+                </p>
             </div>
             
             <div class="">
-                <button type="button" class="btn btn-primary" (click)="close()">ОК</button>
+                <button type="button" class="btn btn-primary" (click)="close()">&nbsp; ОК &nbsp;</button>
             </div>
         </div>
     </div>

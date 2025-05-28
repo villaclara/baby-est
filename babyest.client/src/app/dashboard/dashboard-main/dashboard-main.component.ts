@@ -12,10 +12,10 @@ import { LoadingSpinnerComponent } from "../../compHelpers/loading-spinner/loadi
 import { ErrorPageComponent } from "../../errorpage/error-page/error-page.component";
 import { LoadingOverlayComponent } from '../../compHelpers/loading-overlay/loading-overlay.component';
 import { DashboardActionsEventEmitterService } from '../../services/DashboardActionsEventEmitter/dashboard-actions-event-emitter.service';
-import { OfflineDefaultPageComponent } from "../../offlinepage/offline-default-page/offline-default-page.component";
 import { NetworkService } from '../../services/NetworkService/network-service.service';
 import { LocalStorageService } from '../../services/LocalStorage/local-storage.service';
 import { Subject, takeUntil } from 'rxjs';
+import { SyncStatus } from '../../models/sync-status';
 
 @Component({
   selector: 'app-dashboard-main',
@@ -26,8 +26,7 @@ import { Subject, takeUntil } from 'rxjs';
     LastActivitiesComponent,
     NgClass, NgIf,
     LoadingSpinnerComponent,
-    ErrorPageComponent,
-    OfflineDefaultPageComponent],
+    ErrorPageComponent],
   templateUrl: './dashboard-main.component.html',
   styleUrl: './dashboard-main.component.css'
 })
@@ -59,96 +58,108 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
   errorMessageForAction: string = '';
 
   isOnline: boolean = false;
+  // used in OnDestroy to unsubscribe
   private destroy$ = new Subject<void>();
+
+  // for binding to Visibility changed handler to be in separate method
+  private visibilityChangeHandler: () => void;
 
   constructor(private kidService: KidService,
     private currentKidService: CurrentKidService,
     private router: Router,
     private actionEventsEmitter: DashboardActionsEventEmitterService,
     private networkService: NetworkService,
-    private localStorageService: LocalStorageService
-  ) {
+    private localStorageService: LocalStorageService) {
     this.kidId = this.currentKidService.getCurrentKid();
+    // binding to actual handler
+    this.visibilityChangeHandler = this.onVisibilityChanged.bind(this);
   }
 
   // On destroy to remove listeners from dashboard on destroy
   ngOnDestroy(): void {
-    console.log("dashboard ON DESTROY");
     this.destroy$.next();
     this.destroy$.complete();
+    window.removeEventListener("visibilitychange", this.visibilityChangeHandler);
   }
 
+  onVisibilityChanged(): void {
+    if (document.visibilityState === "visible") {
+
+      // this check prevents to LoadData() every time the App gets focus. 
+      // Load data only if we are inside /main/kidId link.
+      if (this.router.url === "/main/" + this.kidId) {
+
+        // set the false to trigger re-display the sections
+        this.isHeaderInfoDisplay = false;
+        this.isDisplayedMainSectionTimerLastActs = false;
+
+        // set the activities which is passed to components as default values
+        this.unloadData();
+
+        if (this.isOnline) {
+          // load actual data for activities
+          this.loadData();
+        }
+        else {
+          this.loadLocalData();
+        }
+      }
+    }
+  }
 
   ngOnInit(): void {
 
     // Adds the listener for event window focus. To trigger refresh timer each time app gets focus.
-    window.addEventListener("visibilitychange", () => {
-      if (document.visibilityState === "visible") {
-
-        // this check prevents to LoadData() every time the App gets focus. 
-        // Load data only if we are inside /main/kidId link.
-        if (this.router.url === "/main/" + this.kidId) {
-
-          // set the false to trigger re-display the sections
-          this.isHeaderInfoDisplay = false;
-          this.isDisplayedMainSectionTimerLastActs = false;
-
-          // set the activities which is passed to components as default values
-          this.unloadData();
-
-          if (this.isOnline) {
-            // load actual data for activities
-            this.loadData();
-          }
-          else {
-            this.loadLocalData();
-          }
-        }
-      }
-    });
+    window.addEventListener("visibilitychange", this.visibilityChangeHandler);
 
     this.currentTheme = this.currentKidService.getTheme();
     this.currentKidService.themeChanged$.subscribe((newTheme) => this.currentTheme = newTheme);
+
+    // REFRESH page when SYNC has been completed
+    // syncCompleted is tracked in HomeComponent
+    // On init Homecomponent we try to sync the pending activities
+    // If we are offline then still we emit the syncCompletedWithResults subject
+    this.localStorageService.syncCompletedWithResult$
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(value => {
+        // nothing has changed after sync
+        if (!this.isOnline) {
+          this.loadLocalData();
+          return;
+        }
+
+        // refresh page after sync is completed
+        this.isLoading = true;
+        this.unloadData();
+        this.loadData();
+        this.isOnline = this.networkService.currentNetworkStatus;
+      });
 
     // Load data if the Offline/Online
     this.networkService.onlineStatus$
       .pipe(takeUntil(this.destroy$))
       .subscribe(isOnline => {
-        if (!this.isOnline && isOnline) {
 
-          // if we back to online then refresh page with is loading
-          this.isLoading = true;
-          console.log("loaddata called");
-          this.loadData();
-
-          // get if any pending acts are in storage
-          // it can be if doing changes in offline -> closing app -> opening app
-          this.localStorageService.getPendingActsFromLocalStorage();
-          console.log("dashboard sync called in init)");
-
-          // synchronize pending acts if any
-          // internally the clearPendingActs is called
-          this.localStorageService.synchronizePendingActs();
-
+        // if Back to online while being previous offline
+        // need to refresh page when staying on Dashboard and going online -> offline -> online
+        if (isOnline) {
+          // if nothing has changed when return to online 
+          // if activities has changed we then reload data in this.localstorage.SyncCompletedWithResult subscription (above)
+          if (this.localStorageService.currentSyncState === SyncStatus.Nothing) {
+            this.isLoading = true;
+            this.unloadData();
+            this.loadData();
+          }
         }
         this.isOnline = isOnline;
       });
 
-    // Assign isOnline and do not call the rest if we are offline
+    // if OFFLINE load only local data
     this.isOnline = this.networkService.currentNetworkStatus;
-    console.log("isonline ? - " + this.isOnline);
     if (!this.isOnline) {
-
       this.loadLocalData();
-      console.log("loaded local data because OFFLINE");
-      // set is loading to false and return to skip this.loadData() to execute later.
       return;
     }
-
-    //this.loadData();
-
-
-
   }
 
   unloadData(): void {
@@ -192,8 +203,6 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
             if (this.lastEatActivity.IsActiveNow == true) {
               this.currentActivity = this.lastEatActivity;
               this.timeSinceLastEat = -1;
-
-
             }
             else {
               this.timeSinceLastEat = Math.floor((new Date().getTime() - new Date(this.lastEatActivity.EndDate!).getTime()) / 1000);
@@ -203,17 +212,8 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
             this.localStorageService.addLastEatingToLocalStorage(data);
           },
           error: (err: Error) => {
-
             this.timeSinceLastEat = -1;
             this.isHeaderInfoDisplay = true;
-            // this.errorMessageDisplayed = err.message;
-            // if (err.message === '404') {
-            //   this.timeSinceLastEat = -1;
-
-            // }
-            // else {
-            //   this.errorMessageDisplayed = err.message;
-            // }
           }
         });
 
@@ -236,20 +236,12 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
             }
 
             this.isHeaderInfoDisplay = true;
-
             // add actual values to local storage for offline access
             this.localStorageService.addLastSleepingToLocalStorage(data);
           },
           error: (err: Error) => {
             this.timeSinceLastSleep = -1;
-            // this.errorMessageDisplayed = err.message;
-            // if (err.message === '404') {
-            //   this.timeSinceLastSleep = -1;
-
-            // }
-            // else {
-            //   this.errorMessageDisplayed = err.message;
-            // }
+            this.isHeaderInfoDisplay = true;
           }
         });
 
@@ -362,6 +354,14 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
     // and only then translate actType to UA
     activity.Id = activity.Id <= 0 ? -1 : activity.Id;
 
+    // update LOCAL lastEat/lastSleep to display updated times in kid-header
+    if (activity.ActivityType.toLocaleLowerCase() === 'sleeping') {
+      this.localStorageService.addLastSleepingToLocalStorage(activity);
+    }
+    else {
+      this.localStorageService.addLastEatingToLocalStorage(activity);
+    }
+
     // Add to local storage only
     if (!this.isOnline) {
 
@@ -380,14 +380,6 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
           this.localStorageService.addCurrentActivityToLocalStorage(activity);
           // add to pending
           this.localStorageService.addActToPendingActs(activity);
-
-          // add to lastEat/lastSleep to display updated times in kid-header
-          if (activity.ActivityType.toLocaleLowerCase() === 'sleeping') {
-            this.localStorageService.addLastSleepingToLocalStorage(activity);
-          }
-          else {
-            this.localStorageService.addLastEatingToLocalStorage(activity);
-          }
 
           // set success number to child Timer
           this.actionEventsEmitter.triggerAction(200);
@@ -442,14 +434,6 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
           // update local storage last actitivies
           const lastacts = this.activities.slice();
           this.localStorageService.addLastActivitiesToLocalStorage(lastacts);
-
-          // update last eat/sleep local activity
-          if (activity.ActivityType.toLocaleLowerCase() === 'sleeping') {
-            this.localStorageService.addLastSleepingToLocalStorage(activity);
-          }
-          else {
-            this.localStorageService.addLastEatingToLocalStorage(activity);
-          }
 
           // send success number
           this.actionEventsEmitter.triggerAction(100);
@@ -534,6 +518,7 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
                   this.activities.unshift(activity);
                   this.activities.pop();
                 }
+
                 // send success number
                 this.actionEventsEmitter.triggerAction(100);
               }, 300);
@@ -554,6 +539,5 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
       }
     }
   }
-
 
 }

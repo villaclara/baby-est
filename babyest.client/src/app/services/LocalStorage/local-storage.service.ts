@@ -3,9 +3,8 @@ import { Kid } from '../../models/kid';
 import { KidActivity } from '../../models/kid-activity';
 import { KidService } from '../KidService/kid.service';
 import { CurrentKidService } from '../CurrentKid/current-kid.service';
-import { Subject } from 'rxjs';
+import { BehaviorSubject, finalize, Subject } from 'rxjs';
 import { SyncStatus } from '../../models/sync-status';
-import { SyncStatusPendingActsComponent } from '../../home/sync-status-pending-acts/sync-status-pending-acts.component';
 
 @Injectable({
   providedIn: 'root'
@@ -22,17 +21,16 @@ export class LocalStorageService {
 
   syncStatusChanged$: Subject<SyncStatus> = new Subject<SyncStatus>();
 
-  syncCompletedWithResult$: Subject<boolean> = new Subject<boolean>();
+  // behavior subject allows the last value to be received by subscribers if the subscribe after .next is called
+  syncCompletedWithResult$: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
 
   private _currentState: SyncStatus = SyncStatus.Nothing;
   set currentSyncState(value: SyncStatus) {
     this._currentState = value;
-    console.log("set new value to current state in localstorage - " + value);
     this.syncStatusChanged$.next(this._currentState);
   }
 
   get currentSyncState(): SyncStatus {
-    console.log("get curernt state in local - " + this._currentState);
     return this._currentState;
   }
 
@@ -44,7 +42,12 @@ export class LocalStorageService {
   }
 
   getKidHeaderInfoFromLocalStorage(): Kid {
-    return JSON.parse(localStorage.getItem("kidinfo")!);
+    const value = localStorage.getItem("kidinfo");
+    if(value != null)
+    {
+      return JSON.parse(value);
+    }
+    return { Name: "KidTest", BirthDate: "2024-09-09", Parents: [], Activities: [] }
   }
 
   addLastEatingToLocalStorage(act: KidActivity): void {
@@ -52,7 +55,12 @@ export class LocalStorageService {
   }
 
   getLastEatingFromLocalStorage(): KidActivity {
-    return JSON.parse(localStorage.getItem("lasteating")!);
+    const value = localStorage.getItem("lasteating");
+    if(value != null)
+    {
+      return JSON.parse(value);
+    }
+    return { ActivityType: "eating", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   }
 
   addLastSleepingToLocalStorage(act: KidActivity): void {
@@ -60,7 +68,12 @@ export class LocalStorageService {
   }
 
   getLastSleepingFromLocalStorage(): KidActivity {
-    return JSON.parse(localStorage.getItem("lastsleeping")!);
+    const value = localStorage.getItem("lastsleeping");
+    if(value != null)
+    {
+      return JSON.parse(value);
+    }
+    return { ActivityType: "sleeping", Id: 0, KidName: "", StartDate: undefined, EndDate: undefined, IsActiveNow: false };
   }
 
   addLastActivitiesToLocalStorage(acts: KidActivity[]): void {
@@ -68,22 +81,19 @@ export class LocalStorageService {
   }
 
   getLastActivitiesFromLocalStorage(): KidActivity[] {
-    return JSON.parse(localStorage.getItem("lastacts")!);
+    const value = localStorage.getItem("lastacts");
+    if(value != null)
+    {
+      return JSON.parse(value);
+    }
+    return [];
   }
 
   addCurrentActivityToLocalStorage(act: KidActivity) {
     localStorage.setItem("currentact", JSON.stringify(act));
-
   }
 
-  // Probably no need as we get Current ACTIVE activity from Last acts
-  // getCurrentActivityFromLocalStorage(): KidActivity {
-
-  // }
-
-
   addActToPendingActs(act: KidActivity): void {
-
     // IN case of stopping the activity (updating it)
     // remove ACTIVE actitivy from list of pending with isActive = true 
     const index = this._pendingActs.findIndex(act => act.IsActiveNow === true);
@@ -93,11 +103,8 @@ export class LocalStorageService {
 
     // add activity to list
     this._pendingActs.push(act);
-
     localStorage.setItem("pendingacts", JSON.stringify(this._pendingActs));
-
     this.pendingActsChanged$.next(this._pendingActs.length);
-
     this.currentSyncState = SyncStatus.Pending;
   }
 
@@ -114,8 +121,6 @@ export class LocalStorageService {
 
 
   private clearPendingActs(): void {
-    console.log("call clear pending acts - value - " + this._canDeletePendingActs);
-
     // If nothing to delete or any other reason we return
     if (!this._canDeletePendingActs) {
       return;
@@ -124,7 +129,6 @@ export class LocalStorageService {
     this._pendingActs = [];
     this._canDeletePendingActs = false;
     this.pendingActsChanged$.next(this._pendingActs.length);
-
     this.currentSyncState = SyncStatus.Nothing;
 
   }
@@ -133,8 +137,9 @@ export class LocalStorageService {
 
     // nothing to sync, no pending acts
     if (this._pendingActs.length === 0) {
-      console.log("nothing to sync. return");
       this._canDeletePendingActs = false;
+      this.syncCompletedWithResult$.next(true);
+      this.currentSyncState = SyncStatus.Nothing;
       return;
     }
 
@@ -146,10 +151,8 @@ export class LocalStorageService {
     const checkAllDone = () => {
       completedCount++;
       if (completedCount === totalRequests) {
-        console.log('All requests completed');
 
         // after synchronizing we set to true
-        console.log("end of foreach loop in synch changes - value - " + this._canDeletePendingActs);
         this._canDeletePendingActs = true;
 
         // change current Sync State to Success/Fail after a bit delay if the requests were done very quickly 
@@ -162,41 +165,33 @@ export class LocalStorageService {
 
             // clearing acts anyway
             this.clearPendingActs();
-          }, 500);
-        }, 500);
+          }, 1000);
+        }, 1000);
       }
     };
 
-    console.log("start of foreach loop in synch changes - value - " + this._canDeletePendingActs);
-    // this.canDeletePendingActs = true;
+    // sending requests for all pending activities in loop
     this._pendingActs.forEach(element => {
 
       // If Id == -1 it means that the activity was started OFFLINE so we need to Add to API
       if (element.Id != -1) {
         this.actService.updateActivity(this.currentKidService.getCurrentKid(), element)
+          // finalize is called when success/error has been thrown
+          .pipe(finalize(() => checkAllDone()))
           .subscribe({
-            next: () => {
-              console.log(`act updated - ${element.Id}`);
-            },
-            error: () => {
-              this.failedSyncActs.push(element);
-            },
-            complete: checkAllDone
+            next: () => { },
+            error: () => this.failedSyncActs.push(element)
           });
       }
       else {
         this.actService.addActivityToKid(this.currentKidService.getCurrentKid(), element)
+          // finalize is called when success/error has been thrown
+          .pipe(finalize(() => checkAllDone()))
           .subscribe({
-            next: () => {
-              console.log(`act added - ${element.Id}, ${element.ActivityType}`);
-            },
-            error: () => {
-              this.failedSyncActs.push(element);
-            },
-            complete: checkAllDone
+            next: () => { },
+            error: () => this.failedSyncActs.push(element)
           });
       }
-      console.log("called action for element id in array - ");
     });
   }
 

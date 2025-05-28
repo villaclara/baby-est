@@ -12,8 +12,7 @@ import { DatePipe } from '@angular/common';
 })
 export class SyncStatusPendingActsComponent implements OnInit {
 
-  pendingActs: KidActivity[] = [];
-
+  failedActs: KidActivity[] = [];
   isDisplayed: boolean = false;
 
   constructor(private localStorageService: LocalStorageService) { }
@@ -23,17 +22,14 @@ export class SyncStatusPendingActsComponent implements OnInit {
       if(!value)
       {
         this.isDisplayed = true;
-        this.pendingActs = this.localStorageService.failedSyncActs;
+        this.failedActs = this.localStorageService.failedSyncActs;
       }
     })
-  }
-
-  syncManually(): void {
-
   }
 
   close(): void {
     this.isDisplayed = false;
     this.localStorageService.failedSyncActs = [];
+    this.failedActs = [];
   }
 }
