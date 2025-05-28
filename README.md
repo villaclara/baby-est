@@ -10,7 +10,7 @@ Features:
 - cookie based authentication
 - PWA application available to install on device
 - SQLite/Postgres database provider
-
+- *from v1.0.15 new activities in Main page can be added while offline.*
 
 
 
