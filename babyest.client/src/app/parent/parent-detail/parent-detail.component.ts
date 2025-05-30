@@ -42,7 +42,7 @@ export class ParentDetailComponent implements OnInit, OnDestroy {
   selectedTheme: string = '';
   isAutoThemeChecked: boolean = true;
 
-  version: string = "v1.0.15";
+  version: string = "v1.0.16";
   constructor(private authService: AuthService,
     private router: Router,
     private parentService: ParentService,

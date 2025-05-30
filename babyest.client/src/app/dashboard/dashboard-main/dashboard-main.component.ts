@@ -115,10 +115,16 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
     this.currentTheme = this.currentKidService.getTheme();
     this.currentKidService.themeChanged$.subscribe((newTheme) => this.currentTheme = newTheme);
 
-    // REFRESH page when SYNC has been completed
-    // syncCompleted is tracked in HomeComponent
-    // On init Homecomponent we try to sync the pending activities
-    // If we are offline then still we emit the syncCompletedWithResults subject
+    this.isOnline = this.networkService.currentNetworkStatus;
+
+    let isTheDataLoaded: boolean = false;
+
+    // REFRESH page when SYNC has been completed.
+    // syncCompleted is tracked in HomeComponent.
+    // On init Homecomponent we try to sync the pending activities - 
+    // If we are offline then still we emit the syncCompletedWithResults subject.
+    // THIS call will always be called when loading the component as we have BehaviorSubject 
+    // and the value is emmited and we always call this on loading. Then no need to manually check below if online.
     this.localStorageService.syncCompletedWithResult$
       .pipe(takeUntil(this.destroy$))
       .subscribe(value => {
@@ -132,6 +138,7 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         this.unloadData();
         this.loadData();
+        isTheDataLoaded = true;
         this.isOnline = this.networkService.currentNetworkStatus;
       });
 
@@ -142,7 +149,7 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
 
         // if Back to online while being previous offline
         // need to refresh page when staying on Dashboard and going online -> offline -> online
-        if (isOnline) {
+        if (isOnline && !isTheDataLoaded) {
           // if nothing has changed when return to online 
           // if activities has changed we then reload data in this.localstorage.SyncCompletedWithResult subscription (above)
           if (this.localStorageService.currentSyncState === SyncStatus.Nothing) {
@@ -155,11 +162,15 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
       });
 
     // if OFFLINE load only local data
-    this.isOnline = this.networkService.currentNetworkStatus;
-    if (!this.isOnline) {
-      this.loadLocalData();
-      return;
-    }
+    // this.isOnline = this.networkService.currentNetworkStatus;
+    // if (!this.isOnline) {
+    //   console.log("call load local data in offline from network service");
+    //   this.loadLocalData();
+    //   console.log("load data in netwrok status");
+    //   return;
+    // }
+
+    isTheDataLoaded = false;
   }
 
   unloadData(): void {
@@ -270,6 +281,7 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
             setTimeout(() => {
               this.isDisplayedMainSectionTimerLastActs = true;
               this.isLoading = false;
+              console.log("loaded online data");
             }, 300);  // timeout is set to make smoother display as if the instant load the main section is like flickering
           },
           error: (err: Error) => {
@@ -341,6 +353,8 @@ export class DashboardMainComponent implements OnInit, OnDestroy {
     setTimeout(() => {
       this.isDisplayedMainSectionTimerLastActs = true;
       this.isLoading = false;
+              console.log("loaded local data");
+
     }, 300);  // timeout is set to make smoother display as if the instant load the main section is like flickering
 
   }
